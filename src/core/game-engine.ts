@@ -176,18 +176,23 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (state.gamePhase !== 'home') {
         const atOrigin = state.player.currentCountryId === ORIGIN_COUNTRY;
         const hasInv = state.player.inventory.length > 0;
-        const guidance = !atOrigin
-          ? "You're still abroad. Fly home, stash your goods, then deposit your cash using the End Trip button in the center panel."
-          : hasInv
-            ? "You have goods in your inventory. Stash them or sell to a kingpin, then deposit your cash."
-            : "Use the DEPOSIT & RETURN button in the center panel to deposit your cash and end the trip.";
-        const warnEvent: ChoiceEvent = {
-          id: 'end_trip_warn_' + Date.now().toString(36),
-          title: 'End Current Trip First',
-          context: `You need to end your current trip before booking another flight.\n\n${guidance}\n\nThen withdraw fresh cash and book a new flight.`,
-          choices: [{ id: 'understood', text: 'Understood', odds: 1.0, successEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' } }],
-        };
-        return { ...state, pendingEvent: warnEvent, lastEventMessage: 'End your current trip first.' };
+        // In London with no goods on person — auto-transition to home and continue booking
+        if (state.gamePhase === 'selling' && atOrigin && !hasInv) {
+          state = { ...state, gamePhase: 'home' };
+        } else {
+          const guidance = !atOrigin
+            ? "You're abroad. Fly home first."
+            : hasInv
+              ? "You're carrying goods. Stash them first, then book another flight."
+              : "Use the DEPOSIT & RETURN button to end your current trip.";
+          const warnEvent: ChoiceEvent = {
+            id: 'end_trip_warn_' + Date.now().toString(36),
+            title: 'End Current Trip First',
+            context: `You can't book a flight right now.\n\n${guidance}\n\nThen withdraw fresh cash if needed and book a new flight.`,
+            choices: [{ id: 'understood', text: 'Understood', odds: 1.0, successEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' } }],
+          };
+          return { ...state, pendingEvent: warnEvent, lastEventMessage: guidance };
+        }
       }
       const destCountry = getCountry(action.toCountryId);
       if (!destCountry) return { ...state, lastEventMessage: 'Invalid destination.' };
@@ -385,7 +390,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
     case 'CONTACT_KINGPIN': {
       if (state.gamePhase !== 'selling') {
-        const pw: ChoiceEvent = { id: 'kingpin_warn_' + Date.now().toString(36), title: 'Not Available', context: 'You can only contact kingpins from London. Return home and build up your stash first.', choices: [{ id: 'understood', text: 'Understood', odds: 1.0, successEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' } }] };
+        const pw: ChoiceEvent = { id: 'kingpin_warn_' + Date.now().toString(36), title: 'Not Available', context: 'You can only contact kingpins once you meet the minimum stash threshold. Fly abroad, do some deals, and build up your stash first.', choices: [{ id: 'understood', text: 'Understood', odds: 1.0, successEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' } }] };
         return { ...state, pendingEvent: pw };
       }
       const kingpin = KINGPIN_POOL.find(k => k.id === action.kingpinId);
@@ -551,7 +556,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
       // End trip warning — dismiss
       if (state.pendingEvent.id.startsWith('end_trip_warn_')) {
-        return { ...state, pendingEvent: null, lastEventMessage: 'End your current trip first, then book another flight.' };
+        return { ...state, pendingEvent: null, lastEventMessage: 'Resolve the issue before booking another flight.' };
       }
 
       // Kingpin warning — dismiss
