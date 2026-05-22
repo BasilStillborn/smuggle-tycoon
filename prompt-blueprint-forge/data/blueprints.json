@@ -1,0 +1,2095 @@
+[
+  {
+    "id": "bp_1",
+    "title": "The Perfect Blog Post Generator",
+    "description": "A comprehensive chain-of-thought blueprint that guides AI through research, outline, drafting, editing, and SEO optimization to produce publication-ready blog posts every time.",
+    "longDescription": "This blueprint uses a 5-stage chain-of-thought process to generate high-quality blog content. Stage 1 researches the topic deeply. Stage 2 creates a structured outline. Stage 3 drafts the full post with proper flow. Stage 4 performs self-editing and refinement. Stage 5 optimizes for SEO and readability scores. Includes customizable tone, audience, and length parameters.",
+    "price": 29.99,
+    "categoryId": "cat_1",
+    "authorId": "user_1",
+    "rating": 4.8,
+    "reviewCount": 127,
+    "sales": 1845,
+    "difficulty": "intermediate",
+    "tags": [
+      "blogging",
+      "seo",
+      "content-marketing",
+      "writing",
+      "chain-of-thought"
+    ],
+    "createdAt": "2024-09-12",
+    "updatedAt": "2025-01-15",
+    "image": "/blueprints/blog-generator.svg",
+    "featured": true,
+    "steps": 5,
+    "tokens": 2500,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3",
+      "Gemini Pro"
+    ],
+    "includes": [
+      "Prompt chain (5 steps)",
+      "Variables guide",
+      "Output templates",
+      "SEO checklist"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_2",
+    "title": "React Component Architect",
+    "description": "Generate production-ready React components with TypeScript, tests, and Storybook stories from a single structured prompt chain.",
+    "longDescription": "A specialized blueprint for AI-powered React component generation. Define your component requirements once, and the chain produces TypeScript-typed components, unit tests with Jest/React Testing Library, Storybook stories, and CSS module styles. Supports all modern React patterns including hooks, context, and Suspense.",
+    "price": 39.99,
+    "categoryId": "cat_2",
+    "authorId": "user_2",
+    "rating": 4.9,
+    "reviewCount": 89,
+    "sales": 1256,
+    "difficulty": "advanced",
+    "tags": [
+      "react",
+      "typescript",
+      "component",
+      "storybook",
+      "testing"
+    ],
+    "createdAt": "2024-10-01",
+    "updatedAt": "2025-02-20",
+    "image": "/blueprints/react-architect.svg",
+    "featured": true,
+    "steps": 4,
+    "tokens": 3200,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3 Opus",
+      "Gemini Ultra"
+    ],
+    "includes": [
+      "Component prompt",
+      "Test generator",
+      "Story generator",
+      "Style generator"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_3",
+    "title": "Data Storyteller Suite",
+    "description": "Transform raw datasets into compelling narratives with visualizations, insights, and executive summaries using this analytical prompt chain.",
+    "longDescription": "Feed raw CSV/JSON data into this 6-step blueprint and receive comprehensive data analysis. Step 1: Data profiling and quality assessment. Step 2: Statistical analysis. Step 3: Pattern recognition. Step 4: Visualization recommendations. Step 5: Narrative generation. Step 6: Executive summary with actionable insights.",
+    "price": 49.99,
+    "categoryId": "cat_3",
+    "authorId": "user_3",
+    "rating": 4.7,
+    "reviewCount": 64,
+    "sales": 892,
+    "difficulty": "advanced",
+    "tags": [
+      "data-analysis",
+      "visualization",
+      "reporting",
+      "analytics",
+      "storytelling"
+    ],
+    "createdAt": "2024-07-20",
+    "updatedAt": "2025-01-10",
+    "image": "/blueprints/data-storyteller.svg",
+    "featured": true,
+    "steps": 6,
+    "tokens": 4800,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3",
+      "Gemini Pro"
+    ],
+    "includes": [
+      "Data profile prompt",
+      "Stats analyzer",
+      "Visualization guide",
+      "Narrative builder",
+      "Summary generator"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_4",
+    "title": "Creative Writing Companion",
+    "description": "A multi-perspective prompt chain for fiction writing: world-building, character development, plot plotting, and dialogue refinement.",
+    "longDescription": "Designed for authors and storytellers, this blueprint chain covers the full creative writing process. World-building module creates rich, consistent settings. Character developer crafts deep的人物 with unique voices. Plot architect designs compelling story arcs. Dialogue polisher refines conversations for authenticity and impact.",
+    "price": 24.99,
+    "categoryId": "cat_4",
+    "authorId": "user_4",
+    "rating": 4.6,
+    "reviewCount": 93,
+    "sales": 2105,
+    "difficulty": "beginner",
+    "tags": [
+      "fiction",
+      "writing",
+      "world-building",
+      "characters",
+      "creative"
+    ],
+    "createdAt": "2024-11-05",
+    "updatedAt": "2025-03-01",
+    "image": "/blueprints/creative-writing.svg",
+    "featured": true,
+    "steps": 4,
+    "tokens": 1800,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3",
+      "Gemini Pro",
+      "Llama 3"
+    ],
+    "includes": [
+      "World-building prompt",
+      "Character sheets",
+      "Plot templates",
+      "Dialogue guide"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_5",
+    "title": "SWOT & Strategy Architect",
+    "description": "Strategic business analysis blueprint that performs SWOT, PESTLE, Porter's Five Forces, and generates actionable strategy documents.",
+    "longDescription": "A comprehensive business strategy chain that takes your company or product details and produces professional-grade strategic analysis. Performs SWOT (Strengths, Weaknesses, Opportunities, Threats), PESTLE (Political, Economic, Social, Technological, Legal, Environmental), and Porter's Five Forces analyses, then synthesizes everything into a cohesive strategy document with prioritized action items.",
+    "price": 59.99,
+    "categoryId": "cat_5",
+    "authorId": "user_1",
+    "rating": 4.5,
+    "reviewCount": 47,
+    "sales": 678,
+    "difficulty": "advanced",
+    "tags": [
+      "business",
+      "strategy",
+      "swot",
+      "analysis",
+      "planning"
+    ],
+    "createdAt": "2024-08-15",
+    "updatedAt": "2025-02-28",
+    "image": "/blueprints/strategy-architect.svg",
+    "featured": false,
+    "steps": 7,
+    "tokens": 5500,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3 Opus"
+    ],
+    "includes": [
+      "SWOT analyzer",
+      "PESTLE framework",
+      "Porter's Five Forces",
+      "Strategy synthesizer",
+      "Action plan generator"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_6",
+    "title": "Math Tutor Engine",
+    "description": "Step-by-step math tutoring chain that adapts to student level, explains concepts, generates practice problems, and tracks progress.",
+    "longDescription": "An adaptive learning blueprint that functions as a personalized math tutor. Assesses student level through diagnostic questions, then generates tailored lessons with step-by-step explanations. Creates practice problems at the right difficulty, provides detailed feedback on answers, and tracks progress across sessions. Covers algebra, geometry, calculus, and statistics.",
+    "price": 34.99,
+    "categoryId": "cat_6",
+    "authorId": "user_6",
+    "rating": 4.9,
+    "reviewCount": 156,
+    "sales": 3241,
+    "difficulty": "intermediate",
+    "tags": [
+      "education",
+      "math",
+      "tutoring",
+      "adaptive-learning",
+      "k12"
+    ],
+    "createdAt": "2024-12-01",
+    "updatedAt": "2025-03-15",
+    "image": "/blueprints/math-tutor.svg",
+    "featured": false,
+    "steps": 6,
+    "tokens": 2100,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3",
+      "Gemini Pro"
+    ],
+    "includes": [
+      "Assessment prompt",
+      "Lesson generator",
+      "Problem creator",
+      "Feedback engine",
+      "Progress tracker"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_7",
+    "title": "SEO Content Optimizer",
+    "description": "End-to-end SEO content chain: keyword research, content brief, article writing, meta optimization, and performance tracking.",
+    "longDescription": "A complete SEO workflow in a prompt chain. Start with keyword research and competitor analysis, receive a detailed content brief, generate the article with optimal keyword placement, get meta title and description suggestions, and a post-publication tracking framework. Includes SERP analysis and featured snippet optimization.",
+    "price": 44.99,
+    "categoryId": "cat_8",
+    "authorId": "user_4",
+    "rating": 4.4,
+    "reviewCount": 78,
+    "sales": 1567,
+    "difficulty": "intermediate",
+    "tags": [
+      "seo",
+      "content",
+      "marketing",
+      "keywords",
+      "optimization"
+    ],
+    "createdAt": "2024-10-20",
+    "updatedAt": "2025-01-25",
+    "image": "/blueprints/seo-optimizer.svg",
+    "featured": false,
+    "steps": 5,
+    "tokens": 3000,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3",
+      "Gemini Pro"
+    ],
+    "includes": [
+      "Keyword research prompt",
+      "Content brief template",
+      "Article writer",
+      "Meta optimizer",
+      "Tracking framework"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_8",
+    "title": "Research Paper Accelerator",
+    "description": "Academic research chain: literature review, hypothesis generation, methodology design, analysis, and paper drafting.",
+    "longDescription": "Accelerate your academic research with this comprehensive prompt chain. Conducts systematic literature reviews, generates research hypotheses based on gaps found, designs appropriate methodologies, analyzes results with statistical rigor, and drafts complete paper sections following academic style guides (APA, MLA, Chicago). Includes citation management and abstract generation.",
+    "price": 54.99,
+    "categoryId": "cat_7",
+    "authorId": "user_6",
+    "rating": 4.7,
+    "reviewCount": 52,
+    "sales": 934,
+    "difficulty": "advanced",
+    "tags": [
+      "academic",
+      "research",
+      "paper",
+      "literature-review",
+      "writing"
+    ],
+    "createdAt": "2024-09-28",
+    "updatedAt": "2025-02-10",
+    "image": "/blueprints/research-paper.svg",
+    "featured": false,
+    "steps": 6,
+    "tokens": 4200,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3 Opus"
+    ],
+    "includes": [
+      "Lit review prompt",
+      "Hypothesis generator",
+      "Methodology designer",
+      "Analysis framework",
+      "Paper drafter",
+      "Abstract generator"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_9",
+    "title": "API Integration Wizard",
+    "description": "Generate API integration code, documentation, error handling, and test suites for any REST or GraphQL API.",
+    "longDescription": "Describe any API endpoint and this blueprint generates production-ready integration code. Handles REST and GraphQL endpoints, generates TypeScript types, creates comprehensive error handling, builds request/response interceptors, generates API documentation, and creates test suites. Includes rate limiting, retry logic, and caching strategies.",
+    "price": 44.99,
+    "categoryId": "cat_2",
+    "authorId": "user_2",
+    "rating": 4.6,
+    "reviewCount": 71,
+    "sales": 1123,
+    "difficulty": "intermediate",
+    "tags": [
+      "api",
+      "integration",
+      "code-generation",
+      "rest",
+      "graphql"
+    ],
+    "createdAt": "2024-11-15",
+    "updatedAt": "2025-03-05",
+    "image": "/blueprints/api-wizard.svg",
+    "featured": false,
+    "steps": 5,
+    "tokens": 2800,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3",
+      "Gemini Pro"
+    ],
+    "includes": [
+      "Endpoint analyzer",
+      "Type generator",
+      "Integration code",
+      "Error handler",
+      "Test suite"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_10",
+    "title": "Email Marketing Machine",
+    "description": "Craft high-converting email sequences: welcome series, nurture campaigns, promotional emails, and A/B test variants.",
+    "longDescription": "A complete email marketing prompt chain that generates entire campaigns. Defines audience segments, creates compelling subject lines (with A/B test variants), writes engaging email body copy, designs call-to-action strategies, and sets up follow-up sequences. Includes spam score optimization and engagement tracking metrics.",
+    "price": 19.99,
+    "categoryId": "cat_8",
+    "authorId": "user_1",
+    "rating": 4.3,
+    "reviewCount": 112,
+    "sales": 2890,
+    "difficulty": "beginner",
+    "tags": [
+      "email",
+      "marketing",
+      "campaign",
+      "conversion",
+      "copywriting"
+    ],
+    "createdAt": "2024-12-15",
+    "updatedAt": "2025-03-20",
+    "image": "/blueprints/email-marketing.svg",
+    "featured": false,
+    "steps": 4,
+    "tokens": 1500,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3",
+      "Gemini Pro",
+      "Llama 3"
+    ],
+    "includes": [
+      "Segment definitions",
+      "Subject line generator",
+      "Body copy writer",
+      "CTA optimizer"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_11",
+    "title": "Python Script Builder",
+    "description": "Generate Python scripts with error handling, logging, CLI arguments, and documentation from natural language descriptions.",
+    "longDescription": "Describe what you want your Python script to do in plain English, and this blueprint chain produces a complete, production-ready script. Includes argparse CLI interface, structured logging, comprehensive error handling, type hints, docstrings, and a test file. Follows PEP 8 standards and includes a requirements.txt.",
+    "price": 34.99,
+    "categoryId": "cat_2",
+    "authorId": "user_3",
+    "rating": 4.8,
+    "reviewCount": 83,
+    "sales": 1678,
+    "difficulty": "beginner",
+    "tags": [
+      "python",
+      "scripting",
+      "automation",
+      "cli",
+      "development"
+    ],
+    "createdAt": "2025-01-05",
+    "updatedAt": "2025-03-25",
+    "image": "/blueprints/python-builder.svg",
+    "featured": false,
+    "steps": 4,
+    "tokens": 2200,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3",
+      "Gemini Pro"
+    ],
+    "includes": [
+      "Script generator",
+      "Error handler",
+      "Test file generator",
+      "Documentation builder"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_12",
+    "title": "Brand Voice Forge",
+    "description": "Define, document, and deploy a consistent brand voice across all content channels with this strategic prompt chain.",
+    "longDescription": "This blueprint helps businesses define and maintain a consistent brand voice. Through a structured prompt chain, it analyzes existing content to extract voice characteristics, creates a comprehensive brand voice guide, generates channel-specific adaptation rules, and provides a quality assurance framework. Includes tone calibration tools and voice consistency checkers.",
+    "price": 39.99,
+    "categoryId": "cat_1",
+    "authorId": "user_4",
+    "rating": 4.5,
+    "reviewCount": 38,
+    "sales": 567,
+    "difficulty": "intermediate",
+    "tags": [
+      "brand",
+      "voice",
+      "content",
+      "branding",
+      "guidelines"
+    ],
+    "createdAt": "2025-02-01",
+    "updatedAt": "2025-04-01",
+    "image": "/blueprints/brand-voice.svg",
+    "featured": false,
+    "steps": 5,
+    "tokens": 3500,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3"
+    ],
+    "includes": [
+      "Voice analysis prompt",
+      "Brand guide generator",
+      "Channel adaptation rules",
+      "QA framework",
+      "Tone calibrator"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_25",
+    "title": "Email Marketing Sequence Generator",
+    "description": "Craft high-converting email sequences from welcome to re-engagement with this 6-step prompt chain.",
+    "longDescription": "Craft high-converting email sequences from welcome to re-engagement with this 6-step prompt chain. This blueprint includes Welcome email prompt, Nurture series, Sales email, Re-engagement prompt, A/B test generator. Suitable for beginner users.",
+    "price": 24.99,
+    "categoryId": "cat_1",
+    "authorId": "user_3",
+    "rating": 4.9,
+    "reviewCount": 23,
+    "sales": 183,
+    "difficulty": "beginner",
+    "tags": [
+      "email",
+      "marketing",
+      "copywriting",
+      "automation"
+    ],
+    "createdAt": "2025-03-01",
+    "updatedAt": "2025-03-01",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 6,
+    "tokens": 2800,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3",
+      "Gemini Pro"
+    ],
+    "includes": [
+      "Welcome email prompt",
+      "Nurture series",
+      "Sales email",
+      "Re-engagement prompt",
+      "A/B test generator"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_26",
+    "title": "SEO Meta Description Optimizer",
+    "description": "Generate click-optimized meta descriptions and title tags that rank higher and drive organic traffic.",
+    "longDescription": "Generate click-optimized meta descriptions and title tags that rank higher and drive organic traffic. This blueprint includes Meta title generator, Description optimizer, Keyword integration prompt. Suitable for intermediate users.",
+    "price": 14.99,
+    "categoryId": "cat_1",
+    "authorId": "user_4",
+    "rating": 3.8,
+    "reviewCount": 35,
+    "sales": 314,
+    "difficulty": "intermediate",
+    "tags": [
+      "seo",
+      "meta",
+      "description",
+      "organic",
+      "traffic"
+    ],
+    "createdAt": "2025-03-23",
+    "updatedAt": "2025-03-23",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 3,
+    "tokens": 1500,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3"
+    ],
+    "includes": [
+      "Meta title generator",
+      "Description optimizer",
+      "Keyword integration prompt"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_27",
+    "title": "Technical Documentation Writer",
+    "description": "Transform complex technical concepts into clear, structured documentation with code examples.",
+    "longDescription": "Transform complex technical concepts into clear, structured documentation with code examples. This blueprint includes API doc prompt, Code example generator, Tutorial structure, Quick start guide. Suitable for advanced users.",
+    "price": 34.99,
+    "categoryId": "cat_1",
+    "authorId": "user_6",
+    "rating": 4.7,
+    "reviewCount": 53,
+    "sales": 312,
+    "difficulty": "advanced",
+    "tags": [
+      "documentation",
+      "technical",
+      "writing",
+      "api",
+      "developer"
+    ],
+    "createdAt": "2025-04-15",
+    "updatedAt": "2025-04-15",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 4,
+    "tokens": 3500,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3 Opus"
+    ],
+    "includes": [
+      "API doc prompt",
+      "Code example generator",
+      "Tutorial structure",
+      "Quick start guide"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_28",
+    "title": "Press Release & Media Kit Generator",
+    "description": "Create professional press releases and media kits that get journalists' attention.",
+    "longDescription": "Create professional press releases and media kits that get journalists' attention. This blueprint includes Press release template, Media kit structure, Quote generator, Boilerplate builder, Distribution checklist. Suitable for beginner users.",
+    "price": 29.99,
+    "categoryId": "cat_1",
+    "authorId": "user_1",
+    "rating": 4.2,
+    "reviewCount": 14,
+    "sales": 126,
+    "difficulty": "beginner",
+    "tags": [
+      "press",
+      "media",
+      "pr",
+      "announcement",
+      "journalism"
+    ],
+    "createdAt": "2025-03-19",
+    "updatedAt": "2025-03-19",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 5,
+    "tokens": 3000,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3"
+    ],
+    "includes": [
+      "Press release template",
+      "Media kit structure",
+      "Quote generator",
+      "Boilerplate builder",
+      "Distribution checklist"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_29",
+    "title": "Newsletter Content Curator",
+    "description": "Curate and summarize the best industry news into engaging newsletter content your subscribers will love.",
+    "longDescription": "Curate and summarize the best industry news into engaging newsletter content your subscribers will love. This blueprint includes Article summarizer, Editorial note prompt, Headline generator, CTA optimizer. Suitable for intermediate users.",
+    "price": 19.99,
+    "categoryId": "cat_1",
+    "authorId": "user_2",
+    "rating": 4.2,
+    "reviewCount": 71,
+    "sales": 363,
+    "difficulty": "intermediate",
+    "tags": [
+      "newsletter",
+      "curation",
+      "summary",
+      "content",
+      "email"
+    ],
+    "createdAt": "2025-01-03",
+    "updatedAt": "2025-01-03",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 4,
+    "tokens": 2200,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3",
+      "Gemini Pro"
+    ],
+    "includes": [
+      "Article summarizer",
+      "Editorial note prompt",
+      "Headline generator",
+      "CTA optimizer"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_30",
+    "title": "REST API Endpoint Builder",
+    "description": "Design and implement production-ready REST API endpoints with validation, error handling, and documentation.",
+    "longDescription": "Design and implement production-ready REST API endpoints with validation, error handling, and documentation. This blueprint includes Route design prompt, Controller generator, Validation schema, Error handler, API docs template. Suitable for advanced users.",
+    "price": 44.99,
+    "categoryId": "cat_2",
+    "authorId": "user_3",
+    "rating": 4.7,
+    "reviewCount": 33,
+    "sales": 183,
+    "difficulty": "advanced",
+    "tags": [
+      "api",
+      "rest",
+      "backend",
+      "node",
+      "express"
+    ],
+    "createdAt": "2025-03-11",
+    "updatedAt": "2025-03-11",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 5,
+    "tokens": 4000,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3 Opus",
+      "Gemini Ultra"
+    ],
+    "includes": [
+      "Route design prompt",
+      "Controller generator",
+      "Validation schema",
+      "Error handler",
+      "API docs template"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_31",
+    "title": "Database Schema Designer",
+    "description": "Design normalized database schemas with relationships, indexes, and migration scripts for any project.",
+    "longDescription": "Design normalized database schemas with relationships, indexes, and migration scripts for any project. This blueprint includes Schema designer, Relationship mapper, Index optimizer, Migration script generator. Suitable for beginner users.",
+    "price": 39.99,
+    "categoryId": "cat_2",
+    "authorId": "user_4",
+    "rating": 3.6,
+    "reviewCount": 26,
+    "sales": 384,
+    "difficulty": "beginner",
+    "tags": [
+      "database",
+      "schema",
+      "sql",
+      "postgres",
+      "migration"
+    ],
+    "createdAt": "2025-02-08",
+    "updatedAt": "2025-02-08",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 4,
+    "tokens": 3200,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3 Opus"
+    ],
+    "includes": [
+      "Schema designer",
+      "Relationship mapper",
+      "Index optimizer",
+      "Migration script generator"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_32",
+    "title": "Unit Test Suite Generator",
+    "description": "Generate comprehensive unit tests with mocks, edge cases, and coverage reports for your codebase.",
+    "longDescription": "Generate comprehensive unit tests with mocks, edge cases, and coverage reports for your codebase. This blueprint includes Test case generator, Mock factory, Edge case finder, Coverage reporter. Suitable for intermediate users.",
+    "price": 34.99,
+    "categoryId": "cat_2",
+    "authorId": "user_6",
+    "rating": 4,
+    "reviewCount": 4,
+    "sales": 30,
+    "difficulty": "intermediate",
+    "tags": [
+      "testing",
+      "unit",
+      "jest",
+      "mocha",
+      "coverage"
+    ],
+    "createdAt": "2025-02-01",
+    "updatedAt": "2025-02-01",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 4,
+    "tokens": 3500,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3"
+    ],
+    "includes": [
+      "Test case generator",
+      "Mock factory",
+      "Edge case finder",
+      "Coverage reporter"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_33",
+    "title": "CI/CD Pipeline Architect",
+    "description": "Design and implement CI/CD pipelines for GitHub Actions, GitLab CI, or Jenkins with best practices.",
+    "longDescription": "Design and implement CI/CD pipelines for GitHub Actions, GitLab CI, or Jenkins with best practices. This blueprint includes Pipeline structure prompt, Step generator, Secret manager, Deploy strategy, Notification config, Rollback plan. Suitable for advanced users.",
+    "price": 49.99,
+    "categoryId": "cat_2",
+    "authorId": "user_1",
+    "rating": 4.2,
+    "reviewCount": 11,
+    "sales": 143,
+    "difficulty": "advanced",
+    "tags": [
+      "cicd",
+      "devops",
+      "github-actions",
+      "jenkins",
+      "automation"
+    ],
+    "createdAt": "2025-03-01",
+    "updatedAt": "2025-03-01",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 6,
+    "tokens": 4500,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3 Opus"
+    ],
+    "includes": [
+      "Pipeline structure prompt",
+      "Step generator",
+      "Secret manager",
+      "Deploy strategy",
+      "Notification config",
+      "Rollback plan"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_34",
+    "title": "Code Review Assistant",
+    "description": "Automate thorough code reviews with security scanning, style checking, and performance suggestions.",
+    "longDescription": "Automate thorough code reviews with security scanning, style checking, and performance suggestions. This blueprint includes Security scanner prompt, Style checker, Performance analyzer, Best practices enforcer. Suitable for beginner users.",
+    "price": 29.99,
+    "categoryId": "cat_2",
+    "authorId": "user_2",
+    "rating": 4.1,
+    "reviewCount": 16,
+    "sales": 223,
+    "difficulty": "beginner",
+    "tags": [
+      "code-review",
+      "security",
+      "quality",
+      "performance",
+      "best-practices"
+    ],
+    "createdAt": "2025-01-16",
+    "updatedAt": "2025-01-16",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 4,
+    "tokens": 3000,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3"
+    ],
+    "includes": [
+      "Security scanner prompt",
+      "Style checker",
+      "Performance analyzer",
+      "Best practices enforcer"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_35",
+    "title": "Statistical Analysis Workflow",
+    "description": "Run comprehensive statistical analyses on datasets with hypothesis testing, correlation analysis, and regression modeling.",
+    "longDescription": "Run comprehensive statistical analyses on datasets with hypothesis testing, correlation analysis, and regression modeling. This blueprint includes Hypothesis tester, Correlation analyzer, Regression modeler, Visualization prompter, Report generator. Suitable for intermediate users.",
+    "price": 44.99,
+    "categoryId": "cat_3",
+    "authorId": "user_3",
+    "rating": 3.9,
+    "reviewCount": 10,
+    "sales": 80,
+    "difficulty": "intermediate",
+    "tags": [
+      "statistics",
+      "analysis",
+      "hypothesis",
+      "regression",
+      "data-science"
+    ],
+    "createdAt": "2025-01-18",
+    "updatedAt": "2025-01-18",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 5,
+    "tokens": 4000,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3 Opus",
+      "Gemini Ultra"
+    ],
+    "includes": [
+      "Hypothesis tester",
+      "Correlation analyzer",
+      "Regression modeler",
+      "Visualization prompter",
+      "Report generator"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_36",
+    "title": "Data Cleaning & Preprocessing Pipeline",
+    "description": "Automate the tedious process of cleaning, normalizing, and preprocessing messy datasets for analysis.",
+    "longDescription": "Automate the tedious process of cleaning, normalizing, and preprocessing messy datasets for analysis. This blueprint includes Missing value handler, Outlier detector, Normalization prompter, Feature encoder, Data validator, Pipeline builder. Suitable for advanced users.",
+    "price": 29.99,
+    "categoryId": "cat_3",
+    "authorId": "user_4",
+    "rating": 4.2,
+    "reviewCount": 31,
+    "sales": 432,
+    "difficulty": "advanced",
+    "tags": [
+      "data-cleaning",
+      "preprocessing",
+      "normalization",
+      "pipeline",
+      "etl"
+    ],
+    "createdAt": "2025-01-25",
+    "updatedAt": "2025-01-25",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 6,
+    "tokens": 3500,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3"
+    ],
+    "includes": [
+      "Missing value handler",
+      "Outlier detector",
+      "Normalization prompter",
+      "Feature encoder",
+      "Data validator",
+      "Pipeline builder"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_37",
+    "title": "Time Series Forecasting Engine",
+    "description": "Generate accurate time series forecasts using trend analysis, seasonality decomposition, and ARIMA modeling.",
+    "longDescription": "Generate accurate time series forecasts using trend analysis, seasonality decomposition, and ARIMA modeling. This blueprint includes Trend analyzer, Seasonality decomposer, Model selector, Forecast generator, Accuracy reporter. Suitable for beginner users.",
+    "price": 49.99,
+    "categoryId": "cat_3",
+    "authorId": "user_6",
+    "rating": 3.6,
+    "reviewCount": 41,
+    "sales": 305,
+    "difficulty": "beginner",
+    "tags": [
+      "time-series",
+      "forecasting",
+      "trend",
+      "seasonality",
+      "arima"
+    ],
+    "createdAt": "2025-04-17",
+    "updatedAt": "2025-04-17",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 5,
+    "tokens": 3800,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3 Opus"
+    ],
+    "includes": [
+      "Trend analyzer",
+      "Seasonality decomposer",
+      "Model selector",
+      "Forecast generator",
+      "Accuracy reporter"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_38",
+    "title": "A/B Test Analyzer",
+    "description": "Design, run, and analyze A/B tests with statistical significance calculations and actionable recommendations.",
+    "longDescription": "Design, run, and analyze A/B tests with statistical significance calculations and actionable recommendations. This blueprint includes Test designer, Sample size calculator, Significance tester, Recommendation engine. Suitable for intermediate users.",
+    "price": 34.99,
+    "categoryId": "cat_3",
+    "authorId": "user_1",
+    "rating": 4.6,
+    "reviewCount": 19,
+    "sales": 191,
+    "difficulty": "intermediate",
+    "tags": [
+      "ab-test",
+      "experiment",
+      "significance",
+      "conversion",
+      "optimization"
+    ],
+    "createdAt": "2025-04-11",
+    "updatedAt": "2025-04-11",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 4,
+    "tokens": 2800,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3"
+    ],
+    "includes": [
+      "Test designer",
+      "Sample size calculator",
+      "Significance tester",
+      "Recommendation engine"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_39",
+    "title": "Natural Language Data Explorer",
+    "description": "Explore unstructured text data through topic modeling, sentiment analysis, and keyword extraction.",
+    "longDescription": "Explore unstructured text data through topic modeling, sentiment analysis, and keyword extraction. This blueprint includes Topic modeler, Sentiment analyzer, Keyword extractor, Summary generator, Visualization prompter. Suitable for advanced users.",
+    "price": 39.99,
+    "categoryId": "cat_3",
+    "authorId": "user_2",
+    "rating": 3.7,
+    "reviewCount": 13,
+    "sales": 183,
+    "difficulty": "advanced",
+    "tags": [
+      "nlp",
+      "text-analysis",
+      "sentiment",
+      "topic-modeling",
+      "keywords"
+    ],
+    "createdAt": "2025-01-13",
+    "updatedAt": "2025-01-13",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 5,
+    "tokens": 3500,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3 Opus",
+      "Gemini Pro"
+    ],
+    "includes": [
+      "Topic modeler",
+      "Sentiment analyzer",
+      "Keyword extractor",
+      "Summary generator",
+      "Visualization prompter"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_40",
+    "title": "Fantasy Worldbuilding Generator",
+    "description": "Build rich, consistent fantasy worlds with detailed geography, cultures, magic systems, and history.",
+    "longDescription": "Build rich, consistent fantasy worlds with detailed geography, cultures, magic systems, and history. This blueprint includes Geography generator, Culture builder, Magic system designer, History timeline, Pantheon creator, Bestiary prompter, Map prompt. Suitable for beginner users.",
+    "price": 34.99,
+    "categoryId": "cat_4",
+    "authorId": "user_3",
+    "rating": 4.6,
+    "reviewCount": 14,
+    "sales": 156,
+    "difficulty": "beginner",
+    "tags": [
+      "fantasy",
+      "worldbuilding",
+      "ttrpg",
+      "writing",
+      "creative"
+    ],
+    "createdAt": "2025-04-07",
+    "updatedAt": "2025-04-07",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 7,
+    "tokens": 5000,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3 Opus"
+    ],
+    "includes": [
+      "Geography generator",
+      "Culture builder",
+      "Magic system designer",
+      "History timeline",
+      "Pantheon creator",
+      "Bestiary prompter",
+      "Map prompt"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_41",
+    "title": "Character Dialogue Writer",
+    "description": "Write authentic, character-specific dialogue with distinct voices, subtext, and emotional arcs.",
+    "longDescription": "Write authentic, character-specific dialogue with distinct voices, subtext, and emotional arcs. This blueprint includes Voice definition prompt, Dialogue generator, Subtext enhancer, Emotion arc tracker. Suitable for intermediate users.",
+    "price": 24.99,
+    "categoryId": "cat_4",
+    "authorId": "user_4",
+    "rating": 4.2,
+    "reviewCount": 66,
+    "sales": 444,
+    "difficulty": "intermediate",
+    "tags": [
+      "dialogue",
+      "character",
+      "writing",
+      "voice",
+      "script"
+    ],
+    "createdAt": "2025-04-24",
+    "updatedAt": "2025-04-24",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 4,
+    "tokens": 2500,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3"
+    ],
+    "includes": [
+      "Voice definition prompt",
+      "Dialogue generator",
+      "Subtext enhancer",
+      "Emotion arc tracker"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_42",
+    "title": "Music Video Concept Generator",
+    "description": "Generate creative music video concepts with visual treatments, storyboards, and production notes.",
+    "longDescription": "Generate creative music video concepts with visual treatments, storyboards, and production notes. This blueprint includes Concept brainstormer, Visual treatment prompter, Storyboard generator, Shot list creator, Production notes. Suitable for advanced users.",
+    "price": 29.99,
+    "categoryId": "cat_4",
+    "authorId": "user_6",
+    "rating": 3.7,
+    "reviewCount": 15,
+    "sales": 202,
+    "difficulty": "advanced",
+    "tags": [
+      "music",
+      "video",
+      "concept",
+      "storyboard",
+      "creative"
+    ],
+    "createdAt": "2025-02-06",
+    "updatedAt": "2025-02-06",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 5,
+    "tokens": 3000,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3"
+    ],
+    "includes": [
+      "Concept brainstormer",
+      "Visual treatment prompter",
+      "Storyboard generator",
+      "Shot list creator",
+      "Production notes"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_43",
+    "title": "Logo Design Brief Generator",
+    "description": "Create comprehensive design briefs for logo designers with brand personality, color psychology, and style direction.",
+    "longDescription": "Create comprehensive design briefs for logo designers with brand personality, color psychology, and style direction. This blueprint includes Brand personality profiler, Color psychologist, Style direction prompter, Brief template. Suitable for beginner users.",
+    "price": 19.99,
+    "categoryId": "cat_4",
+    "authorId": "user_1",
+    "rating": 4,
+    "reviewCount": 24,
+    "sales": 423,
+    "difficulty": "beginner",
+    "tags": [
+      "design",
+      "logo",
+      "branding",
+      "brief",
+      "creative"
+    ],
+    "createdAt": "2025-04-11",
+    "updatedAt": "2025-04-11",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 4,
+    "tokens": 2200,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3",
+      "Gemini Pro"
+    ],
+    "includes": [
+      "Brand personality profiler",
+      "Color psychologist",
+      "Style direction prompter",
+      "Brief template"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_44",
+    "title": "Sci-Fi Technology Concept Designer",
+    "description": "Design believable sci-fi technologies with explanations of their mechanics, societal impact, and narrative potential.",
+    "longDescription": "Design believable sci-fi technologies with explanations of their mechanics, societal impact, and narrative potential. This blueprint includes Tech concept generator, Mechanics explainer, Impact analyzer, Narrative hook finder, Visual description prompter. Suitable for intermediate users.",
+    "price": 34.99,
+    "categoryId": "cat_4",
+    "authorId": "user_2",
+    "rating": 4.8,
+    "reviewCount": 68,
+    "sales": 378,
+    "difficulty": "intermediate",
+    "tags": [
+      "scifi",
+      "technology",
+      "worldbuilding",
+      "creative",
+      "writing"
+    ],
+    "createdAt": "2025-02-04",
+    "updatedAt": "2025-02-04",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 5,
+    "tokens": 3500,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3 Opus"
+    ],
+    "includes": [
+      "Tech concept generator",
+      "Mechanics explainer",
+      "Impact analyzer",
+      "Narrative hook finder",
+      "Visual description prompter"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_45",
+    "title": "Business Model Canvas Builder",
+    "description": "Design and validate business models using the Lean Canvas framework with risk assessment and hypothesis testing.",
+    "longDescription": "Design and validate business models using the Lean Canvas framework with risk assessment and hypothesis testing. This blueprint includes Value proposition designer, Revenue modeler, Cost structure analyzer, Channel strategist, Risk assessor. Suitable for advanced users.",
+    "price": 39.99,
+    "categoryId": "cat_5",
+    "authorId": "user_3",
+    "rating": 4.3,
+    "reviewCount": 33,
+    "sales": 488,
+    "difficulty": "advanced",
+    "tags": [
+      "business",
+      "canvas",
+      "lean",
+      "startup",
+      "strategy"
+    ],
+    "createdAt": "2025-01-18",
+    "updatedAt": "2025-01-18",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 5,
+    "tokens": 3500,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3"
+    ],
+    "includes": [
+      "Value proposition designer",
+      "Revenue modeler",
+      "Cost structure analyzer",
+      "Channel strategist",
+      "Risk assessor"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_46",
+    "title": "Competitive Intelligence Report Generator",
+    "description": "Produce in-depth competitive analysis reports with SWOT, market positioning, and strategic recommendations.",
+    "longDescription": "Produce in-depth competitive analysis reports with SWOT, market positioning, and strategic recommendations. This blueprint includes Competitor profiler, SWOT analyzer, Market position mapper, Threat assessor, Opportunity finder, Recommendation engine. Suitable for beginner users.",
+    "price": 44.99,
+    "categoryId": "cat_5",
+    "authorId": "user_4",
+    "rating": 4.6,
+    "reviewCount": 27,
+    "sales": 156,
+    "difficulty": "beginner",
+    "tags": [
+      "competitive",
+      "intelligence",
+      "swot",
+      "analysis",
+      "strategy"
+    ],
+    "createdAt": "2025-04-02",
+    "updatedAt": "2025-04-02",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 6,
+    "tokens": 4000,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3 Opus"
+    ],
+    "includes": [
+      "Competitor profiler",
+      "SWOT analyzer",
+      "Market position mapper",
+      "Threat assessor",
+      "Opportunity finder",
+      "Recommendation engine"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_47",
+    "title": "OKR & KPI Framework Designer",
+    "description": "Design aligned OKRs and KPIs across your organization with measurable targets and regular check-in prompts.",
+    "longDescription": "Design aligned OKRs and KPIs across your organization with measurable targets and regular check-in prompts. This blueprint includes OKR designer, KPI selector, Target setter, Check-in facilitator. Suitable for intermediate users.",
+    "price": 34.99,
+    "categoryId": "cat_5",
+    "authorId": "user_6",
+    "rating": 3.5,
+    "reviewCount": 1,
+    "sales": 24,
+    "difficulty": "intermediate",
+    "tags": [
+      "okr",
+      "kpi",
+      "goals",
+      "metrics",
+      "management"
+    ],
+    "createdAt": "2025-01-11",
+    "updatedAt": "2025-01-11",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 4,
+    "tokens": 3000,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3"
+    ],
+    "includes": [
+      "OKR designer",
+      "KPI selector",
+      "Target setter",
+      "Check-in facilitator"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_48",
+    "title": "Investor Pitch Deck Creator",
+    "description": "Craft compelling investor pitch decks with slide-by-slide prompts covering problem, solution, market, traction, and ask.",
+    "longDescription": "Craft compelling investor pitch decks with slide-by-slide prompts covering problem, solution, market, traction, and ask. This blueprint includes Problem slide prompter, Solution architect, Market size calculator, Traction reporter, Team prompter, Financial modeler, Competitive slide, Ask structure. Suitable for advanced users.",
+    "price": 49.99,
+    "categoryId": "cat_5",
+    "authorId": "user_1",
+    "rating": 3.7,
+    "reviewCount": 31,
+    "sales": 244,
+    "difficulty": "advanced",
+    "tags": [
+      "investor",
+      "pitch",
+      "fundraising",
+      "startup",
+      "deck"
+    ],
+    "createdAt": "2025-01-04",
+    "updatedAt": "2025-01-04",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 8,
+    "tokens": 5000,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3 Opus"
+    ],
+    "includes": [
+      "Problem slide prompter",
+      "Solution architect",
+      "Market size calculator",
+      "Traction reporter",
+      "Team prompter",
+      "Financial modeler",
+      "Competitive slide",
+      "Ask structure"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_49",
+    "title": "Product Roadmap Strategist",
+    "description": "Build strategic product roadmaps with priority scoring, dependency mapping, and stakeholder communication templates.",
+    "longDescription": "Build strategic product roadmaps with priority scoring, dependency mapping, and stakeholder communication templates. This blueprint includes Feature prioritizer, Dependency mapper, Timeline generator, Stakeholder communicator, Risk buffer planner. Suitable for beginner users.",
+    "price": 39.99,
+    "categoryId": "cat_5",
+    "authorId": "user_2",
+    "rating": 4.3,
+    "reviewCount": 23,
+    "sales": 252,
+    "difficulty": "beginner",
+    "tags": [
+      "product",
+      "roadmap",
+      "strategy",
+      "priorities",
+      "management"
+    ],
+    "createdAt": "2025-03-14",
+    "updatedAt": "2025-03-14",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 5,
+    "tokens": 3500,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3",
+      "Gemini Pro"
+    ],
+    "includes": [
+      "Feature prioritizer",
+      "Dependency mapper",
+      "Timeline generator",
+      "Stakeholder communicator",
+      "Risk buffer planner"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_50",
+    "title": "Lesson Plan Generator",
+    "description": "Create comprehensive lesson plans with learning objectives, activities, assessments, and differentiation strategies.",
+    "longDescription": "Create comprehensive lesson plans with learning objectives, activities, assessments, and differentiation strategies. This blueprint includes Objective writer, Activity designer, Assessment creator, Differentiation planner, Resource list. Suitable for intermediate users.",
+    "price": 24.99,
+    "categoryId": "cat_6",
+    "authorId": "user_3",
+    "rating": 4.1,
+    "reviewCount": 35,
+    "sales": 303,
+    "difficulty": "intermediate",
+    "tags": [
+      "education",
+      "lesson-plan",
+      "teaching",
+      "curriculum",
+      "classroom"
+    ],
+    "createdAt": "2025-03-06",
+    "updatedAt": "2025-03-06",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 5,
+    "tokens": 3000,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3"
+    ],
+    "includes": [
+      "Objective writer",
+      "Activity designer",
+      "Assessment creator",
+      "Differentiation planner",
+      "Resource list"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_51",
+    "title": "Quiz & Assessment Builder",
+    "description": "Generate varied assessment questions with difficulty calibration, answer explanations, and plagiarism detection.",
+    "longDescription": "Generate varied assessment questions with difficulty calibration, answer explanations, and plagiarism detection. This blueprint includes Question generator, Difficulty calibrator, Answer explainer, Plagiarism checker. Suitable for advanced users.",
+    "price": 19.99,
+    "categoryId": "cat_6",
+    "authorId": "user_4",
+    "rating": 4,
+    "reviewCount": 6,
+    "sales": 34,
+    "difficulty": "advanced",
+    "tags": [
+      "quiz",
+      "assessment",
+      "questions",
+      "testing",
+      "education"
+    ],
+    "createdAt": "2025-04-20",
+    "updatedAt": "2025-04-20",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 4,
+    "tokens": 2500,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3",
+      "Gemini Pro"
+    ],
+    "includes": [
+      "Question generator",
+      "Difficulty calibrator",
+      "Answer explainer",
+      "Plagiarism checker"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_52",
+    "title": "Study Guide Creator",
+    "description": "Transform course materials into structured study guides with summaries, key concepts, practice problems, and mnemonics.",
+    "longDescription": "Transform course materials into structured study guides with summaries, key concepts, practice problems, and mnemonics. This blueprint includes Concept extractor, Summary writer, Practice problem generator, Mnemonic creator. Suitable for beginner users.",
+    "price": 14.99,
+    "categoryId": "cat_6",
+    "authorId": "user_6",
+    "rating": 3.8,
+    "reviewCount": 10,
+    "sales": 79,
+    "difficulty": "beginner",
+    "tags": [
+      "study",
+      "guide",
+      "summary",
+      "practice",
+      "learning"
+    ],
+    "createdAt": "2025-04-27",
+    "updatedAt": "2025-04-27",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 4,
+    "tokens": 2000,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3"
+    ],
+    "includes": [
+      "Concept extractor",
+      "Summary writer",
+      "Practice problem generator",
+      "Mnemonic creator"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_53",
+    "title": "Science Experiment Designer",
+    "description": "Design safe, educational science experiments with hypothesis, procedure, materials list, and discussion questions.",
+    "longDescription": "Design safe, educational science experiments with hypothesis, procedure, materials list, and discussion questions. This blueprint includes Hypothesis generator, Procedure writer, Materials list, Safety checker, Data recorder, Discussion prompter. Suitable for intermediate users.",
+    "price": 29.99,
+    "categoryId": "cat_6",
+    "authorId": "user_1",
+    "rating": 3.6,
+    "reviewCount": 19,
+    "sales": 302,
+    "difficulty": "intermediate",
+    "tags": [
+      "science",
+      "experiment",
+      "lab",
+      "education",
+      "stem"
+    ],
+    "createdAt": "2025-03-17",
+    "updatedAt": "2025-03-17",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 6,
+    "tokens": 3200,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3 Opus"
+    ],
+    "includes": [
+      "Hypothesis generator",
+      "Procedure writer",
+      "Materials list",
+      "Safety checker",
+      "Data recorder",
+      "Discussion prompter"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_54",
+    "title": "Language Learning Companion",
+    "description": "Practice any language with immersive conversation scenarios, grammar explanations, and vocabulary building exercises.",
+    "longDescription": "Practice any language with immersive conversation scenarios, grammar explanations, and vocabulary building exercises. This blueprint includes Scenario builder, Grammar explainer, Vocabulary expander, Pronunciation guide, Culture note prompter. Suitable for advanced users.",
+    "price": 34.99,
+    "categoryId": "cat_6",
+    "authorId": "user_2",
+    "rating": 4.1,
+    "reviewCount": 45,
+    "sales": 231,
+    "difficulty": "advanced",
+    "tags": [
+      "language",
+      "learning",
+      "conversation",
+      "grammar",
+      "vocabulary"
+    ],
+    "createdAt": "2025-01-21",
+    "updatedAt": "2025-01-21",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 5,
+    "tokens": 4000,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3"
+    ],
+    "includes": [
+      "Scenario builder",
+      "Grammar explainer",
+      "Vocabulary expander",
+      "Pronunciation guide",
+      "Culture note prompter"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_55",
+    "title": "Literature Review Synthesizer",
+    "description": "Synthesize academic papers and research articles into comprehensive literature reviews with thematic analysis.",
+    "longDescription": "Synthesize academic papers and research articles into comprehensive literature reviews with thematic analysis. This blueprint includes Paper summarizer, Theme finder, Gap analyzer, Synthesis writer, Reference formatter. Suitable for beginner users.",
+    "price": 44.99,
+    "categoryId": "cat_7",
+    "authorId": "user_3",
+    "rating": 4,
+    "reviewCount": 50,
+    "sales": 317,
+    "difficulty": "beginner",
+    "tags": [
+      "research",
+      "literature",
+      "review",
+      "academic",
+      "synthesis"
+    ],
+    "createdAt": "2025-04-09",
+    "updatedAt": "2025-04-09",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 5,
+    "tokens": 4500,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3 Opus",
+      "Gemini Ultra"
+    ],
+    "includes": [
+      "Paper summarizer",
+      "Theme finder",
+      "Gap analyzer",
+      "Synthesis writer",
+      "Reference formatter"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_56",
+    "title": "Research Methodology Designer",
+    "description": "Design robust research methodologies with appropriate sampling, data collection, and analysis techniques.",
+    "longDescription": "Design robust research methodologies with appropriate sampling, data collection, and analysis techniques. This blueprint includes Method selector, Sampling strategist, Data collection prompter, Analysis planner, Ethics checker. Suitable for intermediate users.",
+    "price": 39.99,
+    "categoryId": "cat_7",
+    "authorId": "user_4",
+    "rating": 4.6,
+    "reviewCount": 79,
+    "sales": 484,
+    "difficulty": "intermediate",
+    "tags": [
+      "methodology",
+      "research",
+      "sampling",
+      "study-design",
+      "academic"
+    ],
+    "createdAt": "2025-04-18",
+    "updatedAt": "2025-04-18",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 5,
+    "tokens": 3500,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3 Opus"
+    ],
+    "includes": [
+      "Method selector",
+      "Sampling strategist",
+      "Data collection prompter",
+      "Analysis planner",
+      "Ethics checker"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_57",
+    "title": "Data Visualisation Brief Generator",
+    "description": "Create detailed data visualization briefs specifying chart types, color schemes, annotations, and narrative flow.",
+    "longDescription": "Create detailed data visualization briefs specifying chart types, color schemes, annotations, and narrative flow. This blueprint includes Chart type selector, Color scheme designer, Annotation writer, Narrative flow builder. Suitable for advanced users.",
+    "price": 29.99,
+    "categoryId": "cat_7",
+    "authorId": "user_6",
+    "rating": 4.1,
+    "reviewCount": 4,
+    "sales": 92,
+    "difficulty": "advanced",
+    "tags": [
+      "visualization",
+      "charts",
+      "data",
+      "design",
+      "presentation"
+    ],
+    "createdAt": "2025-04-03",
+    "updatedAt": "2025-04-03",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 4,
+    "tokens": 2800,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3",
+      "Gemini Pro"
+    ],
+    "includes": [
+      "Chart type selector",
+      "Color scheme designer",
+      "Annotation writer",
+      "Narrative flow builder"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_58",
+    "title": "Market Research Survey Builder",
+    "description": "Design effective market research surveys with unbiased questions, skip logic, and analysis frameworks.",
+    "longDescription": "Design effective market research surveys with unbiased questions, skip logic, and analysis frameworks. This blueprint includes Question designer, Bias checker, Skip logic builder, Analysis framework, Report template. Suitable for beginner users.",
+    "price": 34.99,
+    "categoryId": "cat_7",
+    "authorId": "user_1",
+    "rating": 4.8,
+    "reviewCount": 85,
+    "sales": 456,
+    "difficulty": "beginner",
+    "tags": [
+      "survey",
+      "market-research",
+      "questions",
+      "analysis",
+      "feedback"
+    ],
+    "createdAt": "2025-04-27",
+    "updatedAt": "2025-04-27",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 5,
+    "tokens": 3000,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3"
+    ],
+    "includes": [
+      "Question designer",
+      "Bias checker",
+      "Skip logic builder",
+      "Analysis framework",
+      "Report template"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_59",
+    "title": "Case Study Framework",
+    "description": "Structure compelling case studies with problem definition, solution analysis, results measurement, and lessons learned.",
+    "longDescription": "Structure compelling case studies with problem definition, solution analysis, results measurement, and lessons learned. This blueprint includes Problem framer, Solution analyzer, Results measurer, Lesson extractor, Executive summary writer. Suitable for intermediate users.",
+    "price": 24.99,
+    "categoryId": "cat_7",
+    "authorId": "user_2",
+    "rating": 3.5,
+    "reviewCount": 25,
+    "sales": 348,
+    "difficulty": "intermediate",
+    "tags": [
+      "case-study",
+      "analysis",
+      "framework",
+      "business",
+      "research"
+    ],
+    "createdAt": "2025-02-19",
+    "updatedAt": "2025-02-19",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 5,
+    "tokens": 2800,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3"
+    ],
+    "includes": [
+      "Problem framer",
+      "Solution analyzer",
+      "Results measurer",
+      "Lesson extractor",
+      "Executive summary writer"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_60",
+    "title": "Social Media Content Calendar Generator",
+    "description": "Plan and create month-long social media content calendars with platform-specific optimization and engagement strategies.",
+    "longDescription": "Plan and create month-long social media content calendars with platform-specific optimization and engagement strategies. This blueprint includes Platform strategist, Content ideator, Copywriter, Hashtag researcher, Engagement tracker. Suitable for advanced users.",
+    "price": 24.99,
+    "categoryId": "cat_8",
+    "authorId": "user_3",
+    "rating": 3.5,
+    "reviewCount": 33,
+    "sales": 394,
+    "difficulty": "advanced",
+    "tags": [
+      "social-media",
+      "content",
+      "calendar",
+      "planning",
+      "engagement"
+    ],
+    "createdAt": "2025-01-12",
+    "updatedAt": "2025-01-12",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 5,
+    "tokens": 3000,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3",
+      "Gemini Pro"
+    ],
+    "includes": [
+      "Platform strategist",
+      "Content ideator",
+      "Copywriter",
+      "Hashtag researcher",
+      "Engagement tracker"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_61",
+    "title": "Google Ads Copy Optimizer",
+    "description": "Write high-converting Google Ads copy with keyword integration, ad extensions, and A/B test variations.",
+    "longDescription": "Write high-converting Google Ads copy with keyword integration, ad extensions, and A/B test variations. This blueprint includes Keyword integrator, Headline generator, Description writer, Extension prompter, A/B variant creator. Suitable for beginner users.",
+    "price": 34.99,
+    "categoryId": "cat_8",
+    "authorId": "user_4",
+    "rating": 4.2,
+    "reviewCount": 34,
+    "sales": 496,
+    "difficulty": "beginner",
+    "tags": [
+      "google-ads",
+      "ppc",
+      "copywriting",
+      "conversion",
+      "seo"
+    ],
+    "createdAt": "2025-01-18",
+    "updatedAt": "2025-01-18",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 4,
+    "tokens": 2800,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3"
+    ],
+    "includes": [
+      "Keyword integrator",
+      "Headline generator",
+      "Description writer",
+      "Extension prompter",
+      "A/B variant creator"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_62",
+    "title": "Email Drip Campaign Architect",
+    "description": "Design automated email drip campaigns for lead nurturing, onboarding, and customer retention.",
+    "longDescription": "Design automated email drip campaigns for lead nurturing, onboarding, and customer retention. This blueprint includes Campaign strategist, Email sequence writer, Subject line tester, CTA optimizer, Timeline designer, Analytics prompter. Suitable for intermediate users.",
+    "price": 29.99,
+    "categoryId": "cat_8",
+    "authorId": "user_6",
+    "rating": 4.2,
+    "reviewCount": 47,
+    "sales": 266,
+    "difficulty": "intermediate",
+    "tags": [
+      "email",
+      "drip",
+      "automation",
+      "nurture",
+      "retention"
+    ],
+    "createdAt": "2025-02-28",
+    "updatedAt": "2025-02-28",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 6,
+    "tokens": 3500,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3"
+    ],
+    "includes": [
+      "Campaign strategist",
+      "Email sequence writer",
+      "Subject line tester",
+      "CTA optimizer",
+      "Timeline designer",
+      "Analytics prompter"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_63",
+    "title": "Influencer Outreach Script Generator",
+    "description": "Craft personalized influencer outreach messages that get responses and build authentic partnerships.",
+    "longDescription": "Craft personalized influencer outreach messages that get responses and build authentic partnerships. This blueprint includes Outreach strategist, Message personalizer, Follow-up sequence, Partnership proposal template. Suitable for advanced users.",
+    "price": 19.99,
+    "categoryId": "cat_8",
+    "authorId": "user_1",
+    "rating": 3.6,
+    "reviewCount": 21,
+    "sales": 142,
+    "difficulty": "advanced",
+    "tags": [
+      "influencer",
+      "outreach",
+      "partnership",
+      "marketing",
+      "growth"
+    ],
+    "createdAt": "2025-04-14",
+    "updatedAt": "2025-04-14",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 3,
+    "tokens": 2000,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3"
+    ],
+    "includes": [
+      "Outreach strategist",
+      "Message personalizer",
+      "Follow-up sequence",
+      "Partnership proposal template"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  },
+  {
+    "id": "bp_seed_64",
+    "title": "Conversion Rate Optimization (CRO) Framework",
+    "description": "Systematically improve conversion rates through user research, hypothesis testing, and data-driven optimization.",
+    "longDescription": "Systematically improve conversion rates through user research, hypothesis testing, and data-driven optimization. This blueprint includes User research prompter, Hypothesis generator, Test designer, Data analyzer, Implementation planner, Results reporter. Suitable for beginner users.",
+    "price": 44.99,
+    "categoryId": "cat_8",
+    "authorId": "user_2",
+    "rating": 4,
+    "reviewCount": 19,
+    "sales": 161,
+    "difficulty": "beginner",
+    "tags": [
+      "cro",
+      "conversion",
+      "optimization",
+      "testing",
+      "ux"
+    ],
+    "createdAt": "2025-04-11",
+    "updatedAt": "2025-04-11",
+    "image": "/blueprints/default-pending.svg",
+    "featured": false,
+    "steps": 6,
+    "tokens": 4000,
+    "compatibleModels": [
+      "GPT-4",
+      "Claude 3 Opus"
+    ],
+    "includes": [
+      "User research prompter",
+      "Hypothesis generator",
+      "Test designer",
+      "Data analyzer",
+      "Implementation planner",
+      "Results reporter"
+    ],
+    "submissionStatus": "approved",
+    "reviewNotes": "",
+    "platformCommissionRate": 0.2
+  }
+]

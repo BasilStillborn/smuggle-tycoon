@@ -1,0 +1,119 @@
+================================================================
+                BEAMNG DRIVE MOD AUTOMATION TOOLS
+================================================================
+
+LOCATION: C:\Users\a6lit\OneDrive\Documents\New folder\
+
+================================================================
+                            QUICK START
+================================================================
+
+1. DOWNLOAD A MOD from ModLand or any other site
+   - It will go to your Downloads folder (C:\Users\a6lit\Downloads)
+
+2. RUN "Start-ModWatcher.bat" BEFORE downloading if you want auto-move
+   - Or run "Install-New-Mods.bat" AFTER downloading to manually select
+
+3. LAUNCH BEAMNG.DRIVE
+   - Open the in-game Mod Manager
+   - Enable your new mods
+
+================================================================
+                           ALL TOOLS
+================================================================
+
+Double-click any .bat file to run:
+
+  Start-ModWatcher.bat
+    - Runs in background, watches Downloads folder
+    - Automatically moves new ZIP files to BeamNG mods folder
+    - Keep this window open while downloading
+    - Press Ctrl+C to stop
+
+  Install-New-Mods.bat
+    - Interactive installer
+    - Shows all recent ZIPs in Downloads
+    - Asks which ones you want to install
+    - Use this if you don't want the watcher running
+
+  Open-ModFolder.bat
+    - One-click to open your BeamNG mods folder in Explorer
+    - Use this to manually add/remove mods
+
+  List-Mods.bat
+    - Shows all installed mods with their sizes
+    - Helps you see what's taking up space
+
+================================================================
+                       MODS FOLDER LOCATION
+================================================================
+
+Your mods go here:
+  C:\Users\a6lit\AppData\Local\BeamNG\BeamNG.drive\current\mods
+
+IMPORTANT:
+  - Do NOT extract ZIP files - BeamNG reads them directly
+  - Some ModLand mods need passwords (check the mod page!)
+  - Common password: vgtimes
+
+================================================================
+                        TYPICAL WORKFLOW
+================================================================
+
+OPTION A - AUTOMATIC (Recommended):
+  1. Double-click "Start-ModWatcher.bat"
+  2. Download mods from ModLand
+  3. Watch the window - it will say "MOVED: filename.zip"
+  4. Launch BeamNG → Mod Manager → Enable mods
+  5. Close the watcher window when done
+
+OPTION B - MANUAL:
+  1. Download mods from ModLand
+  2. Double-click "Install-New-Mods.bat"
+  3. Answer Y/N for each mod found
+  4. Launch BeamNG → Mod Manager → Enable mods
+
+OPTION C - FULLY MANUAL:
+  1. Download mods
+  2. Double-click "Open-ModFolder.bat"
+  3. Drag-and-drop ZIP files into the folder
+  4. Launch BeamNG
+
+================================================================
+                        TROUBLESHOOTING
+================================================================
+
+MOD NOT SHOWING UP IN GAME?
+  - Make sure it's a ZIP file (not RAR, 7z, or extracted)
+  - Some ModLand mods are inside another ZIP - extract first
+  - Check if mod needs a password
+  - Make sure it's compatible with your BeamNG version
+  - Old mods may be broken
+
+SCRIPT WON'T RUN?
+  - The .bat files bypass PowerShell restrictions automatically
+  - If still having issues, right-click → "Run with PowerShell"
+
+WATCHER NOT DETECTING?
+  - Make sure the window is still open
+  - Files must be > 100KB (ignores small junk files)
+  - Waits 10 seconds after download to ensure file is not in use
+
+================================================================
+                          FOLDER STRUCTURE
+================================================================
+
+New folder/
+  Start-ModWatcher.bat          <- Double-click this
+  Install-New-Mods.bat
+  Open-ModFolder.bat
+  List-Mods.bat
+  Watch-DownloadsForMods.ps1
+  Install-BeamNGMods.ps1
+  List-InstalledMods.ps1
+  Open-BeamNGModsFolder.ps1
+  HOW_TO_USE.txt                <- This file
+  mod-watcher.log               <- Created when watcher runs
+  processed-mods.txt            <- Tracks already processed files
+
+================================================================

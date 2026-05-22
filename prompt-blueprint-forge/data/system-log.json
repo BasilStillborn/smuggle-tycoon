@@ -1,0 +1,60 @@
+[
+  {
+    "level": "INFO",
+    "source": "system",
+    "message": "System initialized. Financial engine ready.",
+    "timestamp": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "level": "INFO",
+    "source": "checkout",
+    "message": "Initiating payment for 1 item(s), total 29.99",
+    "data": {
+      "buyerId": "user_5",
+      "totalAmount": 29.99,
+      "itemCount": 1
+    },
+    "timestamp": "2026-05-14T19:07:50.270Z"
+  },
+  {
+    "level": "INFO",
+    "source": "checkout",
+    "message": "Purchase successful. Order: test_checkout_001, Items: 1, Total: 29.99",
+    "data": {
+      "buyerId": "user_5",
+      "orderNumber": "test_checkout_001",
+      "itemCount": 1,
+      "totalAmount": 29.99,
+      "purchaseIds": [
+        "purch_1778785670868_nvoocf"
+      ]
+    },
+    "timestamp": "2026-05-14T19:07:50.870Z"
+  },
+  {
+    "level": "INFO",
+    "source": "checkout",
+    "message": "Initiating payment for 1 item(s), total 29.99",
+    "data": {
+      "buyerId": "user_5",
+      "totalAmount": 29.99,
+      "itemCount": 1
+    },
+    "timestamp": "2026-05-14T19:08:13.394Z"
+  },
+  {
+    "level": "INFO",
+    "source": "checkout",
+    "message": "Purchase successful. Order: test_final_001, Items: 1, Total: 29.99",
+    "data": {
+      "buyerId": "user_5",
+      "orderNumber": "test_final_001",
+      "itemCount": 1,
+      "totalAmount": 29.99,
+      "purchaseIds": [
+        "purch_1778785693733_e7ugnr"
+      ]
+    },
+    "timestamp": "2026-05-14T19:08:13.734Z"
+  }
+]

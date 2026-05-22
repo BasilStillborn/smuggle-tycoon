@@ -1,0 +1,65 @@
+[
+  {
+    "id": "social-media",
+    "name": "Social Media Automation",
+    "slug": "social-media",
+    "description": "Schedule, publish, and automate your social media presence across platforms.",
+    "count": 4
+  },
+  {
+    "id": "booking",
+    "name": "Booking & Scheduling",
+    "slug": "booking",
+    "description": "Let clients book your time automatically without the back-and-forth emails.",
+    "count": 2
+  },
+  {
+    "id": "email-marketing",
+    "name": "Email Marketing",
+    "slug": "email-marketing",
+    "description": "Build email sequences that nurture leads and convert clients on autopilot.",
+    "count": 3
+  },
+  {
+    "id": "crm",
+    "name": "CRM & Lead Tracking",
+    "slug": "crm",
+    "description": "Track every client interaction and never miss a follow-up again.",
+    "count": 2
+  },
+  {
+    "id": "design",
+    "name": "Design & Content",
+    "slug": "design",
+    "description": "Create professional graphics and repurpose content with AI-powered tools.",
+    "count": 1
+  },
+  {
+    "id": "content-creation",
+    "name": "Content Creation",
+    "slug": "content-creation",
+    "description": "Edit, repurpose, and create video content faster with AI assistance.",
+    "count": 2
+  },
+  {
+    "id": "automation",
+    "name": "Workflow Automation",
+    "slug": "automation",
+    "description": "Connect your apps and build no-code automations between your tools.",
+    "count": 2
+  },
+  {
+    "id": "reviews",
+    "name": "Review Management",
+    "slug": "reviews",
+    "description": "Automate review requests and manage your online reputation.",
+    "count": 2
+  },
+  {
+    "id": "accounting",
+    "name": "Accounting & Invoicing",
+    "slug": "accounting",
+    "description": "Send invoices, track expenses, and get paid faster with automated tools.",
+    "count": 2
+  }
+]

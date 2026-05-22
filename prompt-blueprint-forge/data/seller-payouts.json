@@ -1,0 +1,83 @@
+[
+  {
+    "payoutId": "payout_1",
+    "sellerId": "user_1",
+    "amountEarned": 29.99,
+    "platformFee": 5.998,
+    "netAmount": 23.992,
+    "dateRecorded": "2025-01-15",
+    "status": "paid_out",
+    "blueprintId": "bp_1",
+    "purchaseId": "purch_1"
+  },
+  {
+    "payoutId": "payout_2",
+    "sellerId": "user_2",
+    "amountEarned": 39.99,
+    "platformFee": 7.998,
+    "netAmount": 31.992,
+    "dateRecorded": "2025-02-20",
+    "status": "paid_out",
+    "blueprintId": "bp_2",
+    "purchaseId": "purch_2"
+  },
+  {
+    "payoutId": "payout_3",
+    "sellerId": "user_3",
+    "amountEarned": 49.99,
+    "platformFee": 9.998,
+    "netAmount": 39.992,
+    "dateRecorded": "2025-01-10",
+    "status": "paid_out",
+    "blueprintId": "bp_3",
+    "purchaseId": "purch_3"
+  },
+  {
+    "payoutId": "payout_4",
+    "sellerId": "user_4",
+    "amountEarned": 24.99,
+    "platformFee": 4.998,
+    "netAmount": 19.992,
+    "dateRecorded": "2025-03-01",
+    "status": "paid_out",
+    "blueprintId": "bp_4",
+    "purchaseId": "purch_4"
+  },
+  {
+    "payoutId": "payout_5",
+    "sellerId": "user_6",
+    "amountEarned": 34.99,
+    "platformFee": 6.998,
+    "netAmount": 27.992,
+    "dateRecorded": "2025-03-15",
+    "status": "paid_out",
+    "blueprintId": "bp_6",
+    "purchaseId": "purch_5",
+    "transferId": "tr_mock_1778785693373",
+    "paidOutAt": "2026-05-14T19:08:13.373Z"
+  },
+  {
+    "payoutId": "payout_1778785670868_iic4fu",
+    "sellerId": "user_1",
+    "amountEarned": 29.99,
+    "platformFee": 5.998,
+    "netAmount": 23.991999999999997,
+    "dateRecorded": "2026-05-14",
+    "status": "paid_out",
+    "blueprintId": "bp_1",
+    "purchaseId": "test_checkout_001",
+    "transferId": "tr_mock_1778785693373",
+    "paidOutAt": "2026-05-14T19:08:13.373Z"
+  },
+  {
+    "payoutId": "payout_1778785693733_yj58k2",
+    "sellerId": "user_1",
+    "amountEarned": 29.99,
+    "platformFee": 5.998,
+    "netAmount": 23.991999999999997,
+    "dateRecorded": "2026-05-14",
+    "status": "pending_payout",
+    "blueprintId": "bp_1",
+    "purchaseId": "test_final_001"
+  }
+]

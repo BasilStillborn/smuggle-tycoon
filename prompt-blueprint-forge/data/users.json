@@ -1,0 +1,75 @@
+[
+  {
+    "id": "user_1",
+    "name": "Alex Rivera",
+    "email": "alex@example.com",
+    "avatar": "https://api.dicebear.com/9.x/avataaars/svg?seed=Alex",
+    "bio": "AI Prompt Engineer & Architect. Building the future of human-AI interaction.",
+    "joinedDate": "2024-03-15",
+    "role": "creator",
+    "stripeConnectId": "acct_mock_user1",
+    "stripeAccountStatus": "active"
+  },
+  {
+    "id": "user_2",
+    "name": "Sarah Chen",
+    "email": "sarah@example.com",
+    "avatar": "https://api.dicebear.com/9.x/avataaars/svg?seed=Sarah",
+    "bio": "Full-stack developer exploring the boundaries of prompt engineering.",
+    "joinedDate": "2024-06-22",
+    "role": "creator",
+    "stripeConnectId": "acct_mock_user2",
+    "stripeAccountStatus": "active"
+  },
+  {
+    "id": "user_3",
+    "name": "Marcus Johnson",
+    "email": "marcus@example.com",
+    "avatar": "https://api.dicebear.com/9.x/avataaars/svg?seed=Marcus",
+    "bio": "Data scientist crafting precise prompts for complex analytical tasks.",
+    "joinedDate": "2024-01-10",
+    "role": "creator",
+    "stripeConnectId": "acct_mock_user3",
+    "stripeAccountStatus": "active"
+  },
+  {
+    "id": "user_4",
+    "name": "Emily Watson",
+    "email": "emily@example.com",
+    "avatar": "https://api.dicebear.com/9.x/avataaars/svg?seed=Emily",
+    "bio": "UX writer turned prompt artist. Words are my medium.",
+    "joinedDate": "2024-08-05",
+    "role": "creator",
+    "stripeConnectId": "acct_mock_user4",
+    "stripeAccountStatus": "active"
+  },
+  {
+    "id": "user_5",
+    "name": "Demo User",
+    "email": "demo@example.com",
+    "avatar": "https://api.dicebear.com/9.x/avataaars/svg?seed=Demo",
+    "bio": "Marketplace explorer discovering the best AI blueprints.",
+    "joinedDate": "2024-11-01",
+    "role": "buyer"
+  },
+  {
+    "id": "user_6",
+    "name": "Dr. Priya Sharma",
+    "email": "priya@example.com",
+    "avatar": "https://api.dicebear.com/9.x/avataaars/svg?seed=Priya",
+    "bio": "AI researcher specializing in chain-of-thought reasoning patterns.",
+    "joinedDate": "2024-02-28",
+    "role": "creator",
+    "stripeConnectId": "acct_mock_user6",
+    "stripeAccountStatus": "active"
+  },
+  {
+    "id": "admin_1",
+    "name": "Platform Admin",
+    "email": "admin@promptforge.com",
+    "avatar": "https://api.dicebear.com/9.x/avataaars/svg?seed=Admin",
+    "bio": "Platform administrator. Manages blueprint approvals, payouts, and platform operations.",
+    "joinedDate": "2024-01-01",
+    "role": "admin"
+  }
+]

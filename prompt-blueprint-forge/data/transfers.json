@@ -1,0 +1,16 @@
+[
+  {
+    "transferId": "tr_mock_1778785693373",
+    "payoutId": "payout_5",
+    "sellerId": "user_6",
+    "timestamp": "2026-05-14T19:08:13.373Z",
+    "status": "completed"
+  },
+  {
+    "transferId": "tr_mock_1778785693373",
+    "payoutId": "payout_1778785670868_iic4fu",
+    "sellerId": "user_1",
+    "timestamp": "2026-05-14T19:08:13.373Z",
+    "status": "completed"
+  }
+]

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to PromptForge — Start Selling!</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; background: #0b1120; color: #f1f5f9; }
+    .container { max-width: 600px; margin: 0 auto; padding: 40px 24px; }
+    .header { text-align: center; padding: 32px 0; border-bottom: 1px solid #1e293b; }
+    .logo { width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: inline-flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; color: white; margin-bottom: 16px; }
+    h1 { font-size: 24px; font-weight: 700; margin: 0 0 8px; }
+    .subtitle { color: #94a3b8; font-size: 16px; margin: 0; }
+    .content { padding: 32px 0; }
+    .step { display: flex; gap: 16px; margin-bottom: 24px; padding: 16px; border-radius: 12px; border: 1px solid #1e293b; background: #0f172a; }
+    .step-number { width: 32px; height: 32px; border-radius: 50%; background: #6366f1; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; flex-shrink: 0; }
+    .step-content h3 { margin: 0 0 4px; font-size: 15px; }
+    .step-content p { margin: 0; color: #94a3b8; font-size: 13px; line-height: 1.5; }
+    .commission-box { padding: 20px; border-radius: 12px; background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1)); border: 1px solid rgba(99,102,241,0.2); margin: 24px 0; }
+    .commission-box h3 { margin: 0 0 8px; font-size: 15px; color: #a5b4fc; }
+    .commission-box p { margin: 0; color: #94a3b8; font-size: 13px; line-height: 1.6; }
+    .cta { display: inline-block; padding: 14px 32px; border-radius: 12px; background: #6366f1; color: white; text-decoration: none; font-weight: 600; font-size: 15px; margin: 24px 0; }
+    .cta:hover { background: #4f46e5; }
+    .footer { text-align: center; padding-top: 32px; border-top: 1px solid #1e293b; font-size: 12px; color: #64748b; }
+    .footer a { color: #6366f1; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">PB</div>
+      <h1>Welcome to PromptForge, {{SELLER_NAME}}!</h1>
+      <p class="subtitle">Your journey as a Blueprint creator starts now.</p>
+    </div>
+
+    <div class="content">
+      <p style="color: #94a3b8; font-size: 14px; line-height: 1.6; margin-bottom: 24px;">
+        Thank you for joining Prompt Blueprint Forge as a creator. We&#8217;re excited to help you
+        showcase your prompt engineering skills and earn revenue from your work.
+      </p>
+
+      <h2 style="font-size: 18px; margin: 0 0 16px;">Your First Steps</h2>
+
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h3>Create Your First Blueprint</h3>
+          <p>Go to the Create page and craft a structured prompt chain. Include clear instructions, variables, and compatible model info.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h3>Submit for Review</h3>
+          <p>Once submitted, your Blueprint enters our admin review queue. Most reviews are completed within 24-48 hours.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h3>Start Earning</h3>
+          <p>When approved, your Blueprint appears in the marketplace. You earn 80% of every sale, paid out monthly.</p>
+        </div>
+      </div>
+
+      <div class="commission-box">
+        <h3>💰 Commission Structure</h3>
+        <p>
+          PromptForge retains a <strong>20% platform commission</strong> on each sale.
+          You receive the remaining <strong>80%</strong> as net revenue.
+          For example, a $29.99 Blueprint earns you $23.99.
+          Payouts are processed monthly for balances over $10.00.
+        </p>
+      </div>
+
+      <div style="text-align: center;">
+        <a href="{{DASHBOARD_URL}}" class="cta">Go to Your Dashboard</a>
+      </div>
+
+      <p style="color: #94a3b8; font-size: 13px; text-align: center; margin-top: 24px;">
+        Need help? Visit our <a href="{{HELP_URL}}" style="color: #6366f1;">Help Center</a>
+        or reply to this email.
+      </p>
+    </div>
+
+    <div class="footer">
+      <p>&copy; 2026 Prompt Blueprint Forge. All rights reserved.</p>
+      <p>
+        <a href="{{TOS_URL}}">Terms of Service</a> &middot;
+        <a href="{{PRIVACY_URL}}">Privacy Policy</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>

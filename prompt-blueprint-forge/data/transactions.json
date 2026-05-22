@@ -1,0 +1,57 @@
+[
+  {
+    "transactionId": "txn_seed_001",
+    "purchaseId": "purch_seed_001",
+    "buyerId": "user_5",
+    "blueprintId": "bp_1",
+    "amountPaid": 29.99,
+    "platformFeeAmount": 5.998,
+    "sellerNetRevenue": 23.992,
+    "timestamp": "2025-01-15T10:30:00.000Z",
+    "status": "success"
+  },
+  {
+    "transactionId": "txn_seed_002",
+    "purchaseId": "purch_seed_002",
+    "buyerId": "user_5",
+    "blueprintId": "bp_2",
+    "amountPaid": 39.99,
+    "platformFeeAmount": 7.998,
+    "sellerNetRevenue": 31.992,
+    "timestamp": "2025-02-20T14:15:00.000Z",
+    "status": "success"
+  },
+  {
+    "transactionId": "txn_seed_003",
+    "purchaseId": "purch_seed_003",
+    "buyerId": "user_5",
+    "blueprintId": "bp_4",
+    "amountPaid": 24.99,
+    "platformFeeAmount": 4.998,
+    "sellerNetRevenue": 19.992,
+    "timestamp": "2025-03-01T09:45:00.000Z",
+    "status": "success"
+  },
+  {
+    "transactionId": "txn_1778785670868_p3j1j9",
+    "purchaseId": "test_checkout_001",
+    "buyerId": "user_5",
+    "blueprintId": "bp_1",
+    "amountPaid": 29.99,
+    "platformFeeAmount": 5.998,
+    "sellerNetRevenue": 23.991999999999997,
+    "timestamp": "2026-05-14T19:07:50.868Z",
+    "status": "success"
+  },
+  {
+    "transactionId": "txn_1778785693733_ymjvxl",
+    "purchaseId": "test_final_001",
+    "buyerId": "user_5",
+    "blueprintId": "bp_1",
+    "amountPaid": 29.99,
+    "platformFeeAmount": 5.998,
+    "sellerNetRevenue": 23.991999999999997,
+    "timestamp": "2026-05-14T19:08:13.733Z",
+    "status": "success"
+  }
+]
