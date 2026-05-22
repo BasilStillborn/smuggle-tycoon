@@ -744,8 +744,8 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         return { ...state, gamePhase: 'buying', selectedDealer: dealer, pendingEvent: dealerIntro, lastEventMessage: `Meeting ${dealer.name}...` };
       }
 
-      // Dealer intro — negotiation choices
-      if (state.pendingEvent.id.startsWith('dealer_intro_')) {
+      // Dealer intro / custom qty — negotiation choices
+      if (state.pendingEvent.id.startsWith('dealer_intro_') || state.pendingEvent.id.startsWith('custom_qty_')) {
         const dealer = state.selectedDealer;
         const pr = dealer ? p(dealer) : p({ gender: 'male' });
         const rapport = state.dealerRapport[dealer?.dealerId ?? ''] ?? 0;
@@ -854,12 +854,16 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           const customEvent: ChoiceEvent = {
             id: 'custom_qty_' + Date.now().toString(36),
             title: 'Custom Amount',
-            context: `Enter how many ${unit}s of ${selectedGood?.name ?? 'product'} you want to buy.\n\nPrice: $${buyPrice}/${unit}\nMax: ${maxQty} (after $500 reserve)\nCash available: $${state.player.cash.toLocaleString()}`,
+            context: `${dealer?.name ?? 'Dealer'}: "${selectedGood?.name ?? 'product'} — $${buyPrice}/${unit}. How many, Angelo?"`,
             choices: [
               { id: 'confirm', text: '', odds: 1.0, successEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' } },
               { id: 'cancel', text: 'Cancel — go back', odds: 1.0, successEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' } },
             ],
           };
+          (customEvent as any)._buyPrice = buyPrice;
+          (customEvent as any)._maxQty = maxQty;
+          (customEvent as any)._unit = unit;
+          (customEvent as any)._goodName = selectedGood?.name ?? 'product';
           return { ...state, pendingEvent: customEvent, lastEventMessage: 'Choose your amount.' };
         }
         // Quantity selection — dispatch BUY with chosen amount
@@ -940,6 +944,25 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         const hasGoods = updatedPlayer.inventory.length > 0;
         const flyLines = [messageText];
         if (buySummaryMsg) flyLines.push(buySummaryMsg);
+        // Dealer farewell — short one-liner on successful deal
+        if (success && state.selectedDealer) {
+          const farewells: Record<string, string> = {
+            col_1: `${state.selectedDealer.name} nods once. "Pleasure doing business with you, Angelo. Now fuck off."`,
+            col_2: `${state.selectedDealer.name} glances at the door. "Right. Get out before you draw attention to us, you spastic."`,
+            col_3: `${state.selectedDealer.name} opens ${p(state.selectedDealer).his} laptop without looking up. "The door is behind you, Angelo. Don't come back without more cash."`,
+            net_1: `${state.selectedDealer.name} gives you a lazy wave. "Nice one bruv. Say nothing to no one, yeah?"`,
+            net_2: `${state.selectedDealer.name} taps ${p(state.selectedDealer).his} phone. "Transaction complete. Delete this conversation, you nonce."`,
+            net_3: `${state.selectedDealer.name} looks genuinely pleased. "Oh wow, that was great, Angelo! Come back anytime. I'll probably be here. Unless I'm at the park, you retard."`,
+            esp_1: `${state.selectedDealer.name} embraces you like a brother. "Angelo! Go with God. And the product. Mostly the product, you brilliant cunt."`,
+            esp_2: `${state.selectedDealer.name} lights a cigarette. "Business concluded. Now get out of my bar before someone recognises you, you fucking spastic."`,
+            esp_3: `${state.selectedDealer.name} fumbles with a drawer. "¡Adiós, Angelo! I had a loyalty card for you but I think I lost it. Come back anyway, you retard!"`,
+            afg_1: `${state.selectedDealer.name} sets down ${p(state.selectedDealer).his} tea. "Go in peace, Angelo. The road to the airport is dangerous after dark. You would do well to hurry, you strange little nonce."`,
+            afg_2: `${state.selectedDealer.name} stares at you with unblinking intensity. "We are done here. If you speak of this meeting, I will know. Now go, you cheeky cunt."`,
+            afg_3: `From behind you, barely audible: "Yeah. Keep walking, retard. See you next time." ${state.selectedDealer.name} has already turned away.`,
+          };
+          const farewellLine = farewells[state.selectedDealer.dealerId];
+          if (farewellLine) flyLines.push(farewellLine);
+        }
         flyLines.push(`Remaining Cash: $${updatedPlayer.cash.toLocaleString()}    Heat: ${updatedPlayer.heat}/100`);
         const flyChoices: ChoiceEvent = {
           id: 'summary_' + Date.now().toString(36),

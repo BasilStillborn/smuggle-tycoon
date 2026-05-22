@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { GameState, GameAction, ChoiceEvent } from '../../core';
 import { audioManager } from '../../audio';
 
@@ -37,15 +37,31 @@ function TypewriterText({ text, speed = 20 }: { text: string; speed?: number }) 
 
 export function EventModal({ event, dispatch }: EventModalProps) {
   const [revealed, setRevealed] = useState(false);
-  const [customQty, setCustomQty] = useState('');
+  const [customQty, setCustomQty] = useState(1);
   const isCustomQty = event.id.startsWith('custom_qty_');
+  const buyPrice = isCustomQty ? ((event as any)._buyPrice as number) || 100 : 0;
+  const maxQty = isCustomQty ? ((event as any)._maxQty as number) || 1 : 1;
+  const unit = isCustomQty ? ((event as any)._unit as string) || 'x' : 'x';
 
   useEffect(() => {
     setRevealed(false);
-    setCustomQty('');
+    if (isCustomQty) {
+      const defQty = Math.min(10, maxQty);
+      setCustomQty(Math.max(1, defQty));
+    }
     const t = setTimeout(() => setRevealed(true), 600);
     return () => clearTimeout(t);
-  }, [event.title, event.id]);
+  }, [event.title, event.id, isCustomQty]);
+
+  const adjustQty = useCallback((delta: number) => {
+    setCustomQty(prev => Math.max(1, Math.min(maxQty, prev + delta)));
+  }, [maxQty]);
+
+  const handleConfirmCustom = () => {
+    if (customQty < 1 || customQty > maxQty) return;
+    audioManager.playSfx('click');
+    dispatch({ type: 'RESPOND_EVENT', choiceId: 'qty_' + customQty });
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -82,24 +98,51 @@ export function EventModal({ event, dispatch }: EventModalProps) {
 
         {/* Choices or Custom Input */}
         {isCustomQty ? (
-          <div className="p-6 space-y-3">
-            <div className="text-[10px] text-gray-600 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-              <span className="text-retro-accent">▶</span> Enter Amount
+          <div className="p-6 space-y-4">
+            <div className="text-[10px] text-gray-600 uppercase tracking-[0.2em] flex items-center gap-2">
+              <span className="text-retro-accent">▶</span> Select Quantity
             </div>
-            <input
-              type="number"
-              min={1}
-              value={customQty}
-              onChange={(e) => setCustomQty(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter' && parseInt(customQty) > 0) { audioManager.playSfx('click'); dispatch({ type: 'RESPOND_EVENT', choiceId: 'qty_' + parseInt(customQty) }); } }}
-              placeholder="Enter quantity..."
-              autoFocus
-              className="w-full bg-[#0a0a0a] border border-retro-border text-gray-300 px-3 py-2 text-xs mb-2 outline-none focus:border-retro-accent"
-            />
+
+            {/* Arrow controls */}
+            <div className="flex items-center justify-center gap-4">
+              <button
+                onClick={() => adjustQty(-1)}
+                onDoubleClick={() => adjustQty(-5)}
+                disabled={customQty <= 1}
+                className="touch-target w-12 h-12 border-2 border-retro-border bg-[#111] hover:bg-[#222] text-gray-300 hover:text-retro-accent text-lg flex items-center justify-center transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
+              >▼</button>
+              <div className="text-center min-w-[80px]">
+                <div className="text-3xl font-bold text-retro-accent tabular-nums">{customQty}</div>
+                <div className="text-[10px] text-gray-500 uppercase tracking-wider">{unit}{customQty !== 1 ? 's' : ''}</div>
+              </div>
+              <button
+                onClick={() => adjustQty(1)}
+                onDoubleClick={() => adjustQty(5)}
+                disabled={customQty >= maxQty}
+                className="touch-target w-12 h-12 border-2 border-retro-border bg-[#111] hover:bg-[#222] text-gray-300 hover:text-retro-accent text-lg flex items-center justify-center transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
+              >▲</button>
+            </div>
+
+            {/* Price breakdown */}
+            <div className="border border-retro-border bg-[#0a0a0a] p-3 space-y-1 text-xs">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Price per {unit}:</span>
+                <span className="text-gray-300">${buyPrice.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Total cost:</span>
+                <span className="text-retro-accent font-bold">${(buyPrice * customQty).toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between border-t border-retro-border pt-1 mt-1">
+                <span className="text-gray-500">Max affordable:</span>
+                <span className="text-gray-400">{maxQty} {unit}s</span>
+              </div>
+            </div>
+
             <div className="flex gap-2">
               <button
-                onClick={() => { const q = parseInt(customQty); if (q > 0) { audioManager.playSfx('click'); dispatch({ type: 'RESPOND_EVENT', choiceId: 'qty_' + q }); } }}
-                disabled={!customQty || parseInt(customQty) <= 0}
+                onClick={handleConfirmCustom}
+                disabled={customQty < 1 || customQty > maxQty}
                 className="touch-target flex-1 border-2 border-retro-accent bg-retro-accent/10 hover:bg-retro-accent/20 text-retro-accent px-4 py-3 text-xs font-bold uppercase transition-colors disabled:opacity-30"
               >Confirm</button>
               <button
