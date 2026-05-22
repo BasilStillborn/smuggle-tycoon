@@ -465,7 +465,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'STASH_GOODS': {
-      if (state.gamePhase !== 'selling') return { ...state, lastEventMessage: 'Cannot stash goods now.' };
+      if (state.gamePhase !== 'selling' && state.gamePhase !== 'home') return { ...state, lastEventMessage: 'Cannot stash goods now.' };
       if (state.player.inventory.length === 0) return { ...state, lastEventMessage: 'Nothing to stash.' };
 
       const stashWeight = state.player.inventory.reduce((sum, item) => {
@@ -495,7 +495,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'RETRIEVE_GOODS': {
-      if (state.gamePhase !== 'selling') return { ...state, lastEventMessage: 'Cannot retrieve goods now.' };
+      if (state.gamePhase !== 'selling' && state.gamePhase !== 'home') return { ...state, lastEventMessage: 'Cannot retrieve goods now.' };
       const stashItem = state.player.stash.find(s => s.goodId === action.goodId);
       if (!stashItem || stashItem.quantity < action.quantity) return { ...state, lastEventMessage: 'Not enough in stash.' };
 
@@ -629,7 +629,6 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           const buyPrice = mktPrice ? Math.floor(mktPrice.buyPrice * (1 + (dealer.priceModifier - 1) * 0.5)) : 100;
           const defQty = selectedGood?.standardDealSize ?? 10;
           const totalCost = buyPrice * defQty;
-          const maxQty = Math.floor((state.player.cash - 500) / buyPrice);
           const dealerIntro: ChoiceEvent = {
             id: 'dealer_intro_' + Date.now().toString(36),
             title: `Meeting ${dealer.name}`,
@@ -734,10 +733,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           title: `Meeting ${dealer.name}`,
           context: `${dealer.name} is waiting for you at ${dealer.location}.\n\n${goodName}: $${buyPrice}/${unit}\nCash on hand: $${state.player.cash.toLocaleString()}\n\n⚠ Keep at least $500 spare for customs on the way home.`,
           choices: [
-            { id: 'qty_2', text: `2 ${unit}${selectedGood ? 's' : ''} — $${(buyPrice * 2).toLocaleString()}`, odds: 1.0, successEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' } },
-            { id: `qty_${defQty}`, text: `${defQty} ${unit}${selectedGood && defQty > 1 ? 's' : ''} — $${totalCost.toLocaleString()}`, odds: 1.0, successEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' } },
-            { id: `qty_${Math.min(defQty * 5, Math.floor((state.player.cash - 500) / buyPrice))}`, text: `${Math.min(defQty * 5, Math.floor((state.player.cash - 500) / buyPrice))} ${unit}s — $${(buyPrice * Math.min(defQty * 5, Math.floor((state.player.cash - 500) / buyPrice))).toLocaleString()}`, odds: 1.0, successEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' } },
-            { id: 'negotiate', text: 'Try to haggle for a better price', odds: 1.0, successEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' } },
+            { id: 'qty_2', text: `2 ${unit}s — $${(buyPrice * 2).toLocaleString()}`, odds: 1.0, successEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' } },
+            { id: `qty_${defQty}`, text: `${defQty} ${unit}s — $${totalCost.toLocaleString()}`, odds: 1.0, successEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' } },
+            { id: 'custom_qty', text: 'Custom amount...', odds: 1.0, successEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' } },
             { id: 'back_out', text: 'Something\'s off — walk away', odds: 1.0, successEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' } },
           ],
         };
@@ -999,8 +997,18 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         const outcomeLabel = success ? 'SUCCESS' : 'FAILURE';
         const messageText = effects.message ? `[$${outcomeLabel}] ${effects.message}` : '';
         const revenue = success && effects.inventoryLost ? state.pendingSell.baseSellPrice * state.pendingSell.quantity : 0;
-        const sellLines = success ? [messageText, `SOLD $${state.pendingSell.quantity} units FOR ${revenue.toLocaleString()}.`, `Cash: $${updatedPlayer.cash.toLocaleString()}    Heat: ${updatedPlayer.heat}/100`, '', 'You make your return flight and head home.'] : [messageText, 'The deal failed. No payment received.', `Cash: $${updatedPlayer.cash.toLocaleString()}    Heat: ${updatedPlayer.heat}/100`, '', 'You make your return flight and head home.'];
-        return { ...state, player: updatePeakNetWorth(updatedPlayer, state.currentMarketPrices), pendingEvent: generateSummaryEvent(success ? 'Deal Successful' : 'Deal Failed', sellLines.join('\n\n'), false), pendingSell: null, lastEventMessage: '', gameLog: [...state.gameLog, `[Turn $${state.turn}] ${messageText}`], turn: state.turn + 1, director: updateDirector(state.director, updatedPlayer, state), sellDealsCompleted: success ? state.sellDealsCompleted + 1 : state.sellDealsCompleted };
+        const sellLines = success
+          ? [messageText, `SOLD $${state.pendingSell.quantity} units FOR $${revenue.toLocaleString()}.`, `Cash: $${updatedPlayer.cash.toLocaleString()}    Heat: ${updatedPlayer.heat}/100`, '', 'The deal is done. You head back to your safehouse.']
+          : [messageText, 'The deal failed. No payment received.', `Cash: $${updatedPlayer.cash.toLocaleString()}    Heat: ${updatedPlayer.heat}/100`, '', 'You slink back to your safehouse empty-handed.'];
+        const sellSummary: ChoiceEvent = {
+          id: 'summary_' + Date.now().toString(36),
+          title: success ? 'Deal Successful' : 'Deal Failed',
+          context: sellLines.join('\n\n'),
+          choices: [
+            { id: 'continue', text: 'Continue', odds: 1.0, successEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' } },
+          ],
+        };
+        return { ...state, player: updatePeakNetWorth(updatedPlayer, state.currentMarketPrices), pendingEvent: sellSummary, pendingSell: null, lastEventMessage: '', gameLog: [...state.gameLog, `[Turn $${state.turn}] ${messageText}`], turn: state.turn + 1, director: updateDirector(state.director, updatedPlayer, state), sellDealsCompleted: success ? state.sellDealsCompleted + 1 : state.sellDealsCompleted };
       }
 
       // Fallback: standard procedural event

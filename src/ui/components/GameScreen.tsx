@@ -414,9 +414,14 @@ export function GameScreen({ onNewGame, onLeaderboard }: GameScreenProps) {
                     const g = state.goods.find(x => x.id === i.goodId);
                     return sum + (g ? g.baseValuePerUnit * i.quantity : 0);
                   }, 0);
+                  const invValue = state.player.inventory.reduce((sum, i) => {
+                    const g = state.goods.find(x => x.id === i.goodId);
+                    return sum + (g ? g.baseValuePerUnit * i.quantity : 0);
+                  }, 0);
+                  const visibleValue = invValue > 0 ? invValue : stashValue;
                   return KINGPIN_POOL.map(kp => {
-                    const canMeet = state.gamePhase === 'selling' && stashValue >= kp.minStashValue;
-                    const short = kp.minStashValue - stashValue;
+                    const canMeet = state.gamePhase === 'selling' && visibleValue >= kp.minStashValue;
+                    const short = kp.minStashValue - visibleValue;
                     const btnLabel = state.gamePhase !== 'selling' ? 'Return to London'
                       : canMeet ? `Contact ${kp.name}`
                       : `Need $${short.toLocaleString()}`;
