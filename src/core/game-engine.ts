@@ -396,10 +396,11 @@ function handleDealerIntroOrCustomQty(state: GameState, action: GameAction & { t
     return { ...state, pendingEvent: createCustomQtyEvent(state), lastEventMessage: 'Choose your amount.' };
   }
   if (action.choiceId.startsWith('qty_')) {
+    if (!state.selectedProductId) return { ...state, lastEventMessage: 'No product selected. Pick one from the Market panel.' };
     const qty = parseInt(action.choiceId.replace('qty_', ''), 10);
     if (isNaN(qty) || qty <= 0) return { ...state, lastEventMessage: 'Invalid quantity.' };
     const cleanState = { ...state, pendingEvent: null };
-    return gameReducer(cleanState, { type: 'BUY', goodId: state.selectedProductId!, quantity: qty });
+    return gameReducer(cleanState, { type: 'BUY', goodId: state.selectedProductId, quantity: qty });
   }
   return state;
 }
@@ -506,7 +507,7 @@ function handleBuyEncounter(state: GameState, action: GameAction & { type: 'RESP
       ...(hasGoods ? [{ id: 'buy_more', text: 'Try to buy more', ...nullChoice }] : []),
     ],
   };
-  return withDirector(withTurn({ ...s, player: updatePeakNetWorth(updatedPlayer, s.currentMarketPrices), pendingEvent: flyChoices, lastEventMessage: '' }, messageText), updatedPlayer);
+  return withDirector(withTurn({ ...s, player: updatePeakNetWorth(updatedPlayer, s.currentMarketPrices), pendingEvent: flyChoices, lastEventMessage: '', buyDealsCompleted: success ? s.buyDealsCompleted + 1 : s.buyDealsCompleted }, messageText), updatedPlayer);
 }
 
 function handleSellEncounter(state: GameState, action: GameAction & { type: 'RESPOND_EVENT'; choiceId: string }): GameState {
@@ -538,7 +539,7 @@ function handleSellEncounter(state: GameState, action: GameAction & { type: 'RES
     id: 'summary_' + Date.now().toString(36), title: success ? 'Deal Successful' : 'Deal Failed', context: sellLines.join('\n\n'),
     choices: [{ id: 'continue', text: 'Continue', ...nullChoice }],
   };
-  return withDirector(withTurn({ ...state, player: updatePeakNetWorth(updatedPlayer, state.currentMarketPrices), pendingEvent: sellSummary, pendingSell: null, lastEventMessage: '' }, messageText), updatedPlayer);
+  return withDirector(withTurn({ ...state, player: updatePeakNetWorth(updatedPlayer, state.currentMarketPrices), pendingEvent: sellSummary, pendingSell: null, lastEventMessage: '', sellDealsCompleted: success ? state.sellDealsCompleted + 1 : state.sellDealsCompleted }, messageText), updatedPlayer);
 }
 
 function handleFallbackEvent(state: GameState, action: GameAction & { type: 'RESPOND_EVENT'; choiceId: string }): GameState {
@@ -563,6 +564,22 @@ function dispatchEventResponse(state: GameState, action: GameAction & { type: 'R
     const nw = state.player.bank + state.player.cash;
     const newTier = getSafehouseTier(nw, state.safehouseTier);
     return { ...state, pendingEvent: null, safehouseTier: newTier, lastEventMessage: '' };
+  }
+  if (id.startsWith('high_cap_')) {
+    if (action.choiceId === 'go_back') {
+      return { ...state, pendingEvent: createDealerIntro(state), pendingBuy: null, lastEventMessage: 'Choose a smaller quantity.' };
+    }
+    // risk_it — generate encounter directly (avoid BUY handler re-triggering warning)
+    const pb = state.pendingBuy;
+    if (!pb) return state;
+    const buyCountry = getCountry(state.player.currentCountryId);
+    if (!buyCountry || !state.selectedDealer) return { ...state, lastEventMessage: 'Cannot proceed with purchase.' };
+    const price = state.currentMarketPrices.find(p => p.goodId === pb.goodId);
+    const effectiveBuyPrice = price ? Math.floor(price.buyPrice * state.selectedDealer!.priceModifier) : 100;
+    const totalCost = effectiveBuyPrice * pb.quantity;
+    if (state.player.cash < totalCost) return { ...state, pendingEvent: createDealerIntro(state), pendingBuy: null, lastEventMessage: `Not enough cash. Need $${totalCost.toLocaleString()}.` };
+    const encounter = generateDealerEncounter(state.player, buyCountry, state.selectedDealer, { pricePerUnit: effectiveBuyPrice, quantity: pb.quantity, totalCost });
+    return { ...state, pendingEvent: encounter, pendingBuy: { goodId: pb.goodId, quantity: pb.quantity, totalCost }, lastEventMessage: `Meeting ${state.selectedDealer.name}...` };
   }
   if (id.startsWith('confirm_flight_') && state.pendingFlight) return handleConfirmFlight(state, action);
   if (id.startsWith('bigtime_') && state.pendingFlight) return handleBigTime(state, action);
@@ -756,6 +773,22 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (state.player.cash < totalCost) return { ...state, lastEventMessage: `Need $${totalCost.toLocaleString()}, have $${state.player.cash.toLocaleString()}.` };
       const weightNeeded = buyGoodDef.weight * action.quantity;
       if (weightNeeded > getRemainingCapacity(state.player)) return { ...state, lastEventMessage: 'Not enough inventory capacity.' };
+      // High-capacity warning — ≥70% of remaining weight
+      const remCap = getRemainingCapacity(state.player);
+      if (remCap > 0 && weightNeeded / remCap >= 0.7) {
+        const unit = buyGoodDef.unitOfMeasure ?? 'x';
+        const capPct = Math.round((weightNeeded / remCap) * 100);
+        const riskEvent: ChoiceEvent = {
+          id: 'high_cap_' + Date.now().toString(36),
+          title: 'Risk Warning',
+          context: `You're buying ${action.quantity} ${unit}s of ${buyGoodDef.name}? That's ${capPct}% of your carry capacity, Angelo. Customs will absolutely notice this much product on you, you greedy little cunt. You'll be sweating at the checkpoint. Dogs will sit. Officers will pull you aside. You might get through — but it's a fucking gamble.`,
+          choices: [
+            { id: 'risk_it', text: 'Risk it — buy anyway', odds: 1.0, successEffects: nullEffects, failEffects: nullEffects },
+            { id: 'go_back', text: 'Go back — lower quantity', odds: 1.0, successEffects: nullEffects, failEffects: nullEffects },
+          ],
+        };
+        return { ...state, pendingEvent: riskEvent, pendingBuy: { goodId: action.goodId, quantity: action.quantity, totalCost }, lastEventMessage: `Warning: ${capPct}% of capacity.` };
+      }
       const dealContext = { pricePerUnit: effectiveBuyPrice, quantity: action.quantity, totalCost };
       const encounter = generateDealerEncounter(state.player, buyCountry, state.selectedDealer, dealContext);
       return { ...state, pendingEvent: encounter, pendingBuy: { goodId: action.goodId, quantity: action.quantity, totalCost }, lastEventMessage: `Meeting ${state.selectedDealer.name}...`, gameLog: [...state.gameLog, `[Turn $${state.turn}] Buying from ${state.selectedDealer.name}.`] };

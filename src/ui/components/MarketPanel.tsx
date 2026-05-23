@@ -44,7 +44,7 @@ export function MarketPanel({ state, dispatch }: MarketPanelProps) {
           const bestLoc = g ? getBestLocation(g.id) : '';
           const isSelected = state.selectedProductId === price.goodId;
           return (
-            <button key={price.goodId} onClick={() => { audioManager.playSfx('click'); dispatch({ type: 'SELECT_PRODUCT', goodId: isSelected ? null : price.goodId }); }}
+            <button key={price.goodId} onClick={() => { audioManager.playSfx('click'); const atHome = state.player.currentCountryId === 'london'; dispatch({ type: 'SELECT_PRODUCT', goodId: (isSelected && atHome) ? null : price.goodId }); }}
               className={`touch-target w-full text-left border px-3 py-2 text-xs transition-colors ${
                 isSelected
                   ? 'border-retro-accent bg-[#1a1a1a] border-glow'
