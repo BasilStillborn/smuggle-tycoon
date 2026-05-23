@@ -21,6 +21,7 @@ import { VisualState, getCombinedVisuals } from '../visual/VisualState';
 interface GameScreenProps {
   onNewGame: () => void;
   onLeaderboard: () => void;
+  initialState?: GameState | null;
 }
 
 function getCountriesVisited(state: GameState): number {
@@ -30,11 +31,11 @@ function getCountriesVisited(state: GameState): number {
   return visited.size;
 }
 
-export function GameScreen({ onNewGame, onLeaderboard }: GameScreenProps) {
+export function GameScreen({ onNewGame, onLeaderboard, initialState }: GameScreenProps) {
   const [state, dispatch] = useReducer(
     coreReducer,
     undefined,
-    () => createGameState()
+    () => initialState ?? createGameState()
   );
 
   const prevStateRef = useRef<GameState | null>(null);

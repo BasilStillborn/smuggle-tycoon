@@ -2,14 +2,20 @@ import { useEffect, useState, useCallback } from 'react';
 
 interface ContentWarningProps {
   onStart: () => void;
+  onLoadSave: () => void;
 }
 
 const DISCLAIMER_TEXT = 'This game is a work of fiction, it includes fictional characters and scenarios. However, much of the gameplay and dialogue is either racist, sexist, homophobic or antisemitic. As a result, we do not recommend this game is played by anyone, ever.';
 
-export function ContentWarning({ onStart }: ContentWarningProps) {
+const hasSavedGame = (): boolean => {
+  try { return !!localStorage.getItem('angelo_save'); } catch { return false; }
+};
+
+export function ContentWarning({ onStart, onLoadSave }: ContentWarningProps) {
   const [showText, setShowText] = useState(false);
   const [showButton, setShowButton] = useState(false);
   const [buttonClickable, setButtonClickable] = useState(false);
+  const canLoad = hasSavedGame();
 
   useEffect(() => {
     const textTimer = setTimeout(() => setShowText(true), 200);
@@ -24,6 +30,10 @@ export function ContentWarning({ onStart }: ContentWarningProps) {
   const handleStart = useCallback(() => {
     onStart();
   }, [onStart]);
+
+  const handleLoad = useCallback(() => {
+    onLoadSave();
+  }, [onLoadSave]);
 
   return (
     <div
@@ -63,8 +73,8 @@ export function ContentWarning({ onStart }: ContentWarningProps) {
           </div>
         </div>
 
-        {/* Button — fades in over 3s */}
-        <div className={`transition-opacity duration-[3000ms] ease-in mt-12 ${showButton ? 'opacity-100' : 'opacity-0'}`}>
+        {/* Buttons — fade in over 3s */}
+        <div className={`transition-opacity duration-[3000ms] ease-in mt-12 flex flex-col items-center gap-4 ${showButton ? 'opacity-100' : 'opacity-0'}`}>
           <button
             onClick={buttonClickable ? handleStart : undefined}
             disabled={!buttonClickable}
@@ -77,6 +87,21 @@ export function ContentWarning({ onStart }: ContentWarningProps) {
           >
             (I completely understand)
           </button>
+
+          {canLoad && (
+            <button
+              onClick={buttonClickable ? handleLoad : undefined}
+              disabled={!buttonClickable}
+              className={`touch-target border-2 px-8 py-3 text-xs transition-all duration-300 font-bold tracking-[0.15em] uppercase ${
+                buttonClickable
+                  ? 'border-retro-border bg-[#111] hover:bg-[#222] text-gray-400 hover:text-gray-200 cursor-pointer'
+                  : 'border-transparent text-transparent cursor-default'
+              }`}
+              style={{ fontFamily: '"Courier New", Courier, monospace' }}
+            >
+              [ LOAD SAVED GAME ]
+            </button>
+          )}
         </div>
       </div>
     </div>

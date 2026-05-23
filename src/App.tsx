@@ -1,4 +1,5 @@
 import { useState, useCallback, Component, type ReactNode } from 'react';
+import type { GameState } from './core';
 import { GameScreen } from './ui/components/GameScreen';
 import { LeaderboardScreen } from './ui/components/LeaderboardScreen';
 import { UniversalIntro } from './ui/components/UniversalIntro';
@@ -39,10 +40,21 @@ class ErrorBoundary extends Component<{ children: ReactNode; onReset: () => void
   }
 }
 
+function loadSavedState(): GameState | null {
+  try {
+    const raw = localStorage.getItem('angelo_save');
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 function App() {
   const [screen, setScreen] = useState<Screen>('warning');
+  const [loadedState, setLoadedState] = useState<GameState | null>(null);
 
   const handleStart = useCallback(() => {
+    setLoadedState(null);
     setScreen('briefing');
   }, []);
 
@@ -51,6 +63,7 @@ function App() {
   }, []);
 
   const handleNewGame = useCallback(() => {
+    setLoadedState(null);
     setScreen('intro');
   }, []);
 
@@ -62,6 +75,14 @@ function App() {
     setScreen('game');
   }, []);
 
+  const handleLoadSave = useCallback(() => {
+    const saved = loadSavedState();
+    if (saved) {
+      setLoadedState(saved);
+      setScreen('game');
+    }
+  }, []);
+
   if (screen === 'game') {
     return (
       <ErrorBoundary onReset={() => { setScreen('warning'); }}>
@@ -69,6 +90,7 @@ function App() {
           <GameScreen
             onNewGame={handleNewGame}
             onLeaderboard={handleLeaderboard}
+            initialState={loadedState}
           />
         </div>
       </ErrorBoundary>
@@ -84,7 +106,7 @@ function App() {
   }
 
   if (screen === 'warning') {
-    return <ContentWarning onStart={() => setScreen('intro')} />;
+    return <ContentWarning onStart={() => setScreen('intro')} onLoadSave={handleLoadSave} />;
   }
 
   return <UniversalIntro onStart={handleStart} />;
