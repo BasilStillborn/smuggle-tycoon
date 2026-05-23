@@ -38,6 +38,8 @@ function TypewriterText({ text, speed = 20 }: { text: string; speed?: number }) 
 export function EventModal({ event, dispatch }: EventModalProps) {
   const [revealed, setRevealed] = useState(false);
   const [customQty, setCustomQty] = useState(1);
+  const [editing, setEditing] = useState(false);
+  const [editVal, setEditVal] = useState('');
   const isCustomQty = event.id.startsWith('custom_qty_');
   const buyPrice = isCustomQty ? ((event as any)._buyPrice as number) || 100 : 0;
   const maxQty = isCustomQty ? ((event as any)._maxQty as number) || 1 : 1;
@@ -45,6 +47,7 @@ export function EventModal({ event, dispatch }: EventModalProps) {
 
   useEffect(() => {
     setRevealed(false);
+    setEditing(false);
     if (isCustomQty) {
       const defQty = Math.min(10, maxQty);
       setCustomQty(Math.max(1, defQty));
@@ -61,6 +64,19 @@ export function EventModal({ event, dispatch }: EventModalProps) {
     if (customQty < 1 || customQty > maxQty) return;
     audioManager.playSfx('click');
     dispatch({ type: 'RESPOND_EVENT', choiceId: 'qty_' + customQty });
+  };
+
+  const startEditing = () => {
+    setEditVal(String(customQty));
+    setEditing(true);
+  };
+
+  const commitEdit = () => {
+    const n = parseInt(editVal, 10);
+    if (!isNaN(n) && n >= 1 && n <= maxQty) {
+      setCustomQty(n);
+    }
+    setEditing(false);
   };
 
   return (
@@ -98,28 +114,59 @@ export function EventModal({ event, dispatch }: EventModalProps) {
 
         {/* Choices or Custom Input */}
         {isCustomQty ? (
-          <div className="p-6 space-y-4">
+          <div className="p-6 space-y-3">
             <div className="text-[10px] text-gray-600 uppercase tracking-[0.2em] flex items-center gap-2">
               <span className="text-retro-accent">▶</span> Select Quantity
             </div>
 
+            {/* Quick-jump row */}
+            <div className="flex gap-1.5 justify-center">
+              <button onClick={() => setCustomQty(1)} disabled={customQty <= 1}
+                className="touch-target border border-retro-border bg-[#111] hover:bg-[#222] text-gray-500 px-2 py-1 text-[10px] transition-colors disabled:opacity-20">MIN</button>
+              <button onClick={() => adjustQty(-10)} disabled={customQty <= 1}
+                className="touch-target border border-retro-border bg-[#111] hover:bg-[#222] text-gray-400 px-2 py-1 text-[10px] transition-colors disabled:opacity-20">−10</button>
+              <button onClick={() => adjustQty(10)} disabled={customQty >= maxQty}
+                className="touch-target border border-retro-border bg-[#111] hover:bg-[#222] text-gray-400 px-2 py-1 text-[10px] transition-colors disabled:opacity-20">+10</button>
+              <button onClick={() => setCustomQty(maxQty)} disabled={customQty >= maxQty}
+                className="touch-target border border-retro-border bg-[#111] hover:bg-[#222] text-gray-500 px-2 py-1 text-[10px] transition-colors disabled:opacity-20">MAX</button>
+            </div>
+
             {/* Arrow controls */}
-            <div className="flex items-center justify-center gap-4">
+            <div className="flex items-center justify-center gap-2">
               <button
                 onClick={() => adjustQty(-1)}
-                onDoubleClick={() => adjustQty(-5)}
+                onDoubleClick={() => adjustQty(-10)}
                 disabled={customQty <= 1}
-                className="touch-target w-12 h-12 border-2 border-retro-border bg-[#111] hover:bg-[#222] text-gray-300 hover:text-retro-accent text-lg flex items-center justify-center transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
+                className="touch-target w-10 h-10 border-2 border-retro-border bg-[#111] hover:bg-[#222] text-gray-300 hover:text-retro-accent text-lg flex items-center justify-center transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
               >▼</button>
-              <div className="text-center min-w-[80px]">
-                <div className="text-3xl font-bold text-retro-accent tabular-nums">{customQty}</div>
-                <div className="text-[10px] text-gray-500 uppercase tracking-wider">{unit}{customQty !== 1 ? 's' : ''}</div>
-              </div>
+
+              {/* Quantity — click to type */}
+              {editing ? (
+                <input
+                  type="number"
+                  min={1}
+                  max={maxQty}
+                  value={editVal}
+                  onChange={(e) => setEditVal(e.target.value)}
+                  onBlur={commitEdit}
+                  onKeyDown={(e) => { if (e.key === 'Enter') commitEdit(); if (e.key === 'Escape') setEditing(false); }}
+                  autoFocus
+                  className="w-24 bg-[#0a0a0a] border border-retro-accent text-retro-accent text-3xl font-bold text-center px-2 py-1 outline-none tabular-nums"
+                />
+              ) : (
+                <button onClick={startEditing}
+                  className="text-center min-w-[80px] cursor-text group"
+                  title="Click to type">
+                  <div className="text-3xl font-bold text-retro-accent tabular-nums group-hover:text-retro-text transition-colors">{customQty}</div>
+                  <div className="text-[10px] text-gray-500 uppercase tracking-wider">{unit}{customQty !== 1 ? 's' : ''}</div>
+                </button>
+              )}
+
               <button
                 onClick={() => adjustQty(1)}
-                onDoubleClick={() => adjustQty(5)}
+                onDoubleClick={() => adjustQty(10)}
                 disabled={customQty >= maxQty}
-                className="touch-target w-12 h-12 border-2 border-retro-border bg-[#111] hover:bg-[#222] text-gray-300 hover:text-retro-accent text-lg flex items-center justify-center transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
+                className="touch-target w-10 h-10 border-2 border-retro-border bg-[#111] hover:bg-[#222] text-gray-300 hover:text-retro-accent text-lg flex items-center justify-center transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
               >▲</button>
             </div>
 
