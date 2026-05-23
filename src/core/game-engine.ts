@@ -97,8 +97,8 @@ const WALK_AWAYS: Record<string, string> = {
 // ─── Phase guard ─────────────────────────────────────────────
 
 const PHASE_ACTIONS: Record<GamePhase, string[]> = {
-  home: ['START_TRIP', 'SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'TRAVEL', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'STASH_GOODS', 'RETRIEVE_GOODS', 'CONTACT_KINGPIN', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE', 'BANK_TUTORIAL_SHOWN'],
-  selling: ['SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'CONTACT_KINGPIN', 'MEET_KINGPIN', 'SELL', 'STASH_GOODS', 'RETRIEVE_GOODS', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE', 'BANK_TUTORIAL_SHOWN'],
+  home: ['START_TRIP', 'SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'TRAVEL', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'STASH_GOODS', 'RETRIEVE_GOODS', 'CONTACT_KINGPIN', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE', 'BANK_TUTORIAL_SHOWN', 'MARKET_REFRESH_TUTORIAL'],
+  selling: ['SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'CONTACT_KINGPIN', 'MEET_KINGPIN', 'SELL', 'STASH_GOODS', 'RETRIEVE_GOODS', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE', 'BANK_TUTORIAL_SHOWN', 'MARKET_REFRESH_TUTORIAL'],
   buying: ['BUY', 'TRAVEL', 'FLY_HOME', 'CONTACT_KINGPIN', 'RESPOND_EVENT'],
   selecting_dealer: ['SELECT_DEALER', 'FLY_HOME', 'CONTACT_KINGPIN', 'RESPOND_EVENT'],
   arrived: ['AFTER_CUSTOMS', 'CONTACT_KINGPIN', 'RESPOND_EVENT', 'TRAVEL'],
@@ -129,7 +129,7 @@ export function createGameState(): GameState {
     selectedDealer: null, selectedKingpin: null,
     dealerRapport: {}, marketMemory: {}, journalEntries: [],
     securitySniffsPassed: 0, buyDealsCompleted: 0, sellDealsCompleted: 0,
-    firstRunTutorialShown: false, safehouseTier: 1, bankTutorialShown: false,
+    firstRunTutorialShown: false, safehouseTier: 1, bankTutorialShown: false, marketRefreshTutorialShown: false,
   };
 }
 
@@ -587,6 +587,9 @@ function dispatchEventResponse(state: GameState, action: GameAction & { type: 'R
     const newTier = getSafehouseTier(nw, state.safehouseTier);
     return { ...state, pendingEvent: null, safehouseTier: newTier, lastEventMessage: '' };
   }
+  if (id.startsWith('refresh_tutorial_')) {
+    return { ...state, pendingEvent: null, lastEventMessage: '' };
+  }
   if (id.startsWith('high_cap_')) {
     if (action.choiceId === 'go_back') {
       return { ...state, pendingEvent: createDealerIntro(state), pendingBuy: null, lastEventMessage: 'Choose a smaller quantity.' };
@@ -909,7 +912,22 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       const tradeVol = getRecentTradeVolume(state);
       const prices = generateMarketPrices(country, state.director, tradeVol, state.player.heat);
       const priceList = prices.map(p => `${p.goodName}: Buy=$${p.buyPrice} Sell=$${p.sellPrice} (Demand:${p.demand})`).join('\n  ');
-      return { ...state, currentMarketPrices: prices, lastEventMessage: `Market prices in ${country.name}:\n  ${priceList}` };
+      const updatedPlayer = { ...state.player, reputation: Math.max(0, state.player.reputation - 2) };
+      return { ...state, player: updatedPlayer, currentMarketPrices: prices, lastEventMessage: `Market prices in ${country.name}:\n  ${priceList}` };
+    }
+
+    case 'MARKET_REFRESH_TUTORIAL': {
+      const country = getCountry(state.player.currentCountryId)!;
+      const tradeVol = getRecentTradeVolume(state);
+      const prices = generateMarketPrices(country, state.director, tradeVol, state.player.heat);
+      const updatedPlayer = { ...state.player, reputation: Math.max(0, state.player.reputation - 2) };
+      const refreshEvt: ChoiceEvent = {
+        id: 'refresh_tutorial_' + Date.now().toString(36),
+        title: 'Refreshing Prices',
+        context: `You're basically hanging around waiting for the market to shift, Angelo. Every time you refresh prices, dealers notice you lurking — you look desperate. Loses you a bit of street rep. Not much — just enough that people start thinking you're a bit of a melt. Every refresh: -2 reputation. Don't spam it, you needy little prick.`,
+        choices: [{ id: 'understood', text: 'Understood', ...nullChoice }],
+      };
+      return { ...state, player: updatedPlayer, currentMarketPrices: prices, marketRefreshTutorialShown: true, pendingEvent: refreshEvt, lastEventMessage: 'Prices refreshed (-2 rep).' };
     }
 
     case 'VIEW_INVENTORY': {

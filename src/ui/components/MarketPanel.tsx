@@ -33,7 +33,7 @@ export function MarketPanel({ state, dispatch }: MarketPanelProps) {
 
       {/* Action bar */}
       <div className="flex gap-2 mb-4">
-        <button onClick={() => { audioManager.playSfx('click'); dispatch({ type: 'VIEW_MARKET' }); }} className="touch-target flex-1 border border-retro-border bg-[#111] hover:bg-[#222] px-3 py-2 text-xs transition-colors">Refresh Prices</button>
+        <button onClick={() => { audioManager.playSfx('click'); dispatch({ type: state.marketRefreshTutorialShown ? 'VIEW_MARKET' : 'MARKET_REFRESH_TUTORIAL' }); }} className="touch-target flex-1 border border-retro-border bg-[#111] hover:bg-[#222] px-3 py-2 text-xs transition-colors">Refresh Prices</button>
         <button onClick={() => { audioManager.playSfx('click'); dispatch({ type: 'WAIT' }); }} className="touch-target flex-1 border border-retro-border bg-[#111] hover:bg-[#222] px-3 py-2 text-xs transition-colors">Lie Low</button>
       </div>
 
