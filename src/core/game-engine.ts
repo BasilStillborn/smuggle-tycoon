@@ -841,6 +841,11 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       }
       const sellGood = state.player.inventory[0];
       const goodDef = state.goods.find(g => g.id === sellGood.goodId);
+      if (kingpin.buys && !kingpin.buys.includes(sellGood.goodId)) {
+        const accepted = kingpin.buys.map(id => state.goods.find(g => g.id === id)?.name ?? id).join(', ');
+        const gName = goodDef?.name ?? sellGood.goodId;
+        return { ...state, pendingEvent: warnEvent('Wrong Product', `${kingpin.name} doesn't deal in ${gName}. ${kingpin.name} only buys ${accepted}. Take that shit somewhere else.`) };
+      }
       const productValue = goodDef ? goodDef.baseValuePerUnit * sellGood.quantity : 0;
       if (productValue < kingpin.minStashValue) {
         return { ...state, pendingEvent: warnEvent('Below Minimum', `These kingpins don't get out of bed for pocket change, Angelo, you lazy coon. You've got to build up your stash first — make a few runs, stack some product, THEN give them a bell. You can't walk into Hatton Garden with a tenner and expect Avi to roll out the red carpet, that covetous Jew will take everything you've got, even if you've got nothing. So start small with the chav behind Chicken Cottage. Build up. Then go big. When you've got enough product, the big boys will take your call. Until then, you're just another wannabe with a bag of nothing. You cant fuck about here, Angelo, youre not in Zimbabwe anymore!`), lastEventMessage: 'Need more product.' };

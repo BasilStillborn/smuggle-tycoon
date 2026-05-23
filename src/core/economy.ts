@@ -32,7 +32,7 @@ export function generateMarketPrices(
   return GOODS.map((good) => {
     const buyPrice = calcBuyPrice(good, country, enforcement);
     const sellPrice = calcSellPrice(buyPrice);
-    const baseDemand = Math.floor(30 + Math.random() * 70);
+    const baseDemand = Math.floor(5 + Math.random() * 95);
     const demandShift = Math.floor((100 - enforcement) * 0.2);
     const demand = Math.max(5, Math.min(100, baseDemand + demandShift));
     const spreadPct = Math.round(((sellPrice - buyPrice) / buyPrice) * 100);

@@ -446,6 +446,7 @@ export function GameScreen({ onNewGame, onLeaderboard, initialState }: GameScree
                           <span className="text-[10px] text-retro-success font-bold">{Math.round(kp.sellPriceMod * 100)}%</span>
                         </div>
                         <div className="text-[10px] text-gray-500 mt-0.5">{kp.description.substring(0, 50)}...</div>
+                        <div className="text-[9px] text-gray-600 mt-0.5">Buys: {kp.buys.map(id => state.goods.find(g => g.id === id)?.name ?? id).join(', ')}</div>
                         <div className="flex justify-between mt-1">
                           <span className="text-[9px] text-gray-600">{kp.location}</span>
                           <span className="text-[9px] text-retro-accent font-bold">${kp.minStashValue.toLocaleString()}</span>

@@ -69,6 +69,7 @@ export const KINGPIN_POOL: KingpinProfile[] = [
     minStashValue: 5000,
     sellPriceMod: 1.3,
     encounterWeights: { clean: 85, mugging: 10, raid: 5 },
+    buys: ['ecstasy', 'cocaine'],
   },
   {
     id: 'sergio',
@@ -78,6 +79,7 @@ export const KINGPIN_POOL: KingpinProfile[] = [
     minStashValue: 1500,
     sellPriceMod: 1.15,
     encounterWeights: { clean: 80, mugging: 15, raid: 5 },
+    buys: ['heroin', 'meth'],
   },
   {
     id: 'iqbal',
@@ -87,6 +89,7 @@ export const KINGPIN_POOL: KingpinProfile[] = [
     minStashValue: 750,
     sellPriceMod: 0.9,
     encounterWeights: { clean: 90, mugging: 5, raid: 5 },
+    buys: ['cocaine', 'hashish'],
   },
 ];
 
