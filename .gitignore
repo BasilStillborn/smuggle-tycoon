@@ -11,3 +11,12 @@ local-flow/node_modules/
 prompt-blueprint-forge/.next/
 prompt-blueprint-forge/node_modules/
 paper-game/
+HOW_TO_USE.txt
+*BeamNG*
+*Mods.ps1
+*Mods.bat
+*ModFolder*
+*ModWatcher*
+processed-mods.txt
+simtest.ts
+tsconfig.tsbuildinfo
