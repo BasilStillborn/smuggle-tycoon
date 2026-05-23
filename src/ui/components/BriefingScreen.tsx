@@ -58,7 +58,7 @@ export function BriefingScreen({ onContinue }: BriefingScreenProps) {
               Back in London, stash your goods, there are three dealers in your area who will buy your product..
               <span className="text-retro-accent">Avi</span>, the Hatton Garden Jew — typically greedy
               but when he gets to know you, good deals can make you a lot of money. <span className="text-retro-accent">Sergio</span>{' '}the Albanian — you can't trust him, but you may not have a choice.                <span className="text-retro-accent">Quentin</span>,
-               camp as a rainbow in a grubby flat above a Dalston launderette. Thinks he's Russell Brand, sniffs gear constantly, calls everyone "chocolate boy." Don't let him touch you — he WILL try. These lot won't meet for
+               gay as a rainbow in a grubby flat above a Dalston launderette. Thinks he's Russell Brand but looks like Keith Chegwin. Snorts gear constantly, calls you "chocolate boy." Don't let him touch you — he WILL try. These lot won't meet for
                pocket change deals though — build up your stash before giving them a call.
             </p>
             <p className="text-retro-accent text-xs italic pt-2">

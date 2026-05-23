@@ -82,7 +82,7 @@ export const KINGPIN_POOL: KingpinProfile[] = [
   {
     id: 'iqbal',
     name: 'Quentin',
-    description: 'Camp as a rainbow. Gay as they come. Snorts gear like it\'s going out of fashion. Thinks he\'s Russell Brand after a three-day bender. Touches everyone.',
+    description: 'Gay as a rainbow. Lives in a grubby flat above a Dalston launderette. Thinks he\'s Russell Brand but looks like Keith Chegwin. Snorts gear constantly, calls you "chocolate boy." Don\'t let him touch you — he WILL try.',
     location: 'his grubby flat above a launderette in Dalston — mirrors everywhere, silk kimono collection, and a chaise longue covered in dry jizz',
     minStashValue: 750,
     sellPriceMod: 0.9,

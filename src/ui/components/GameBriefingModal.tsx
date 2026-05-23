@@ -55,7 +55,7 @@ export function GameBriefingModal({ onClose }: GameBriefingModalProps) {
           <div className="border-t border-retro-border pt-3 mt-3">
             <div className="text-retro-accent text-[10px] uppercase tracking-wider mb-2">The Kingpins</div>
             <p>
-              <span className="text-retro-accent">Quentin</span> — the queen above a Dalston launderette.
+              <span className="text-retro-accent">Quentin</span> — gay as a rainbow. Flat above a Dalston launderette. Thinks he's Russell Brand, looks like Keith Chegwin.
               Minimum <span className="text-retro-success">$750</span> stash value.
             </p>
             <p>
