@@ -150,6 +150,15 @@ export function GameScreen({ onNewGame, onLeaderboard }: GameScreenProps) {
 
   const gameOver = !state.player.runActive;
 
+  const GAME_OVER_MSGS = useMemo(() => [
+    `You've run out of fucking money, you twat. All those opportunities and you've screwed it up — and don't go blaming the Jews. They've got nothing to do with this. This is on you, boy. You're a bottle job just like your old man. You're gonna have to get a job delivery driving now, but don't go stealing the food or you'll get fired from that as well. Lazy cunt.`,
+    `GAME OVER, you absolute plonker. Look at the state of you. Five grand in the bank and you've managed to not only lose it but end up owing money. That takes a special kind of talent, Angelo — the kind that gets you banned from Ladbrokes and disowned at family gatherings. Your nan knitted you a jumper last Christmas it says CUNT on it in big red letters, go and put it on! you grubby little bastard. Tesco are hiring night shift shelf stackers. They need silly black cunts like you who don't know their ass from their elbow. Oh, and if you do go and work in Tesco, don't get caught stealing from there as well!`,
+    `You've gone and done it now, haven't you. Bankrupt. Skint. Busted flat. Less than zero. Your stepdad warned everyone this would happen — said you'd be back in the basement within a year, smelling of failure and cheap deodorant. He's going to be unbearable about this. Unbearable. You'll never hear the end of it at breakfast. "Morning, Angelo. Made any money laundering for the Albanian mafia lately?" Smug prick. And the worst part? He's right. You are a walking fucking disaster. Go sign on. The Jobcentre's got a desk with your name on it. Cunt.`,
+    `Finished. Done. Washed up. You had it in your hands, Angelo — actual money, actual product, actual opportunities — and you've somehow turned it all into negative bank balance and a police file thicker than a phone book. They're going to study you at business school. "Case Study 47: How To Fuck Up A Smuggling Operation In Five Easy Steps." Your mum's going to be so disappointed. She already was, to be fair, but this is a whole new level. There's a kebab shop on the high street that needs a delivery driver. The manager's called Steve. He's a cunt, but so are you, so you'll get on fine. Off you pop.`,
+  ], []);
+
+  const gameOverMsg = useMemo(() => GAME_OVER_MSGS[Math.floor(Math.random() * GAME_OVER_MSGS.length)], []);
+
   const handleNewGame = useCallback(() => {
     audioManager.playSfx('click');
     setShowScoreSubmit(false);
@@ -223,7 +232,7 @@ export function GameScreen({ onNewGame, onLeaderboard }: GameScreenProps) {
         <div className="border border-retro-border bg-retro-panel p-8 max-w-md w-full text-center">
           <div className="text-retro-danger text-lg mb-4 glow-text-danger">GAME OVER</div>
           <div className="text-sm text-gray-300 mb-6 leading-relaxed space-y-2">
-            You've run out of fucking money, you twat. All those opportunities and you've screwed it up — and don't go blaming the Jews. They've got nothing to do with this. This is on you, boy. You're a bottle job just like your old man. You're gonna have to get a job delivery driving now, but don't go stealing the food or you'll get fired from that as well. Lazy cunt.
+            {gameOverMsg}
           </div>
           <div className="text-[10px] text-gray-600 mb-4 space-x-4">
             <span>Bank: <span className="text-retro-success">${state.player.bank.toLocaleString()}</span></span>
@@ -296,7 +305,7 @@ export function GameScreen({ onNewGame, onLeaderboard }: GameScreenProps) {
             <div className="flex gap-2 text-xs text-gray-500 items-center">
               <span className="text-gray-400">Turn {state.turn}</span>
               <button
-                onClick={() => { audioManager.playSfx('click'); setShowBank(true); }}
+                onClick={() => { audioManager.playSfx('click'); if (state.bankTutorialShown) { setShowBank(true); } else { dispatch({ type: 'BANK_TUTORIAL_SHOWN' }); setShowBank(true); } }}
                 className="border-2 border-retro-accent/50 bg-retro-accent/10 hover:bg-retro-accent/20 text-retro-accent px-3 py-1 text-xs font-bold transition-colors"
                 title="Open banking"
               >[BANK]</button>

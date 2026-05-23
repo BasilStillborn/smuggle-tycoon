@@ -97,8 +97,8 @@ const WALK_AWAYS: Record<string, string> = {
 // ─── Phase guard ─────────────────────────────────────────────
 
 const PHASE_ACTIONS: Record<GamePhase, string[]> = {
-  home: ['START_TRIP', 'SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'TRAVEL', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'STASH_GOODS', 'RETRIEVE_GOODS', 'CONTACT_KINGPIN', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE'],
-  selling: ['SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'CONTACT_KINGPIN', 'MEET_KINGPIN', 'SELL', 'STASH_GOODS', 'RETRIEVE_GOODS', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE'],
+  home: ['START_TRIP', 'SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'TRAVEL', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'STASH_GOODS', 'RETRIEVE_GOODS', 'CONTACT_KINGPIN', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE', 'BANK_TUTORIAL_SHOWN'],
+  selling: ['SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'CONTACT_KINGPIN', 'MEET_KINGPIN', 'SELL', 'STASH_GOODS', 'RETRIEVE_GOODS', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE', 'BANK_TUTORIAL_SHOWN'],
   buying: ['BUY', 'TRAVEL', 'FLY_HOME', 'CONTACT_KINGPIN', 'RESPOND_EVENT'],
   selecting_dealer: ['SELECT_DEALER', 'FLY_HOME', 'CONTACT_KINGPIN', 'RESPOND_EVENT'],
   arrived: ['AFTER_CUSTOMS', 'CONTACT_KINGPIN', 'RESPOND_EVENT', 'TRAVEL'],
@@ -129,7 +129,7 @@ export function createGameState(): GameState {
     selectedDealer: null, selectedKingpin: null,
     dealerRapport: {}, marketMemory: {}, journalEntries: [],
     securitySniffsPassed: 0, buyDealsCompleted: 0, sellDealsCompleted: 0,
-    firstRunTutorialShown: false, safehouseTier: 1,
+    firstRunTutorialShown: false, safehouseTier: 1, bankTutorialShown: false,
   };
 }
 
@@ -234,7 +234,11 @@ function tryTriggerProceduralEvent(state: GameState): GameState {
 }
 
 function handleOverdraft(player: PlayerState): PlayerState {
-  if (checkOverdraft(player)) return { ...player, runActive: false };
+  if (!checkOverdraft(player)) return player;
+  // Game over only when truly broke — no cash, no bank, no product anywhere
+  if (player.bank + player.cash <= 0 && player.stash.length === 0 && player.inventory.length === 0) {
+    return { ...player, runActive: false };
+  }
   return player;
 }
 
@@ -973,6 +977,8 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'CANCEL_AIRPORT': return { ...state, headingToAirport: false, lastEventMessage: 'Flight cancelled.' };
+
+    case 'BANK_TUTORIAL_SHOWN': return { ...state, bankTutorialShown: true };
 
     case 'SAFEHOUSE_TIER_CHANGE': {
       const nw = state.player.bank + state.player.cash;
