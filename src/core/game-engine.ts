@@ -637,7 +637,7 @@ function doTravel(state: GameState, toCountryId: string, travelClass: TravelClas
 // ─── Main Reducer ────────────────────────────────────────────
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
-  if (state.pendingEvent && action.type !== 'RESPOND_EVENT' && action.type !== 'STASH_GOODS' && action.type !== 'RETRIEVE_GOODS') return state;
+  if (state.pendingEvent && action.type !== 'RESPOND_EVENT' && action.type !== 'STASH_GOODS' && action.type !== 'RETRIEVE_GOODS' && action.type !== 'CONTACT_KINGPIN') return state;
 
   if (action.type !== 'RESPOND_EVENT' && !isActionAllowed(state.gamePhase, action.type)) {
     return { ...state, lastEventMessage: `Cannot ${action.type.toLowerCase()} in ${state.gamePhase} phase.` };
@@ -765,7 +765,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (state.gamePhase !== 'selling') return { ...state, pendingEvent: warnEvent('Not Available', 'You can only contact kingpins once you meet the minimum stash threshold. Fly abroad, do some deals, and build up your stash first.') };
       const kingpin = KINGPIN_POOL.find(k => k.id === action.kingpinId);
       if (!kingpin) return { ...state, pendingEvent: warnEvent('Error', 'Invalid kingpin selection.') };
-      if (state.player.inventory.length === 0) return { ...state, pendingEvent: warnEvent('No Product', 'No product in your inventory. Retrieve goods from your stash first, then contact a kingpin.'), lastEventMessage: 'No product to sell.' };
+      if (state.player.inventory.length === 0) return { ...state, pendingEvent: warnEvent('No Product', `You've got nothing on you, Angelo. Empty pockets, empty bag. You need to retrieve product from your stash first. The kingpins aren't going to buy fresh air, you daft little cunt. Go to the Inventory panel, click what you want to sell, bring it out — THEN make the call. fuck me they said you were lazy this takes the piss!`), lastEventMessage: 'No product to sell.' };
       if (state.player.inventory.length > 1) {
         const names = state.player.inventory.map(i => state.goods.find(g => g.id === i.goodId)?.name ?? i.goodId).join(', ');
         return { ...state, pendingEvent: warnEvent('One At A Time', `You can only sell one type of product at a time.\n\nYou're carrying: ${names}\n\nStash the ones you're not selling first.`), lastEventMessage: 'Sell one product at a time.' };
@@ -774,7 +774,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       const goodDef = state.goods.find(g => g.id === sellGood.goodId);
       const productValue = goodDef ? goodDef.baseValuePerUnit * sellGood.quantity : 0;
       if (productValue < kingpin.minStashValue) {
-        return { ...state, pendingEvent: warnEvent('Below Minimum', `${kingpin.name} won't meet for less than $${kingpin.minStashValue.toLocaleString()}.\n\nYour ${goodDef?.name ?? 'product'} is only worth $${productValue.toLocaleString()}.\n\nMake a few more runs and build up your stash — or try a different kingpin with a lower minimum.`), lastEventMessage: 'Need more product.' };
+        return { ...state, pendingEvent: warnEvent('Below Minimum', `These kingpins don't get out of bed for pocket change, Angelo, you lazy coon. You've got to build up your stash first — make a few runs, stack some product, THEN give them a bell. You can't walk into Hatton Garden with a tenner and expect Avi to roll out the red carpet, that covetous Jew will take everything you've got, even if you've got nothing. So start small with the chav behind Chicken Cottage. Build up. Then go big. When you've got enough product, the big boys will take your call. Until then, you're just another wannabe with a bag of nothing. You cant fuck about here, Angelo, youre not in Zimbabwe anymore!`), lastEventMessage: 'Need more product.' };
       }
       const sellPriceData = state.currentMarketPrices.find(p => p.goodId === sellGood.goodId);
       if (!sellPriceData) return { ...state, pendingEvent: warnEvent('No Buyer', 'No buyer for this product right now. Check the market prices first.') };
