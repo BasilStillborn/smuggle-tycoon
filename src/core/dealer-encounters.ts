@@ -89,7 +89,7 @@ export const KINGPIN_POOL: KingpinProfile[] = [
     minStashValue: 750,
     sellPriceMod: 0.9,
     encounterWeights: { clean: 90, mugging: 5, raid: 5 },
-    buys: ['cocaine', 'hashish'],
+    buys: ['cocaine', 'hashish', 'weed'],
   },
 ];
 

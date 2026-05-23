@@ -580,6 +580,7 @@ function dispatchEventResponse(state: GameState, action: GameAction & { type: 'R
   if (id.startsWith('chance_card_')) return handleChanceCard(state);
   if (id.startsWith('tutorial_')) return handleTutorial(state);
   if (id.startsWith('no_cash_')) return handleNoCash(state);
+  if (id.startsWith('no_buyer_')) return { ...state, pendingEvent: null, lastEventMessage: '' };
   if (id.startsWith('end_trip_warn_')) return handleEndTripWarn(state);
   if (id.startsWith('kingpin_warn_')) return handleKingpinWarn(state);
   if (id.startsWith('safehouse_promote_') || id.startsWith('safehouse_demote_')) {
@@ -746,9 +747,42 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         return { ...state, pendingEvent: we, lastEventMessage: 'Not enough cash to make this trip.' };
       }
 
+      // Buyer check — can the player actually sell this product back home?
+      let buyerNote = '';
+      if (selectedGood) {
+        const buyers = KINGPIN_POOL.filter(k => k.buys.includes(selectedGood.id));
+        const cheapestBuyer = buyers.length > 0 ? buyers.reduce((a, b) => a.minStashValue < b.minStashValue ? a : b) : null;
+        const mktPrice = state.currentMarketPrices.find(p => p.goodId === selectedGood.id);
+        const baseVal = selectedGood.baseValuePerUnit;
+        const unit = selectedGood.unitOfMeasure ?? 'unit';
+        if (!cheapestBuyer) {
+          const allBuys = [...new Set(KINGPIN_POOL.flatMap(k => k.buys))].map(id => state.goods.find(g => g.id === id)?.name ?? id).join(', ');
+          const we: ChoiceEvent = { id: 'no_buyer_' + Date.now().toString(36), title: 'No Buyer', context: `Nobody in London wants ${goodName}, Angelo. The kingpins are fussy cunts — Avi only does ecstasy and cocaine, Sergio does heroin and meth, and Quentin's too busy doing lines off his chaise longue to deal in anything besides cocaine, hashish, and weed. They'll buy: ${allBuys}. Pick something else, you daft prick.`, choices: [{ id: 'understood', text: 'Understood', ...nullChoice }] };
+          return { ...state, pendingEvent: we, lastEventMessage: 'No London buyer for this product.' };
+        }
+        const minQty = Math.ceil(cheapestBuyer.minStashValue / baseVal);
+        const estDealerPrice = (mktPrice?.buyPrice ?? baseVal);
+        const estCost = minQty * estDealerPrice;
+        if (state.player.cash < estCost) {
+          const we: ChoiceEvent = { id: 'no_buyer_' + Date.now().toString(36), title: 'Not Enough For Minimum', context: `You'd need at least ${minQty} ${unit}${minQty > 1 ? 's' : ''} of ${goodName} to meet ${cheapestBuyer.name}'s $${cheapestBuyer.minStashValue.toLocaleString()} minimum. That's gonna cost you about $${estCost.toLocaleString()}. You've only got $${state.player.cash.toLocaleString()} on hand, you overambitious little cunt. Withdraw more or pick something else.`, choices: [{ id: 'understood', text: 'Understood', ...nullChoice }] };
+          return { ...state, pendingEvent: we, lastEventMessage: 'Not enough to meet minimum.' };
+        }
+        buyerNote = `\n\nMinimum for ${cheapestBuyer.name}: ${minQty} ${unit}s (~$${estCost.toLocaleString()})`;
+      }
+        const minQty = Math.ceil(cheapestBuyer.minStashValue / baseVal);
+        const estDealerPrice = (mktPrice?.buyPrice ?? baseVal); // conservative — dealer may discount
+        const estCost = minQty * estDealerPrice;
+        if (state.player.cash < estCost) {
+          const we: ChoiceEvent = { id: 'no_buyer_' + Date.now().toString(36), title: 'Not Enough For Minimum', context: `You'd need at least ${minQty} ${unit}${minQty > 1 ? 's' : ''} of ${goodName} to meet ${cheapestBuyer.name}'s $${cheapestBuyer.minStashValue.toLocaleString()} minimum. That's gonna cost you about $${estCost.toLocaleString()}. You've only got $${state.player.cash.toLocaleString()} on hand, you overambitious little cunt. Withdraw more or pick something else.`, choices: [{ id: 'understood', text: 'Understood', ...nullChoice }] };
+          return { ...state, pendingEvent: we, lastEventMessage: 'Not enough to meet minimum.' };
+        }
+        // Enough cash for minimum — note it in the confirm context
+        const buyerNote = `\n\nMinimum for ${cheapestBuyer.name}: ${minQty} ${unit}s (~$${estCost.toLocaleString()})`;
+      }
+
       const confirmEvent: ChoiceEvent = {
         id: 'confirm_flight_' + Date.now().toString(36), title: 'Confirm Flight',
-        context: `Fly to ${destCountry.city}, ${destCountry.name} to buy ${goodName}?\n\n${isBestSource ? `You're heading to the best source for ${goodName}.` : `Your best source for ${goodName} is ${bestLoc}.`}\nTicket: $${estCost} (${action.travelClass === 'first_class' ? 'First Class' : 'Economy'})\nCash on hand: $${state.player.cash.toLocaleString()}\n\n${selectedGood ? `Current dealer price: $${(state.currentMarketPrices.find(p => p.goodId === selectedGood.id)?.buyPrice ?? 0).toFixed(0)}/${selectedGood.unitOfMeasure}` : ''}\n\nClick a different product in the Market panel to change your choice.`,
+        context: `Fly to ${destCountry.city}, ${destCountry.name} to buy ${goodName}?\n\n${isBestSource ? `You're heading to the best source for ${goodName}.` : `Your best source for ${goodName} is ${bestLoc}.`}\nTicket: $${estCost} (${action.travelClass === 'first_class' ? 'First Class' : 'Economy'})\nCash on hand: $${state.player.cash.toLocaleString()}${buyerNote ?? ''}\n\n${selectedGood ? `Current dealer price: $${(state.currentMarketPrices.find(p => p.goodId === selectedGood.id)?.buyPrice ?? 0).toFixed(0)}/${selectedGood.unitOfMeasure}` : ''}\n\nClick a different product in the Market panel to change your choice.`,
         choices: [
           { id: 'continue', text: 'Book flight', ...nullChoice },
           { id: 'go_back', text: 'Go back', ...nullChoice },

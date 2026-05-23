@@ -1,5 +1,5 @@
 import type { GameState, GameAction } from '../../core';
-import { getCountry, getLocationLabel } from '../../core';
+import { getCountry, getLocationLabel, KINGPIN_POOL } from '../../core';
 import { audioManager } from '../../audio';
 
 interface MarketPanelProps {
@@ -60,6 +60,11 @@ export function MarketPanel({ state, dispatch }: MarketPanelProps) {
                 <span className={`text-gray-500`}>Retail: <span className="text-green-400">${price.sellPrice}</span>/{g?.unitOfMeasure ?? ''}</span>
                 <span className={`${price.demand >= 70 ? 'text-green-400' : price.demand >= 40 ? 'text-gray-400' : 'text-red-400'}`}>Demand: {price.demand}%</span>
               </div>
+              {(() => {
+                const buyers = KINGPIN_POOL.filter(k => k.buys.includes(price.goodId));
+                if (buyers.length === 0) return <div className="text-[9px] text-red-400 leading-tight">No London buyers for this product</div>;
+                return <div className="text-[9px] text-gray-500 leading-tight">Buys: {buyers.map(k => `${k.name} ($${(k.minStashValue / 1000).toFixed(0)}K min)`).join(', ')}</div>;
+              })()}
               {bestLoc && <div className="text-[9px] text-retro-accent italic leading-tight">Best source: {bestLoc}</div>}
               {isSelected && <div className="text-[9px] text-green-500 mt-0.5">— Selected — ready to book a flight</div>}
             </button>
