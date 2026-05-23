@@ -479,11 +479,14 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
       if (stashWeight > stashFree) return { ...state, lastEventMessage: `Not enough stash space. Need $${stashWeight.toFixed(1)}kg, have ${stashFree.toFixed(1)}kg free.` };
 
-      let updatedStash = [...state.player.stash];
+      let updatedStash = state.player.stash.map(s => ({ ...s }));
       for (const item of state.player.inventory) {
-        const existing = updatedStash.find(s => s.goodId === item.goodId);
-        if (existing) existing.quantity += item.quantity;
-        else updatedStash.push({ ...item });
+        const idx = updatedStash.findIndex(s => s.goodId === item.goodId);
+        if (idx >= 0) {
+          updatedStash[idx] = { ...updatedStash[idx], quantity: updatedStash[idx].quantity + item.quantity };
+        } else {
+          updatedStash.push({ goodId: item.goodId, quantity: item.quantity });
+        }
       }
 
       return {
@@ -508,10 +511,13 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (weightNeeded > capFree) return { ...state, lastEventMessage: `Not enough inventory space.` };
 
       let newStash = state.player.stash.map(s => s.goodId === action.goodId ? { ...s, quantity: s.quantity - action.quantity } : s).filter(s => s.quantity > 0);
-      let newInv = [...state.player.inventory];
+      let newInv = state.player.inventory.map(i => ({ ...i }));
       const existing = newInv.find(i => i.goodId === action.goodId);
-      if (existing) existing.quantity += action.quantity;
-      else newInv.push({ goodId: action.goodId, quantity: action.quantity });
+      if (existing) {
+        newInv = newInv.map(i => i.goodId === action.goodId ? { ...i, quantity: i.quantity + action.quantity } : i);
+      } else {
+        newInv.push({ goodId: action.goodId, quantity: action.quantity });
+      }
 
       return {
         ...state,
