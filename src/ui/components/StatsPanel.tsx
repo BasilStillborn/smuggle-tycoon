@@ -65,7 +65,7 @@ export function StatsPanel({ state }: StatsPanelProps) {
           className="touch-target w-full flex justify-between text-[10px] text-gray-500 hover:text-gray-300 transition-colors text-left"
         >
           <span>INVENTORY {showInventory ? '▼' : '▶'}</span>
-          <span>{used}/{state.player.inventoryCapacity}kg</span>
+          <span>{used.toFixed(3)}/{state.player.inventoryCapacity}kg</span>
         </button>
         {showInventory && (
         <>

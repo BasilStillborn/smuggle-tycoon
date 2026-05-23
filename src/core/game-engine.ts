@@ -851,7 +851,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (state.player.inventory.length > 0) { invList = state.player.inventory.map(i => { const g = state.goods.find(x => x.id === i.goodId); return `${g?.name ?? i.goodId}: ${i.quantity}x`; }).join('\n  '); }
       let stashList = 'Empty';
       if (state.player.stash.length > 0) { stashList = state.player.stash.map(i => { const g = state.goods.find(x => x.id === i.goodId); return `${g?.name ?? i.goodId}: ${i.quantity}x`; }).join('\n  '); }
-      return { ...state, lastEventMessage: `INVENTORY (${used}/${state.player.inventoryCapacity}kg)\n  ${invList}\nEstimated value: $${invValue.toLocaleString()}\n\nSTASH (${state.player.stash.reduce((s, i) => { const g = state.goods.find(x => x.id === i.goodId); return s + (g ? g.weight * i.quantity : 0); }, 0).toFixed(1)}/${state.player.stashCapacity}kg)\n  ${stashList}` };
+      return { ...state, lastEventMessage: `INVENTORY (${used.toFixed(3)}/${state.player.inventoryCapacity}kg)\n  ${invList}\nEstimated value: $${invValue.toLocaleString()}\n\nSTASH (${state.player.stash.reduce((s, i) => { const g = state.goods.find(x => x.id === i.goodId); return s + (g ? g.weight * i.quantity : 0); }, 0).toFixed(1)}/${state.player.stashCapacity}kg)\n  ${stashList}` };
     }
 
     case 'WAIT': {
@@ -935,7 +935,7 @@ export function getStatusReport(state: GameState): string {
     `Heat: ${state.player.heat}/100 [${heatLevel.toUpperCase()}]`,
     `Credit: ${state.player.credit}    Credibility: ${state.player.credibility}/100`,
     `Reputation: ${state.player.reputation}/100`,
-    `Inventory: ${used}/${state.player.inventoryCapacity}kg used, ${remaining}kg free`,
+    `Inventory: ${used.toFixed(3)}/${state.player.inventoryCapacity}kg used, ${remaining.toFixed(3)}kg free`,
     `Stash: ${state.player.stash.reduce((s, i) => s + i.quantity, 0)} units / ${state.player.stashCapacity}kg`,
     `Trips: ${state.player.totalTrips}  Busts: ${state.player.totalBusts}`,
     `Director: Tension=${state.director.tension} Boredom=${state.director.boredom} Attn=${state.director.enforcementAttention}`,
