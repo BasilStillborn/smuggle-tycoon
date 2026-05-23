@@ -213,6 +213,7 @@ export interface GameState {
   buyDealsCompleted: number;
   sellDealsCompleted: number;
   firstRunTutorialShown: boolean;
+  safehouseTier: number;
 }
 
 export interface JournalRunEntry {
@@ -238,6 +239,7 @@ export type GameAction =
   | { type: 'END_RUN' }
   | { type: 'SAVE' }
   | { type: 'LOAD' }
+  | { type: 'SAFEHOUSE_TIER_CHANGE' }
   | { type: 'RESPOND_EVENT'; choiceId: string }
   | { type: 'BUY_ASSET'; assetId: string }
   | { type: 'SELL_ASSET'; assetId: string }

@@ -1,11 +1,12 @@
-import { getSafehouseLevel, getSafehouseProgress } from '../visual/SafehouseState';
+import { getSafehouseProgress } from '../visual/SafehouseState';
 
 interface SafehousePanelProps {
   netWorth: number;
+  currentTier: number;
 }
 
-export function SafehousePanel({ netWorth }: SafehousePanelProps) {
-  const { current, next, progress } = getSafehouseProgress(netWorth);
+export function SafehousePanel({ netWorth, currentTier }: SafehousePanelProps) {
+  const { current, next, progress } = getSafehouseProgress(netWorth, currentTier);
 
   const getLevelDots = () => {
     const dots = [];
@@ -23,6 +24,8 @@ export function SafehousePanel({ netWorth }: SafehousePanelProps) {
     }
     return dots;
   };
+
+  const fmt = (n: number) => n >= 1000 ? `$${(n / 1000).toFixed(0)}K` : `$${n}`;
 
   return (
     <div className="border border-retro-border bg-retro-panel p-3">
@@ -42,7 +45,7 @@ export function SafehousePanel({ netWorth }: SafehousePanelProps) {
       {next && (
         <div>
           <div className="text-[10px] text-gray-600 mb-1">
-            Next: {next.name} (${next.minNetWorth.toLocaleString()})
+            Next: {next.name} ({fmt(next.advanceAt)})
           </div>
           <div className="h-1.5 bg-[#0a0a0a] border border-retro-border overflow-hidden">
             <div

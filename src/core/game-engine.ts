@@ -12,6 +12,7 @@ import { generateDealerEncounter, generateSellEncounter, getDealerOptions, p, KI
 import { buyAsset, sellAsset, getAsset, getActiveOperationalBenefits } from './assets';
 import { startTrip, endTrip as bankEndTrip, checkOverdraft, transferFromBank, transferToBank } from './bank-actions';
 import { getChanceCard } from './chance-cards';
+import { getSafehouseTier, SAFEHOUSE_ADVANCE_TITLES, SAFEHOUSE_ADVANCE_MSGS, SAFEHOUSE_DEMOTE_TITLES, SAFEHOUSE_DEMOTE_MSGS } from '../ui/visual/SafehouseState';
 
 // ─── Constants ──────────────────────────────────────────────
 
@@ -96,8 +97,8 @@ const WALK_AWAYS: Record<string, string> = {
 // ─── Phase guard ─────────────────────────────────────────────
 
 const PHASE_ACTIONS: Record<GamePhase, string[]> = {
-  home: ['START_TRIP', 'SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'TRAVEL', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'STASH_GOODS', 'RETRIEVE_GOODS', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT'],
-  selling: ['SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'CONTACT_KINGPIN', 'MEET_KINGPIN', 'SELL', 'STASH_GOODS', 'RETRIEVE_GOODS', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT'],
+  home: ['START_TRIP', 'SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'TRAVEL', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'STASH_GOODS', 'RETRIEVE_GOODS', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE'],
+  selling: ['SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'CONTACT_KINGPIN', 'MEET_KINGPIN', 'SELL', 'STASH_GOODS', 'RETRIEVE_GOODS', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE'],
   buying: ['BUY', 'TRAVEL', 'FLY_HOME', 'RESPOND_EVENT'],
   selecting_dealer: ['SELECT_DEALER', 'FLY_HOME', 'RESPOND_EVENT'],
   arrived: ['AFTER_CUSTOMS', 'RESPOND_EVENT', 'TRAVEL'],
@@ -128,7 +129,7 @@ export function createGameState(): GameState {
     selectedDealer: null, selectedKingpin: null,
     dealerRapport: {}, marketMemory: {}, journalEntries: [],
     securitySniffsPassed: 0, buyDealsCompleted: 0, sellDealsCompleted: 0,
-    firstRunTutorialShown: false,
+    firstRunTutorialShown: false, safehouseTier: 1,
   };
 }
 
@@ -558,6 +559,11 @@ function dispatchEventResponse(state: GameState, action: GameAction & { type: 'R
   if (id.startsWith('no_cash_')) return handleNoCash(state);
   if (id.startsWith('end_trip_warn_')) return handleEndTripWarn(state);
   if (id.startsWith('kingpin_warn_')) return handleKingpinWarn(state);
+  if (id.startsWith('safehouse_promote_') || id.startsWith('safehouse_demote_')) {
+    const nw = state.player.bank + state.player.cash;
+    const newTier = getSafehouseTier(nw, state.safehouseTier);
+    return { ...state, pendingEvent: null, safehouseTier: newTier, lastEventMessage: '' };
+  }
   if (id.startsWith('confirm_flight_') && state.pendingFlight) return handleConfirmFlight(state, action);
   if (id.startsWith('bigtime_') && state.pendingFlight) return handleBigTime(state, action);
   if (id.startsWith('summary_')) return handleSummary(state, action);
@@ -917,6 +923,21 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'CANCEL_AIRPORT': return { ...state, headingToAirport: false, lastEventMessage: 'Flight cancelled.' };
+
+    case 'SAFEHOUSE_TIER_CHANGE': {
+      const nw = state.player.bank + state.player.cash;
+      const newTier = getSafehouseTier(nw, state.safehouseTier);
+      if (newTier === state.safehouseTier) return state;
+      const isPromotion = newTier > state.safehouseTier;
+      const tier = isPromotion ? newTier : state.safehouseTier - 1; // demoted TO previous tier
+      const evt: ChoiceEvent = {
+        id: (isPromotion ? 'safehouse_promote_' : 'safehouse_demote_') + Date.now().toString(36),
+        title: isPromotion ? (SAFEHOUSE_ADVANCE_TITLES[tier] ?? 'New Safehouse') : (SAFEHOUSE_DEMOTE_TITLES[tier] ?? 'Downgraded'),
+        context: isPromotion ? (SAFEHOUSE_ADVANCE_MSGS[tier] ?? '') : (SAFEHOUSE_DEMOTE_MSGS[tier] ?? ''),
+        choices: [{ id: 'continue', text: 'Continue', ...nullChoice }],
+      };
+      return { ...state, pendingEvent: evt, lastEventMessage: '' };
+    }
     default: return state;
   }
 }

@@ -8,6 +8,7 @@ import { MarketPanel } from './MarketPanel';
 import { TravelPanel } from './TravelPanel';
 import { EventModal } from './EventModal';
 import { SafehousePanel } from './SafehousePanel';
+import { getSafehouseTier } from '../visual/SafehouseState';
 import { ScoreSubmitModal } from './ScoreSubmitModal';
 import { AliasModal } from './AliasModal';
 import { AssetShop } from './AssetShop';
@@ -76,6 +77,15 @@ export function GameScreen({ onNewGame, onLeaderboard }: GameScreenProps) {
       audioManager.stopAll();
     };
   }, []);
+
+  // Detect safehouse tier changes
+  useEffect(() => {
+    const nw = state.player.bank + state.player.cash;
+    const newTier = getSafehouseTier(nw, state.safehouseTier);
+    if (newTier !== state.safehouseTier && !state.pendingEvent) {
+      dispatch({ type: 'SAFEHOUSE_TIER_CHANGE' });
+    }
+  }, [state.player.bank, state.player.cash, state.safehouseTier, state.pendingEvent]);
 
   // Track when run ends to show score submit and save journal
   useEffect(() => {
@@ -356,7 +366,7 @@ export function GameScreen({ onNewGame, onLeaderboard }: GameScreenProps) {
             <div className="w-64 shrink-0 border-r border-retro-border overflow-y-auto">
               <StatsPanel state={state} />
               <div className="mt-0.5 border-t border-retro-border pt-1">
-                <SafehousePanel netWorth={state.player.peakNetWorth} />
+                <SafehousePanel netWorth={state.player.bank + state.player.cash} currentTier={state.safehouseTier} />
               </div>
             </div>
 
