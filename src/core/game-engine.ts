@@ -141,7 +141,7 @@ function getBuyInfo(state: GameState) {
   const selectedGood = state.goods.find(g => g.id === state.selectedProductId);
   const mktPrice = state.currentMarketPrices.find(p => p.goodId === state.selectedProductId);
   const dealer = state.selectedDealer;
-  const buyPrice = mktPrice ? Math.floor(mktPrice.buyPrice * (1 + (dealer ? dealer.priceModifier - 1 : 0) * 0.5)) : 100;
+  const buyPrice = mktPrice ? Math.floor(mktPrice.buyPrice * (dealer ? dealer.priceModifier : 1)) : 100;
   const unit = selectedGood?.unitOfMeasure ?? 'x';
   const defQty = selectedGood?.standardDealSize ?? 10;
   const totalCost = buyPrice * defQty;
