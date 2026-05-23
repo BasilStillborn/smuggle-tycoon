@@ -145,7 +145,10 @@ function getBuyInfo(state: GameState) {
   const unit = selectedGood?.unitOfMeasure ?? 'x';
   const defQty = selectedGood?.standardDealSize ?? 10;
   const totalCost = buyPrice * defQty;
-  const maxQty = Math.max(1, Math.floor((state.player.cash - 500) / buyPrice));
+  const affordableQty = Math.floor((state.player.cash - 500) / buyPrice);
+  const capRemaining = getRemainingCapacity(state.player);
+  const weightLimit = selectedGood && selectedGood.weight > 0 ? Math.floor(capRemaining / selectedGood.weight) : Infinity;
+  const maxQty = Math.max(1, Math.min(affordableQty, weightLimit));
   return { selectedGood, mktPrice, dealer, buyPrice, unit, defQty, totalCost, maxQty };
 }
 
@@ -399,8 +402,7 @@ function handleDealerIntroOrCustomQty(state: GameState, action: GameAction & { t
     if (!state.selectedProductId) return { ...state, lastEventMessage: 'No product selected. Pick one from the Market panel.' };
     const qty = parseInt(action.choiceId.replace('qty_', ''), 10);
     if (isNaN(qty) || qty <= 0) return { ...state, lastEventMessage: 'Invalid quantity.' };
-    const cleanState = { ...state, pendingEvent: null };
-    return gameReducer(cleanState, { type: 'BUY', goodId: state.selectedProductId, quantity: qty });
+    return gameReducer(state, { type: 'BUY', goodId: state.selectedProductId, quantity: qty });
   }
   return state;
 }
@@ -654,7 +656,7 @@ function doTravel(state: GameState, toCountryId: string, travelClass: TravelClas
 // ─── Main Reducer ────────────────────────────────────────────
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
-  if (state.pendingEvent && action.type !== 'RESPOND_EVENT' && action.type !== 'STASH_GOODS' && action.type !== 'RETRIEVE_GOODS' && action.type !== 'CONTACT_KINGPIN') return state;
+  if (state.pendingEvent && action.type !== 'RESPOND_EVENT' && action.type !== 'STASH_GOODS' && action.type !== 'RETRIEVE_GOODS' && action.type !== 'CONTACT_KINGPIN' && action.type !== 'BUY') return state;
 
   if (action.type !== 'RESPOND_EVENT' && !isActionAllowed(state.gamePhase, action.type)) {
     return { ...state, lastEventMessage: `Cannot ${action.type.toLowerCase()} in ${state.gamePhase} phase.` };
