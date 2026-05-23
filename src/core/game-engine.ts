@@ -133,7 +133,7 @@ export function createGameState(): GameState {
   };
 }
 
-function getNetWorth(player: PlayerState, _marketPrices?: any): number {
+export function getNetWorth(player: PlayerState, _marketPrices?: any): number {
   const invVal = player.inventory.reduce((sum, i) => {
     const g = GOODS.find(x => x.id === i.goodId);
     return sum + (g ? g.baseValuePerUnit * i.quantity : 0);
@@ -990,7 +990,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     case 'BANK_TUTORIAL_SHOWN': return { ...state, bankTutorialShown: true };
 
     case 'SAFEHOUSE_TIER_CHANGE': {
-      const nw = state.player.bank + state.player.cash;
+      const nw = getNetWorth(state.player, state.currentMarketPrices);
       const newTier = getSafehouseTier(nw, state.safehouseTier);
       if (newTier === state.safehouseTier) return state;
       const isPromotion = newTier > state.safehouseTier;

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useReducer, useRef, useMemo, useState } from 'react';
 import type { GameState, GameAction } from '../../core';
-import { createGameState, gameReducer as coreReducer, getInventoryValue, finalizeRun, loadJournal, getOwnedAssets, KINGPIN_POOL, getOverdraftLimit } from '../../core';
+import { createGameState, gameReducer as coreReducer, getInventoryValue, getNetWorth, finalizeRun, loadJournal, getOwnedAssets, KINGPIN_POOL, getOverdraftLimit } from '../../core';
 import { fetchLeaderboard } from '../../supabase';
 import { audioManager } from '../../audio';
 import { StatsPanel } from './StatsPanel';
@@ -82,7 +82,7 @@ export function GameScreen({ onNewGame, onLeaderboard, initialState }: GameScree
 
   // Detect safehouse tier changes
   useEffect(() => {
-    const nw = state.player.bank + state.player.cash;
+    const nw = getNetWorth(state.player, state.currentMarketPrices);
     const newTier = getSafehouseTier(nw, state.safehouseTier);
     if (newTier !== state.safehouseTier && !state.pendingEvent) {
       dispatch({ type: 'SAFEHOUSE_TIER_CHANGE' });
