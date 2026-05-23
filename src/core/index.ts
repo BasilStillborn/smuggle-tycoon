@@ -23,7 +23,7 @@ export { createPlayer, addCash, deductCash, setLocation, incrementTrips, recordB
 export { COUNTRIES, getCountry, getLocationLabel } from './world';
 export { GOODS } from './goods';
 export { generateMarketPrices } from './economy';
-export { travel, generateSniffChoices } from './travel';
+export { travel, generateSniffChoices, getTicketCost } from './travel';
 export { addGood, removeGood, getGoodQuantity, getUsedCapacity, getRemainingCapacity, getInventoryValue } from './inventory';
 export { addHeat, reduceHeat, getHeatLevel, getInspectionChance, getBustChance, getFineAmount, getQuantityRiskMultiplier, MAX_HEAT } from './heat';
 export { generateProceduralEvent, resolveEventChoice } from './events-procedural';

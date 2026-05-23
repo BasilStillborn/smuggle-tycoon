@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { GameState, GameAction, TravelClass } from '../../core';
-import { getCountry, getLocationLabel, COUNTRIES } from '../../core';
+import { getCountry, getLocationLabel, getTicketCost } from '../../core';
 import { audioManager } from '../../audio';
 
 interface TravelPanelProps {
@@ -9,22 +9,6 @@ interface TravelPanelProps {
 }
 
 const ORIGIN_COUNTRY = 'london';
-
-function calcTicketPrice(fromId: string, toId: string, travelClass: TravelClass): number {
-  const from = COUNTRIES.find((c) => c.id === fromId);
-  const to = COUNTRIES.find((c) => c.id === toId);
-  if (!from || !to) return 200;
-  const regions: Record<string, number> = {
-    'South America': 0,
-    'Europe': 1,
-    'Asia': 2,
-  };
-  const dist = Math.abs((regions[from.region] ?? 0) - (regions[to.region] ?? 0)) + 1;
-  const base = 200 + 50 * dist;
-  const classMultiplier = travelClass === 'first_class' ? 2.5 : 1.0;
-  const variation = 0.9 + Math.random() * 0.2;
-  return Math.floor(base * variation * classMultiplier);
-}
 
 export function TravelPanel({ state, dispatch }: TravelPanelProps) {
   const [selectedClass, setSelectedClass] = useState<TravelClass>('economy');
@@ -90,8 +74,8 @@ export function TravelPanel({ state, dispatch }: TravelPanelProps) {
       <div className="space-y-1.5 mb-4 overflow-y-auto max-h-[220px]" style={{ scrollbarWidth: 'thin' }}>
         {state.world.filter(c => c.id !== ORIGIN_COUNTRY).map((country) => {
           const isCurrent = country.id === state.player.currentCountryId;
-          const econPrice = calcTicketPrice(state.player.currentCountryId, country.id, 'economy');
-          const firstPrice = calcTicketPrice(state.player.currentCountryId, country.id, 'first_class');
+          const econPrice = getTicketCost(getCountry(state.player.currentCountryId)!, country, 'economy');
+          const firstPrice = getTicketCost(getCountry(state.player.currentCountryId)!, country, 'first_class');
           const ticketPrice = selectedClass === 'first_class' ? firstPrice : econPrice;
           const canGo = !isCurrent && productSelected && state.player.cash >= ticketPrice;
 

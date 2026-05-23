@@ -6,6 +6,21 @@ import { COUNTRIES } from './world';
 const TRAVEL_COST_BASE = 200;
 const TRAVEL_COST_PER_DISTANCE = 50;
 
+const REGION_INDICES: Record<string, number> = {
+  'South America': 0,
+  'North America': 1,
+  'North Africa': 2,
+  'Europe': 3,
+  'Middle East': 4,
+  'Asia': 5,
+};
+
+export function getTicketCost(from: Country, to: Country, travelClass: TravelClass): number {
+  const dist = Math.abs((REGION_INDICES[from.region] ?? 0) - (REGION_INDICES[to.region] ?? 0)) + 1;
+  const classMultiplier = travelClass === 'first_class' ? 2.5 : 1.0;
+  return Math.floor((TRAVEL_COST_BASE + TRAVEL_COST_PER_DISTANCE * dist) * classMultiplier);
+}
+
 // Narrative variant pools for travel encounters
 const STRAIGHT_THROUGH_MSGS: string[] = [
   'Smooth crossing. No inspection. Heat -%d.',
@@ -39,15 +54,7 @@ function randomMsg(messages: string[], heatVal: number): string {
 }
 
 function getDistance(from: Country, to: Country): number {
-  const regions: Record<string, number> = {
-    'South America': 0,
-    'North America': 1,
-    'North Africa': 2,
-    'Europe': 3,
-    'Middle East': 4,
-    'Asia': 5,
-  };
-  return Math.abs((regions[from.region] ?? 0) - (regions[to.region] ?? 0)) + 1;
+  return Math.abs((REGION_INDICES[from.region] ?? 0) - (REGION_INDICES[to.region] ?? 0)) + 1;
 }
 
 export function travel(
