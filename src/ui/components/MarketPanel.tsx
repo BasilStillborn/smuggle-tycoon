@@ -57,8 +57,8 @@ export function MarketPanel({ state, dispatch }: MarketPanelProps) {
               </div>
               <div className="flex justify-between text-[10px] mb-1">
                 <span className="text-gray-500">Dealer: <span className="text-green-400">${price.buyPrice}</span>/{g?.unitOfMeasure ?? ''}</span>
-                <span className="text-gray-500">Retail: <span className="text-green-400">${price.sellPrice}</span>/{g?.unitOfMeasure ?? ''}</span>
-                <span className="text-gray-500">Demand: {price.demand}%</span>
+                <span className={`text-gray-500`}>Retail: <span className="text-green-400">${price.sellPrice}</span>/{g?.unitOfMeasure ?? ''}</span>
+                <span className={`${price.demand >= 70 ? 'text-green-400' : price.demand >= 40 ? 'text-gray-400' : 'text-red-400'}`}>Demand: {price.demand}%</span>
               </div>
               {bestLoc && <div className="text-[9px] text-retro-accent italic leading-tight">Best source: {bestLoc}</div>}
               {isSelected && <div className="text-[9px] text-green-500 mt-0.5">— Selected — ready to book a flight</div>}

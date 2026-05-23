@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useReducer, useRef, useMemo, useState } from 'react';
 import type { GameState, GameAction } from '../../core';
-import { createGameState, gameReducer as coreReducer, getInventoryValue, finalizeRun, loadJournal, getOwnedAssets, KINGPIN_POOL } from '../../core';
+import { createGameState, gameReducer as coreReducer, getInventoryValue, finalizeRun, loadJournal, getOwnedAssets, KINGPIN_POOL, getOverdraftLimit } from '../../core';
 import { fetchLeaderboard } from '../../supabase';
 import { audioManager } from '../../audio';
 import { StatsPanel } from './StatsPanel';
@@ -282,6 +282,16 @@ export function GameScreen({ onNewGame, onLeaderboard }: GameScreenProps) {
               >[GUIDE]</button>
               <div className="text-retro-accent text-sm tracking-widest uppercase glow-text">ANGELO</div>
             </div>
+
+            {/* Cash — prominent center display */}
+            <div className={`flex items-center gap-1 border-2 ${state.player.cash < 0 ? 'border-retro-danger' : 'border-retro-accent/50'} bg-[#0a0a0a] px-3 py-1 ${cashPulse}`}>
+              <span className="text-[9px] text-gray-500 uppercase tracking-wider">Cash</span>
+              <span className={`${cashColor} font-bold text-sm tabular-nums ${state.player.cash >= 0 ? 'glow-text-success' : 'glow-text-danger'}`}>${state.player.cash.toLocaleString()}</span>
+              {state.player.cash < 0 && (
+                <span className="text-[9px] text-retro-danger">/ ${getOverdraftLimit(state.player).toLocaleString()}</span>
+              )}
+            </div>
+
             <div className="flex gap-2 text-xs text-gray-500 items-center">
               <span className="text-gray-400">Turn {state.turn}</span>
               <button
@@ -289,7 +299,6 @@ export function GameScreen({ onNewGame, onLeaderboard }: GameScreenProps) {
                 className="border-2 border-retro-accent/50 bg-retro-accent/10 hover:bg-retro-accent/20 text-retro-accent px-3 py-1 text-xs font-bold transition-colors"
                 title="Open banking"
               >[BANK]</button>
-              <span className={`${cashColor} font-bold text-sm tabular-nums ${cashPulse} px-2`}>${state.player.cash.toLocaleString()}</span>
               <span className="text-gray-600 text-[10px]">|</span>
               <span className={state.player.heat >= 50 ? 'text-orange-400' : ''}>H{state.player.heat}</span>
               <span className={state.player.credibility >= 50 ? 'text-purple-400' : ''}>C{state.player.credibility}</span>
