@@ -23,7 +23,7 @@ export function MarketPanel({ state, dispatch }: MarketPanelProps) {
   const country = getCountry(state.player.currentCountryId)!;
 
   return (
-    <div className="border border-retro-border bg-retro-panel p-3 h-full">
+    <div className="border border-retro-border bg-retro-panel p-3">
       <div className="flex items-center justify-between mb-3 border-b border-retro-border pb-1">
         <div className="text-retro-accent text-xs uppercase tracking-widest glow-text">
           Market Prices — {getLocationLabel(country)}
