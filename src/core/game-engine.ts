@@ -769,16 +769,6 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         }
         buyerNote = `\n\nMinimum for ${cheapestBuyer.name}: ${minQty} ${unit}s (~$${estCost.toLocaleString()})`;
       }
-        const minQty = Math.ceil(cheapestBuyer.minStashValue / baseVal);
-        const estDealerPrice = (mktPrice?.buyPrice ?? baseVal); // conservative — dealer may discount
-        const estCost = minQty * estDealerPrice;
-        if (state.player.cash < estCost) {
-          const we: ChoiceEvent = { id: 'no_buyer_' + Date.now().toString(36), title: 'Not Enough For Minimum', context: `You'd need at least ${minQty} ${unit}${minQty > 1 ? 's' : ''} of ${goodName} to meet ${cheapestBuyer.name}'s $${cheapestBuyer.minStashValue.toLocaleString()} minimum. That's gonna cost you about $${estCost.toLocaleString()}. You've only got $${state.player.cash.toLocaleString()} on hand, you overambitious little cunt. Withdraw more or pick something else.`, choices: [{ id: 'understood', text: 'Understood', ...nullChoice }] };
-          return { ...state, pendingEvent: we, lastEventMessage: 'Not enough to meet minimum.' };
-        }
-        // Enough cash for minimum — note it in the confirm context
-        const buyerNote = `\n\nMinimum for ${cheapestBuyer.name}: ${minQty} ${unit}s (~$${estCost.toLocaleString()})`;
-      }
 
       const confirmEvent: ChoiceEvent = {
         id: 'confirm_flight_' + Date.now().toString(36), title: 'Confirm Flight',
