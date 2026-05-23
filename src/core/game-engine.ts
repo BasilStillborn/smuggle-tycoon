@@ -134,7 +134,15 @@ export function createGameState(): GameState {
 }
 
 function getNetWorth(player: PlayerState, _marketPrices?: any): number {
-  return player.bank + player.cash;
+  const invVal = player.inventory.reduce((sum, i) => {
+    const g = GOODS.find(x => x.id === i.goodId);
+    return sum + (g ? g.baseValuePerUnit * i.quantity : 0);
+  }, 0);
+  const stashVal = player.stash.reduce((sum, i) => {
+    const g = GOODS.find(x => x.id === i.goodId);
+    return sum + (g ? g.baseValuePerUnit * i.quantity : 0);
+  }, 0);
+  return player.bank + player.cash + invVal + stashVal;
 }
 
 function getBuyInfo(state: GameState) {
@@ -341,8 +349,15 @@ function handleTravelSniff(state: GameState, action: GameAction & { type: 'RESPO
   if (busted) {
     const bustVariants = ['They slam you face-first onto the counter.', 'Two officers drag you into a windowless room.', 'The dog handler grins as the sniffer sits by your bag.', 'They march you through the terminal in full view.', 'The customs officer reads from a screen.'];
     const bustContext = bustVariants[Math.floor(Math.random() * bustVariants.length)];
-    const summaryEvent = generateSummaryEvent('BUSTED', `BUSTED. Taken to police cells.\n\n${bustContext}\n\nLost: ALL cash ($${lostAllCash.toLocaleString()} confiscated)`, false);
-    let s = withDirector(withTurn({ ...state, player: updatePeakNetWorth(updatedPlayer, state.currentMarketPrices), pendingEvent: summaryEvent, travelSniff: null, lastEventMessage: '' }, message), updatedPlayer);
+    const bustSummary: ChoiceEvent = {
+      id: 'summary_' + Date.now().toString(36),
+      title: 'BUSTED',
+      context: `BUSTED. Taken to police cells.\n\n${bustContext}\n\nFined: $${lostAllCash.toLocaleString()} confiscated`,
+      choices: [{ id: 'continue', text: 'Continue', ...nullChoice }],
+    };
+    // Return to London after bust
+    updatedPlayer.currentCountryId = ORIGIN_COUNTRY;
+    let s = withDirector(withTurn({ ...state, player: updatePeakNetWorth(updatedPlayer, state.currentMarketPrices), pendingEvent: bustSummary, travelSniff: null, lastEventMessage: '', gamePhase: 'selling' }, message), updatedPlayer);
     if (!s.player.runActive) return { ...s, lastEventMessage: 'Debt exceeds $1,000. Game over.' };
     return s;
   }
@@ -604,7 +619,7 @@ function doTravel(state: GameState, toCountryId: string, travelClass: TravelClas
     return { ...state, lastEventMessage: 'You cannot travel right now.' };
   }
 
-  const isReturnLeg = state.gamePhase === 'buying';
+  const isReturnLeg = state.gamePhase === 'buying' || state.gamePhase === 'flying_out';
   const { player: travelPlayer, result } = travel(state.player, toCountryId, travelClass, isReturnLeg);
   let player = travelPlayer;
 
