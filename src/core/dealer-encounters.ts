@@ -538,8 +538,8 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
       title: 'The Back Alley Meeting',
       context: `Your contact leads Angelo through narrow alleys and hanging laundry. ${pr.He} stops in a dim courtyard. "Cash first," ${pr.he} says, hand out. The shadows seem to move behind ${pr.him}.`,
       choices: [
-        { id: 'pay_up', text: 'Hand over the cash. Get the goods and go.', odds: 0.55 + player.credibility * 0.003, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 1, credibilityDelta: 5, inventoryLost: false, message: `${pr.He} counts the money, nods once. "Good lad, Angelo." and hands over the package. Clean deal. You're out before anyone notices.` }, failEffects: { cashDelta: -500, heatDelta: 15, reputationDelta: 0, credibilityDelta: -10, inventoryLost: true, message: `${pr.He} takes the money and shoves Angelo hard into the wall, you stupid cunt. When you get up, ${pr.he}'s gone. So is the product. So is your cash.` } },
-        { id: 'stand_firm', text: 'Show the cash but demand to see the product first.', odds: 0.35 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 2, credibilityDelta: 8, inventoryLost: false, message: `${pr.He} studies you for a long moment, then laughs. "Paranoid. I like that." ${pr.He} opens the bag. Pure quality. The deal proceeds on your terms.` }, failEffects: { cashDelta: 0, heatDelta: 20, reputationDelta: 0, credibilityDelta: -15, inventoryLost: true, message: `${pr.He} whistles. "Amateur, Angelo, you spastic." Two men step out. "Bad move, Angelo, you cunt." They take your cash, your watch, and leave you bleeding in the alley.` } },
+        { id: 'pay_up', text: 'Hand over the cash. Get the goods and go.', odds: 0.55 + player.credibility * 0.003, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 1, credibilityDelta: 5, inventoryLost: false, message: `${pr.He} counts the money, nods once. "Good lad, Angelo." and hands over the package. Clean deal. You're out before anyone notices.` }, failEffects: { cashDelta: -500, heatDelta: 15, reputationDelta: 0, credibilityDelta: -10, inventoryLost: true, message: `${pr.He} takes the money and shoves Angelo hard into the wall, you stupid little cunt. When you get up, ${pr.he}'s gone. So is the product. So is your cash.` } },
+        { id: 'stand_firm', text: 'Show the cash but demand to see the product first.', odds: 0.35 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 2, credibilityDelta: 8, inventoryLost: false, message: `${pr.He} studies you for a long moment, then laughs. "Paranoid. I like that." ${pr.He} opens the bag. Pure quality. The deal proceeds on your terms.` }, failEffects: { cashDelta: 0, heatDelta: 20, reputationDelta: 0, credibilityDelta: -15, inventoryLost: true, message: `${pr.He} whistles. "Amateur, Angelo, you spastic." Two men step out. "Bad move, Angelo, you little cunt." They take your cash, your watch, and leave you bleeding in the alley.` } },
         { id: 'walk', text: 'This feels wrong. Back away slowly.', odds: 0.90, successEffects: { cashDelta: 0, heatDelta: -3, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: 'You back out slowly, hands visible. Nobody follows. Smart call.' }, failEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: '' } },
       ],
       };
@@ -577,7 +577,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
       context: `A group of men block the alley exit. The one in the middle smiles — gold tooth catching the light. "You're new around here. There's a tax for doing business in this neighbourhood. Pay it, or we take it all."`,
       choices: [
         { id: 'pay_tax', text: `Pay the "tax" — $${tax}. Keep it civil.`, odds: 0.55 + oddsBoost + player.credibility * 0.002, successEffects: { cashDelta: -tax, heatDelta: 5, reputationDelta: 0, credibilityDelta: 2, inventoryLost: false, message: `${p(dealer).He} pockets the cash. "Pleasure doing business, Angelo." His men part like a curtain. You pass unharmed.` }, failEffects: { cashDelta: -tax, heatDelta: 20, reputationDelta: 0, credibilityDelta: -10, inventoryLost: true, message: `${p(dealer).He} takes the money — then nods. His men grab you from behind. They take everything. "Tax went up," ${p(dealer).he} says, walking away.` } },
-        { id: 'stand_ground', text: 'Stand your ground. You don\'t pay tax to street trash.', odds: 0.25 + player.notoriety * 0.004, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 5, credibilityDelta: 15, inventoryLost: false, message: `Something in Angelo's eyes makes him pause. ${p(dealer).He} laughs — a genuine one this time. "Tough bastard. Alright. Pass." The men part. You walk through without paying a cent.` }, failEffects: { cashDelta: 0, heatDelta: 30, reputationDelta: 0, credibilityDelta: -20, inventoryLost: true, message: 'They jump Angelo. "Wrong move, you retard." When you come to, your pockets are empty and your face is in the gutter. Pride wounded. Wallet destroyed.' } },
+        { id: 'stand_ground', text: 'Stand your ground. You don\'t pay tax to street trash.', odds: 0.25 + player.notoriety * 0.004, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 5, credibilityDelta: 15, inventoryLost: false, message: `Something in Angelo's eyes makes him pause. ${p(dealer).He} laughs — a genuine one this time. "Tough bastard. Alright. Pass." The men part. You walk through without paying a cent.` }, failEffects: { cashDelta: 0, heatDelta: 30, reputationDelta: 0, credibilityDelta: -20, inventoryLost: true, message: 'They jump Angelo. "Wrong move, you fucking retard." When you come to, your pockets are empty and your face is in the gutter. Pride wounded. Wallet destroyed.' } },
         { id: 'run_back', text: 'Turn and run. Get the hell out.', odds: 0.60, successEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: 'You bolt. They shout but nobody chases. You\'re safe — but the deal is dead.' }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: false, message: 'You slip on loose gravel. They catch up, shove you around a bit, and warn you not to come back. Nothing lost but pride.' } },
       ],
       };
@@ -713,11 +713,11 @@ const CLEAN_SETUPS: Record<string, string[]> = {
     `The bathroom. It's tiny — barely room for a toilet and a sink — but the window looks onto a flat roof. You climb out with the cash and product, crouch behind a ventilation unit, and wait. The helicopter circles — you feel the rotor wash — but it's focused on the front of the building. When it moves on, you climb down a drainpipe. Everything intact.`,
   ],
   sergio: [
-    `The car wash in Barking is closed — it's always closed. Angelo meets Sergio in the back office: a desk, two chairs, a CCTV monitor showing an empty forecourt. He doesn't sit. "You brought what you said?" He gestures at the %GOOD%. "Show me."`,
+    `The car wash in Barking is closed — it's always closed. Angelo meets Sergio in the back office: a desk, two chairs, a CCTV monitor showing an empty forecourt. He doesn't sit. "You brought what you said?" He gestures at the %GOOD%. "Show me, Blacky."`,
     `Sergio is under a BMW on the hydraulic lift, wiping grease from his hands. "Five minutes," he says without looking at you. "I'm replacing a timing belt. You can wait." You wait. When he's done, he leads you to the office — locks the door behind you. "Now. Business."`,
-    `The car wash has four other men in it — all Albanian, all watching you. Sergio is at the centre, arms crossed, eyeing Angelo. "My cousins," he says. "They don't speak much English. Don't worry — they're only here in case you try something stupid." He smiles. It doesn't reach his eyes. "The product. On the table."`,
-    `Sergio's in a bad mood. You can tell because he's actually speaking — rapid Albanian into his phone, gesturing at the ceiling. He hangs up. "Problems. Always problems." He takes a breath. "But business is business. You have the %GOOD%? Good. Let's not waste more time."`,
-    `You find Sergio in the back, counting stacks of cash with a machine. He doesn't acknowledge you until it finishes. The final tally: a number you don't catch. "That's last week. Now — this week." He points at your bag. "Show me what you brought."`,
+    `The car wash has four other men in it — all Albanian, all watching you. Sergio is at the centre, arms crossed, eyeing Angelo. "My cousins," he says. "They don't speak much English. Don't worry — they're only here in case you try something stupid." He smiles. It doesn't reach his eyes. "The product. On the table, you Coon."`,
+    `Sergio's in a bad mood. You can tell because he's actually speaking — rapid Albanian into his phone, gesturing at the ceiling. He hangs up. "Problems. Always problems." He takes a breath. "But business is business. You have the %GOOD%? Good. Let's not waste more time, Blacky."`,
+    `You find Sergio in the back, counting stacks of cash with a machine. He doesn't acknowledge you until it finishes. The final tally: a number you don't catch. "That's last week. Now — this week." He points at your bag. "Show me what you brought, you little Blacky."`,
   ],
   iqbal: [`You meet Iqbal behind Chicken Cottage. He looks at the %GOOD%. "Safe, bruv. Let's do this."`],
 };
@@ -731,11 +731,11 @@ const CLEAN_CLOSE_SUCCESS: Record<string, string[]> = {
     `The bathroom. It's tiny — barely room for a toilet and a sink — but the window looks onto a flat roof. You climb out with the cash and product, crouch behind a ventilation unit, and wait. The helicopter circles — you feel the rotor wash — but it's focused on the front of the building. When it moves on, you climb down a drainpipe. Everything intact.`,
   ],
   sergio: [
-    `Sergio tests the product Angelo brought — a tiny sample on the back of his hand, rubbed into the skin. He waits. Nods. "Good. You don't lie to me. Some people lie to me." He doesn't elaborate on what happens to those people. He counts the cash twice — once for him, once for you. The deal is done.`,
-    `"Shumë mirë." Very good. Sergio almost smiles. He counts the cash quickly — the machine whirring — and hands it over. "You are reliable. I don't forget reliable people." A pause. "I also don't forget unreliable people." He locks eyes with you. "So stay reliable."`,
+    `Sergio tests the product Angelo brought — a tiny sample on the back of his hand, rubbed into the skin. He waits. Nods. "Good. You don't lie to me. Some people lie to me." He doesn't elaborate on what happens to those people. He counts the cash twice — once for him, once for you. The deal is done, Blacky.`,
+    `"Shumë mirë." Very good. Sergio almost smiles. He counts the cash quickly — the machine whirring — and hands it over. "You are reliable. I don't forget reliable people." A pause. "I also don't forget unreliable people." He locks eyes with you. "So stay reliable, you Coon."`,
     `Sergio's mood has improved. He actually offers you a coffee — thick, black, Albanian-style. "My grandmother's recipe," he says. "She would've liked you. She liked people who did what they said they'd do." He hands over the cash and raises his tiny cup. "To business."`,
-    `The deal is quick. Efficient. Sergio values speed — he doesn't like product sitting on the table longer than necessary. Cash counted, product bagged, handshake exchanged. His grip could crush walnuts. "Good. Now go. I have other business." He's already on his phone before you reach the door.`,
-    `"You see?" Sergio gestures at the CCTV monitor — the empty forecourt, the closed shutters. "Clean. Quiet. Nobody knows we're here. Nobody needs to know." He hands over the cash. "This is how business should be. Between people who understand each other."`,
+    `The deal is quick. Efficient. Sergio values speed — he doesn't like product sitting on the table longer than necessary. Cash counted, product bagged, handshake exchanged. His grip could crush walnuts. "Good. Now go, Blacky. I have other business." He's already on his phone before you reach the door.`,
+    `"You see?" Sergio gestures at the CCTV monitor — the empty forecourt, the closed shutters. "Clean. Quiet. Nobody knows we're here. Nobody needs to know." He hands over the cash. "This is how business should be. Between people who understand each other, you little Coon."`,
   ],
   iqbal: [`Iqbal grins. "Sound, bruv. Easy money." He hands over a crumpled envelope.`],
 };
@@ -746,8 +746,8 @@ const CLEAN_CLOSE_FAIL: Record<string, string[]> = {
     `You go for the crawlspace but Yossi's already up there — with the diamonds. Not enough room. You drop back down just as an officer enters. "Found one." Everything gone. Yossi looks down from the ceiling and shrugs apologetically.`,
   ],
   sergio: [
-    `Sergio's phone rings. He answers in Albanian — rapid, sharp. His expression darkens. He hangs up. "There is a problem. Someone I know." He pushes the product back across the desk. "We do this another day. Go now — before the problem arrives."`,
-    `One of the cousins bursts in, speaking fast, pointing at the CCTV. Sergio's face goes hard. "Police. Unmarked car. Two streets away." He's already standing, shoving cash into a bag. "Out the back. Now. We never met." He disappears through a side door. You do the same.`,
+    `Sergio's phone rings. He answers in Albanian — rapid, sharp. His expression darkens. He hangs up. "There is a problem. Someone I know." He pushes the product back across the desk. "We do this another day. Go now — before the problem arrives, Blacky."`,
+    `One of the cousins bursts in, speaking fast, pointing at the CCTV. Sergio's face goes hard. "Police. Unmarked car. Two streets away." He's already standing, shoving cash into a bag. "Out the back. Now. We never met, you Coon." He disappears through a side door. You do the same.`,
   ],
   iqbal: [`Something goes wrong. Iqbal panics and rides off on his e-bike.`],
 };
@@ -761,11 +761,11 @@ const CLEAN_NEGOTIATE_SUCCESS: Record<string, string[]> = {
     `The bathroom. It's tiny — barely room for a toilet and a sink — but the window looks onto a flat roof. You climb out with the cash and product, crouch behind a ventilation unit, and wait. The helicopter circles — you feel the rotor wash — but it's focused on the front of the building. When it moves on, you climb down a drainpipe. Everything intact.`,
   ],
   sergio: [
-    `Sergio stares at you. The silence stretches. His cousins shift uneasily. Then he laughs — a single, sharp bark. "You've got balls. I respect balls." He peels off the extra cash. "Twenty percent. Because you asked. Nobody ever asks."`,
-    `"In my country, haggling is an insult." He pauses. "But you are not from my country. And you bring good product." He counts out the bonus. "Don't make a habit of it." The cousins relax. You've passed some invisible test.`,
+    `Sergio stares at you. The silence stretches. His cousins shift uneasily. Then he laughs — a single, sharp bark. "You've got balls, Blacky. I respect balls." He peels off the extra cash. "Twenty percent. Because you asked. Nobody ever asks."`,
+    `"In my country, haggling is an insult." He pauses. "But you are not from my country. And you bring good product." He counts out the bonus. "Don't make a habit of it, Coon." The cousins relax. You've passed some invisible test.`,
     `Sergio studies you like you're a puzzle he's trying to solve. "Most Englishmen — they come in here, they're nervous. They agree to whatever I say. You — you push back." He nods slowly. "Fine. Extra ten percent. Because you're not like most Englishmen."`,
-    `"You want more money?" Sergio's voice is flat. Then his face cracks into something almost like a smile. "Fine. I'll give you more. But you owe me. Next time — you bring twice as much. Deal?" He slides the bonus across. "Deal."`,
-    `He counts out the extra cash with deliberate slowness — making you wait, making you wonder if he's about to change his mind. "Twenty percent. Because you are either very brave or very stupid. I haven't decided which." He hands it over. "Let's find out next time."`,
+    `"You want more money?" Sergio's voice is flat. Then his face cracks into something almost like a smile. "Fine. I'll give you more. But you owe me, Blacky. Next time — you bring twice as much. Deal?" He slides the bonus across. "Deal."`,
+    `He counts out the extra cash with deliberate slowness — making you wait, making you wonder if he's about to change his mind. "Twenty percent. Because you are either very brave or very stupid. I haven't decided which, you little Coon." He hands it over. "Let's find out next time."`,
   ],
   iqbal: [`Iqbal looks confused but agrees. "Yeah, alright, whatever bruv."`],
 };
@@ -775,7 +775,7 @@ const CLEAN_NEGOTIATE_FAIL: Record<string, string[]> = {
     `You try to hide in the vault but Avi's already closed it — with himself inside. "Sorry, bubbeleh! Only room for one!" You're caught in the open when the police sweep through. Everything seized. Avi mouths "sorry" through the vault window.`,
     `You go for the crawlspace but Yossi's already up there — with the diamonds. Not enough room. You drop back down just as an officer enters. "Found one." Everything gone. Yossi looks down from the ceiling and shrugs apologetically.`,
   ],
-  sergio: [`Sergio laughs. "Nice try." Deal still on, no bonus.`],
+  sergio: [`Sergio laughs. "Nice try, Blacky." Deal still on, no bonus.`],
   iqbal: [`Iqbal shakes his head. "Nah bruv, price is the price innit." Deal proceeds normally.`],
 };
 
@@ -787,7 +787,7 @@ const MUGGING_SETUPS: Record<string, string[]> = {
     `Avi points at a ceiling panel. "Up. The maintenance crawlspace. My father used it during the war." You scramble up with the cash and product. Below, the office fills with police. You lie flat on the dusty boards, breathing through your mouth, listening to Avi offer them coffee and rugelach. Eventually — silence. You lower yourself down. Everything's still here.`,
     `The bathroom. It's tiny — barely room for a toilet and a sink — but the window looks onto a flat roof. You climb out with the cash and product, crouch behind a ventilation unit, and wait. The helicopter circles — you feel the rotor wash — but it's focused on the front of the building. When it moves on, you climb down a drainpipe. Everything intact.`,
   ],
-  sergio: [`Sergio's men step closer. "I think we take the product and keep the cash."`],
+  sergio: [`Sergio's men step closer. "I think we take the product and keep the cash, you little Blacky."`],
   iqbal: [`Iqbal pulls out his knife. "Actually bruv, I'm keeping the cash AND the product."`],
 };
 
@@ -808,7 +808,7 @@ const MUGGING_STARE_FAIL: Record<string, string[]> = {
     `You try to hide in the vault but Avi's already closed it — with himself inside. "Sorry, bubbeleh! Only room for one!" You're caught in the open when the police sweep through. Everything seized. Avi mouths "sorry" through the vault window.`,
     `You go for the crawlspace but Yossi's already up there — with the diamonds. Not enough room. You drop back down just as an officer enters. "Found one." Everything gone. Yossi looks down from the ceiling and shrugs apologetically.`,
   ],
-  sergio: [`Sergio doesn't back down. His men take everything.`],
+  sergio: [`Sergio doesn't back down. His men take everything, you Coon.`],
   iqbal: [`Iqbal's too scared to follow through. He panics, slashes wildly, and you both lose the deal.`],
 };
 
@@ -820,7 +820,7 @@ const MUGGING_FIGHT_SUCCESS: Record<string, string[]> = {
     `Avi points at a ceiling panel. "Up. The maintenance crawlspace. My father used it during the war." You scramble up with the cash and product. Below, the office fills with police. You lie flat on the dusty boards, breathing through your mouth, listening to Avi offer them coffee and rugelach. Eventually — silence. You lower yourself down. Everything's still here.`,
     `The bathroom. It's tiny — barely room for a toilet and a sink — but the window looks onto a flat roof. You climb out with the cash and product, crouch behind a ventilation unit, and wait. The helicopter circles — you feel the rotor wash — but it's focused on the front of the building. When it moves on, you climb down a drainpipe. Everything intact.`,
   ],
-  sergio: [`You fight back. In the chaos you grab the cash AND product. You're out before they recover.`],
+  sergio: [`You fight back, Blacky. In the chaos you grab the cash AND product. You're out before they recover.`],
   iqbal: [`You grab Iqbal's skinny wrist and twist. He drops the knife immediately. "OW OW OW BRUV CHILL." You take the cash and product.`],
 };
 
@@ -829,7 +829,7 @@ const MUGGING_FIGHT_FAIL: Record<string, string[]> = {
     `You try to hide in the vault but Avi's already closed it — with himself inside. "Sorry, bubbeleh! Only room for one!" You're caught in the open when the police sweep through. Everything seized. Avi mouths "sorry" through the vault window.`,
     `You go for the crawlspace but Yossi's already up there — with the diamonds. Not enough room. You drop back down just as an officer enters. "Found one." Everything gone. Yossi looks down from the ceiling and shrugs apologetically.`,
   ],
-  sergio: [`They're faster. Stronger. You wake up in the alley. Everything gone.`],
+  sergio: [`They're faster. Stronger. You wake up in the alley. Everything gone, you Blacky.`],
   iqbal: [`Iqbal's wild swinging catches you across the face. While you're stunned, he grabs everything and pegs it on his e-bike.`],
 };
 
@@ -839,7 +839,7 @@ const MUGGING_RUN_SUCCESS: Record<string, string[]> = {
     `You scoop the cash and run. Yossi chases you as far as the street but he's not built for sprinting — more of a "menacing walk" physique. By the time he reaches the pavement, you're already past the diamond exchange and heading for the Tube. Product left behind. Cash in pocket.`,
     `"Another time, Avi!" You grab the envelope and bolt down the stairs. Through the diamond wholesaler, past the alarmed display cases, out onto Hatton Garden. The gold dealers are giving you strange looks but nobody stops you. You're on the Central Line before Avi's finished shouting at Yossi.`,
   ],
-  sergio: [`You scoop the cash and bolt. The product stays behind — but you're alive.`],
+  sergio: [`You scoop the cash and bolt, you clever Coon. The product stays behind — but you're alive.`],
   iqbal: [`You grab the envelope and leg it. Iqbal tries to chase you on his e-bike but the battery dies after twenty metres.`],
 };
 
@@ -848,7 +848,7 @@ const MUGGING_RUN_FAIL: Record<string, string[]> = {
     `You try to hide in the vault but Avi's already closed it — with himself inside. "Sorry, bubbeleh! Only room for one!" You're caught in the open when the police sweep through. Everything seized. Avi mouths "sorry" through the vault window.`,
     `You go for the crawlspace but Yossi's already up there — with the diamonds. Not enough room. You drop back down just as an officer enters. "Found one." Everything gone. Yossi looks down from the ceiling and shrugs apologetically.`,
   ],
-  sergio: [`You trip. They catch you. Take everything.`],
+  sergio: [`You trip, Blacky. They catch you. Take everything.`],
   iqbal: [`You slip on a discarded Chicken Cottage wrapper. Iqbal's on you before you can get up. Everything gone.`],
 };
 
@@ -860,7 +860,7 @@ const RAID_SETUPS: Record<string, string[]> = {
     `Avi points at a ceiling panel. "Up. The maintenance crawlspace. My father used it during the war." You scramble up with the cash and product. Below, the office fills with police. You lie flat on the dusty boards, breathing through your mouth, listening to Avi offer them coffee and rugelach. Eventually — silence. You lower yourself down. Everything's still here.`,
     `The bathroom. It's tiny — barely room for a toilet and a sink — but the window looks onto a flat roof. You climb out with the cash and product, crouch behind a ventilation unit, and wait. The helicopter circles — you feel the rotor wash — but it's focused on the front of the building. When it moves on, you climb down a drainpipe. Everything intact.`,
   ],
-  sergio: [`The door splinters inward. "POLICE!" Blue lights flash through the car wash windows.`],
+  sergio: [`The door splinters inward. "POLICE! GET DOWN!" Blue lights flash through the car wash windows. "MOVE, Blacky!"`],
   iqbal: [`A police car screeches to a halt outside Chicken Cottage. "OI! YOU TWO! STAY WHERE YOU ARE!"`],
 };
 
@@ -881,7 +881,7 @@ const RAID_GRAB_FAIL: Record<string, string[]> = {
     `You try to hide in the vault but Avi's already closed it — with himself inside. "Sorry, bubbeleh! Only room for one!" You're caught in the open when the police sweep through. Everything seized. Avi mouths "sorry" through the vault window.`,
     `You go for the crawlspace but Yossi's already up there — with the diamonds. Not enough room. You drop back down just as an officer enters. "Found one." Everything gone. Yossi looks down from the ceiling and shrugs apologetically.`,
   ],
-  sergio: [`They're everywhere. Cuffed before you reach the door. Everything confiscated.`],
+  sergio: [`They're everywhere, Blacky. Cuffed before you reach the door. Everything confiscated.`],
   iqbal: [`You try to run but a copper tackles you into a pile of bin bags. Everything's seized. At least the bin bags were soft.`],
 };
 
@@ -902,7 +902,7 @@ const RAID_SLIP_FAIL: Record<string, string[]> = {
     `You try to hide in the vault but Avi's already closed it — with himself inside. "Sorry, bubbeleh! Only room for one!" You're caught in the open when the police sweep through. Everything seized. Avi mouths "sorry" through the vault window.`,
     `You go for the crawlspace but Yossi's already up there — with the diamonds. Not enough room. You drop back down just as an officer enters. "Found one." Everything gone. Yossi looks down from the ceiling and shrugs apologetically.`,
   ],
-  sergio: [`The back is covered. An officer grabs you. Everything's gone.`],
+  sergio: [`The back is covered. An officer grabs you. "Got one, you little Coon." Everything's gone.`],
   iqbal: [`A police dog finds you behind the bin. It looks very pleased with itself. You are less pleased.`],
 };
 
@@ -923,7 +923,7 @@ const RAID_HIDE_FAIL: Record<string, string[]> = {
     `You try to hide in the vault but Avi's already closed it — with himself inside. "Sorry, bubbeleh! Only room for one!" You're caught in the open when the police sweep through. Everything seized. Avi mouths "sorry" through the vault window.`,
     `You go for the crawlspace but Yossi's already up there — with the diamonds. Not enough room. You drop back down just as an officer enters. "Found one." Everything gone. Yossi looks down from the ceiling and shrugs apologetically.`,
   ],
-  sergio: [`A dog finds you. They drag you out. Everything bagged as evidence.`],
+  sergio: [`A dog finds you, Blacky. They drag you out. Everything bagged as evidence.`],
   iqbal: [`A police officer opens the bin to throw away a coffee cup and finds you. "Well this is awkward."`],
 };
 
