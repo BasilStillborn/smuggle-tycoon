@@ -68,12 +68,8 @@ export function createGameState(): GameState {
   };
 }
 
-function getNetWorth(player: PlayerState, marketPrices: MarketPrice[]): number {
-  const invValue = player.inventory.reduce((sum, item) => {
-    const price = marketPrices.find((p) => p.goodId === item.goodId);
-    return sum + (price ? price.sellPrice * item.quantity : 0);
-  }, 0);
-  return player.bank + player.cash + invValue;
+function getNetWorth(player: PlayerState, _marketPrices?: any): number {
+  return player.bank + player.cash;
 }
 
 function updatePeakNetWorth(player: PlayerState, marketPrices: MarketPrice[]): PlayerState {
@@ -137,7 +133,7 @@ function generateSummaryEvent(title: string, context: string, hasGoods: boolean)
 }
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
-  if (state.pendingEvent && action.type !== 'RESPOND_EVENT') return state;
+  if (state.pendingEvent && action.type !== 'RESPOND_EVENT' && action.type !== 'STASH_GOODS' && action.type !== 'RETRIEVE_GOODS') return state;
 
   switch (action.type) {
 
