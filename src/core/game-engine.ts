@@ -97,8 +97,8 @@ const WALK_AWAYS: Record<string, string> = {
 // ─── Phase guard ─────────────────────────────────────────────
 
 const PHASE_ACTIONS: Record<GamePhase, string[]> = {
-  home: ['START_TRIP', 'SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'TRAVEL', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'STASH_GOODS', 'RETRIEVE_GOODS', 'CONTACT_KINGPIN', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE', 'BANK_TUTORIAL_SHOWN', 'MARKET_REFRESH_TUTORIAL'],
-  selling: ['SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'CONTACT_KINGPIN', 'MEET_KINGPIN', 'SELL', 'STASH_GOODS', 'RETRIEVE_GOODS', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE', 'BANK_TUTORIAL_SHOWN', 'MARKET_REFRESH_TUTORIAL'],
+  home: ['START_TRIP', 'SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'TRAVEL', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'STASH_GOODS', 'RETRIEVE_GOODS', 'CONTACT_KINGPIN', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE', 'BANK_TUTORIAL_SHOWN', 'MARKET_REFRESH_TUTORIAL', 'LIE_LOW_TUTORIAL'],
+  selling: ['SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'CONTACT_KINGPIN', 'MEET_KINGPIN', 'SELL', 'STASH_GOODS', 'RETRIEVE_GOODS', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE', 'BANK_TUTORIAL_SHOWN', 'MARKET_REFRESH_TUTORIAL', 'LIE_LOW_TUTORIAL'],
   buying: ['BUY', 'TRAVEL', 'FLY_HOME', 'CONTACT_KINGPIN', 'RESPOND_EVENT'],
   selecting_dealer: ['SELECT_DEALER', 'FLY_HOME', 'CONTACT_KINGPIN', 'RESPOND_EVENT'],
   arrived: ['AFTER_CUSTOMS', 'CONTACT_KINGPIN', 'RESPOND_EVENT', 'TRAVEL'],
@@ -129,7 +129,7 @@ export function createGameState(): GameState {
     selectedDealer: null, selectedKingpin: null,
     dealerRapport: {}, marketMemory: {}, journalEntries: [],
     securitySniffsPassed: 0, buyDealsCompleted: 0, sellDealsCompleted: 0,
-    firstRunTutorialShown: false, safehouseTier: 1, bankTutorialShown: false, marketRefreshTutorialShown: false,
+    firstRunTutorialShown: false, safehouseTier: 1, bankTutorialShown: false, marketRefreshTutorialShown: false, lieLowTutorialShown: false,
   };
 }
 
@@ -590,6 +590,9 @@ function dispatchEventResponse(state: GameState, action: GameAction & { type: 'R
   if (id.startsWith('refresh_tutorial_')) {
     return { ...state, pendingEvent: null, lastEventMessage: '' };
   }
+  if (id.startsWith('lielow_tutorial_')) {
+    return { ...state, pendingEvent: null, lastEventMessage: '' };
+  }
   if (id.startsWith('high_cap_')) {
     if (action.choiceId === 'go_back') {
       return { ...state, pendingEvent: createDealerIntro(state), pendingBuy: null, lastEventMessage: 'Choose a smaller quantity.' };
@@ -939,6 +942,24 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       let stashList = 'Empty';
       if (state.player.stash.length > 0) { stashList = state.player.stash.map(i => { const g = state.goods.find(x => x.id === i.goodId); return `${g?.name ?? i.goodId}: ${i.quantity}x`; }).join('\n  '); }
       return { ...state, lastEventMessage: `INVENTORY (${used.toFixed(3)}/${state.player.inventoryCapacity}kg)\n  ${invList}\nEstimated value: $${invValue.toLocaleString()}\n\nSTASH (${state.player.stash.reduce((s, i) => { const g = state.goods.find(x => x.id === i.goodId); return s + (g ? g.weight * i.quantity : 0); }, 0).toFixed(1)}/${state.player.stashCapacity}kg)\n  ${stashList}` };
+    }
+
+    case 'LIE_LOW_TUTORIAL': {
+      let updatedPlayer: PlayerState = { ...state.player };
+      const ops = getActiveOperationalBenefits(updatedPlayer);
+      const decay = Math.floor((5 + Math.random() * 10) * (1 + ops.heatDecayBonus));
+      updatedPlayer.heat = Math.max(0, updatedPlayer.heat - decay);
+      updatedPlayer.credibility = Math.max(0, updatedPlayer.credibility - 5);
+      const repDecay = Math.floor(1 + Math.random() * 2);
+      updatedPlayer.reputation = Math.max(0, updatedPlayer.reputation - repDecay);
+      const lieLowEvt: ChoiceEvent = {
+        id: 'lielow_tutorial_' + Date.now().toString(36),
+        title: 'Lying Low',
+        context: `You want to disappear for a bit, Angelo? Lie low — keep your head down, let the heat die off. But here's the thing: the same racist cops who'd happily fit you up for a parking ticket are out there wondering why some black cunt who looks like you has suddenly gone quiet. They notice. People talk. Your street rep takes a hit every time you vanish — a couple of points off your credibility too, because you look like you're running. And around here, looking like you're running is worse than actually running. Every lie-low: -5 credibility, -1 to 3 reputation. Heat drops faster if you've got operational assets. Don't hide too long, chocolate boy — they'll think you've been nicked.`,
+        choices: [{ id: 'understood', text: 'Understood', ...nullChoice }],
+      };
+      let s: GameState = withTurn({ ...state, player: updatedPlayer, pendingEvent: lieLowEvt, lastEventMessage: `You wait and lie low. Heat -$${decay}. Cred -5. Rep -${repDecay}.`, lieLowTutorialShown: true }, `Waited. Heat -${decay}. Cred -5. Rep -${repDecay}.`);
+      return tryTriggerProceduralEvent(withDirector(s, updatedPlayer));
     }
 
     case 'WAIT': {
