@@ -529,7 +529,7 @@ export function resolveEventChoice(
   const outcomeLabel = success ? 'SUCCESS' : 'FAILURE';
   return {
     player: updatedPlayer,
-    message: `[$${outcomeLabel}] ${effects.message}`,
+    message: `[${outcomeLabel}] ${effects.message}`,
     event,
   };
 }

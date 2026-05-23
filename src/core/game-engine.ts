@@ -676,7 +676,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         if (sniffToCountry) updatedPlayer.currentCountryId = state.travelSniff.toCountryId;
         updatedPlayer = handleOverdraft(updatedPlayer);
         const outcomeLabel = success ? 'SUCCESS' : 'FAILURE';
-        const message = `[$${outcomeLabel}] ${effects.message}`;
+        const message = `[${outcomeLabel}] ${effects.message}`;
         if (busted) {
           const bustVariants = ['They slam you face-first onto the counter.', 'Two officers drag you into a windowless room.', 'The dog handler grins as the sniffer sits by your bag.', 'They march you through the terminal in full view.', 'The customs officer reads from a screen.'];
           const bustContext = bustVariants[Math.floor(Math.random() * bustVariants.length)];
@@ -942,7 +942,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
         updatedPlayer = handleOverdraft(updatedPlayer);
         const outcomeLabel = success ? 'SUCCESS' : 'FAILURE';
-        const messageText = effects.message ? `[$${outcomeLabel}] ${effects.message}` : '';
+        const messageText = effects.message ? `[${outcomeLabel}] ${effects.message}` : '';
 
         // After buying completes — show deal summary
         const hasGoods = updatedPlayer.inventory.length > 0;
@@ -1001,7 +1001,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         }
         updatedPlayer = handleOverdraft(updatedPlayer);
         const outcomeLabel = success ? 'SUCCESS' : 'FAILURE';
-        const messageText = effects.message ? `[$${outcomeLabel}] ${effects.message}` : '';
+        const messageText = effects.message ? `[${outcomeLabel}] ${effects.message}` : '';
         const revenue = success && effects.inventoryLost ? state.pendingSell.baseSellPrice * state.pendingSell.quantity : 0;
         const sellLines = success
           ? [messageText, `SOLD $${state.pendingSell.quantity} units FOR $${revenue.toLocaleString()}.`, `Cash: $${updatedPlayer.cash.toLocaleString()}    Heat: ${updatedPlayer.heat}/100`, '', 'The deal is done. You head back to your safehouse.']
