@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useReducer, useRef, useMemo, useState } from 'react';
 import type { GameState, GameAction } from '../../core';
-import { createGameState, gameReducer as coreReducer, getInventoryValue, finalizeRun, loadJournal, getOwnedAssets, KINGPIN_POOL, getOverdraftLimit } from '../../core';
+import { createGameState, gameReducer as coreReducer, getInventoryValue, finalizeRun, loadJournal, getOwnedAssets, KINGPIN_POOL } from '../../core';
 import { fetchLeaderboard } from '../../supabase';
 import { audioManager } from '../../audio';
 import { StatsPanel } from './StatsPanel';
@@ -13,6 +13,7 @@ import { ScoreSubmitModal } from './ScoreSubmitModal';
 import { AliasModal } from './AliasModal';
 import { AssetShop } from './AssetShop';
 import { GameBriefingModal } from './GameBriefingModal';
+import { BankModal } from './BankModal';
 import { InventoryPanel } from './InventoryPanel';
 import { JournalScreen } from './JournalScreen';
 import { VisualState, getCombinedVisuals } from '../visual/VisualState';
@@ -41,10 +42,10 @@ export function GameScreen({ onNewGame, onLeaderboard }: GameScreenProps) {
   const [showJournal, setShowJournal] = useState(false);
   const [showGameMenu, setShowGameMenu] = useState(false);
   const [showEndConfirm, setShowEndConfirm] = useState(false);
+  const [showBank, setShowBank] = useState(false);
   const [showBriefing, setShowBriefing] = useState(false);
   const [showAlias, setShowAlias] = useState(false);
   const [globalRank, setGlobalRank] = useState<number | null>(null);
-  const [bankTransferAmt, setBankTransferAmt] = useState(100);
 
   // Show alias entry on load — always appears, pre-populated if saved
   useEffect(() => {
@@ -214,7 +215,6 @@ export function GameScreen({ onNewGame, onLeaderboard }: GameScreenProps) {
   };
 
   const cashColor = state.player.cash < 0 ? 'text-retro-danger' : 'text-retro-success';
-  const bankColor = state.player.bank <= 0 ? 'text-retro-danger' : 'text-retro-success';
   const cashPulse = state.player.cash < -500 ? 'animate-pulse' : '';
 
   if (gameOver) {
@@ -284,43 +284,13 @@ export function GameScreen({ onNewGame, onLeaderboard }: GameScreenProps) {
             </div>
             <div className="flex gap-2 text-xs text-gray-500 items-center">
               <span className="text-gray-400">Turn {state.turn}</span>
-              {/* Bank transfer widget */}
-              <div className="flex items-center gap-1 border border-retro-border bg-[#0a0a0a] px-2 py-1 w-[170px] shrink-0">
-                <span className={`${bankColor} text-[10px]`}>Bank</span>
-                <span className={`${bankColor} ${state.player.bank < 0 ? 'glow-text-danger' : 'glow-text-success'} w-[60px] text-right tabular-nums`}>${state.player.bank.toLocaleString()}</span>
-                <input
-                  type="number"
-                  min={0}
-                  max={state.player.bank}
-                  step={1}
-                  value={bankTransferAmt}
-                  onChange={(e) => setBankTransferAmt(Math.min(state.player.bank, Math.max(0, parseInt(e.target.value) || 0)))}
-                  className="w-14 text-[10px] text-center bg-transparent border border-retro-border shrink-0"
-                />
-                <button
-                  onClick={() => { audioManager.playSfx('click'); dispatch({ type: 'TRANSFER_FROM_BANK', amount: Math.max(1, Math.min(bankTransferAmt, state.player.bank)) }); }}
-                  disabled={state.player.bank < 1 || bankTransferAmt < 1}
-                  className="text-[10px] w-5 h-5 flex items-center justify-center border border-retro-border hover:bg-[#222] disabled:opacity-30 shrink-0"
-                >W</button>
-              </div>
-              <div className="flex items-center gap-1 border border-retro-border bg-[#0a0a0a] px-2 py-1 w-[170px] shrink-0">
-                <span className={`${cashColor} text-[10px]`}>Cash{state.player.cash < 0 ? ` ${Math.abs(state.player.cash).toLocaleString()}/${getOverdraftLimit(state.player).toLocaleString()}` : ''}</span>
-                <span className={`${cashColor} ${cashPulse} w-[60px] text-right tabular-nums`}>${state.player.cash.toLocaleString()}</span>
-                <input
-                  type="number"
-                  min={0}
-                  max={Math.max(0, state.player.cash)}
-                  step={1}
-                  value={bankTransferAmt}
-                  onChange={(e) => setBankTransferAmt(Math.min(Math.max(0, state.player.cash), Math.max(0, parseInt(e.target.value) || 0)))}
-                  className="w-14 text-[10px] text-center bg-transparent border border-retro-border shrink-0"
-                />
-                <button
-                  onClick={() => { audioManager.playSfx('click'); dispatch({ type: 'TRANSFER_TO_BANK', amount: Math.max(1, Math.min(bankTransferAmt, state.player.cash)) }); }}
-                  disabled={state.player.cash < 1 || bankTransferAmt < 1}
-                  className="text-[10px] w-5 h-5 flex items-center justify-center border border-retro-border hover:bg-[#222] disabled:opacity-30 shrink-0"
-                >D</button>
-              </div>
+              <button
+                onClick={() => { audioManager.playSfx('click'); setShowBank(true); }}
+                className="border-2 border-retro-accent/50 bg-retro-accent/10 hover:bg-retro-accent/20 text-retro-accent px-3 py-1 text-xs font-bold transition-colors"
+                title="Open banking"
+              >[BANK]</button>
+              <span className={`${cashColor} font-bold text-sm tabular-nums ${cashPulse} px-2`}>${state.player.cash.toLocaleString()}</span>
+              <span className="text-gray-600 text-[10px]">|</span>
               <span className={state.player.heat >= 50 ? 'text-orange-400' : ''}>H{state.player.heat}</span>
               <span className={state.player.credibility >= 50 ? 'text-purple-400' : ''}>C{state.player.credibility}</span>
               <button
@@ -501,6 +471,7 @@ export function GameScreen({ onNewGame, onLeaderboard }: GameScreenProps) {
     )}
     {showAlias && <AliasModal onDone={() => setShowAlias(false)} onLoadSave={() => { dispatch({ type: 'LOAD' }); setShowAlias(false); }} />}
     {showBriefing && <GameBriefingModal onClose={() => setShowBriefing(false)} />}
+    {showBank && <BankModal state={state} dispatch={dispatch} onClose={() => setShowBank(false)} />}
     </>
   );
 }
