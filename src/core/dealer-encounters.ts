@@ -43,7 +43,7 @@ const DEALER_POOL: DealerProfile[] = [
   { countryId: 'colombia', dealerId: 'col_2', name: 'Carlos', gender: 'male', description: 'Street level. Cheap but unpredictable.', location: 'a noisy bar in the centre of Bogotá', priceModifier: 0.85, riskBonus: 0.10, rapport: 0 },
   { countryId: 'colombia', dealerId: 'col_3', name: 'Valentina', gender: 'female', description: 'Mid-level operator. Reliable, fair pricing.', location: 'a quiet café in the Zona Rosa', priceModifier: 1.0, riskBonus: 0.0, rapport: 0 },
   // Netherlands (weed, hashish)
-  { countryId: 'netherlands', dealerId: 'net_1', name: 'Pieter', gender: 'male', description: 'Canal house specialist. Laid back, consistent.', location: 'his houseboat on a quiet Amsterdam canal', priceModifier: 0.95, riskBonus: -0.05, rapport: 0 },
+  { countryId: 'netherlands', dealerId: 'net_1', name: 'Pieter', gender: 'male', description: 'Houseboat philosopher. Always high. Grows his own truffles. Once tried to sell a sofa he thought was a dragon.', location: 'his houseboat on a quiet Amsterdam canal', priceModifier: 0.95, riskBonus: -0.05, rapport: 0 },
   { countryId: 'netherlands', dealerId: 'net_2', name: 'Lena', gender: 'female', description: 'Premium supplier. Top quality, top price.', location: 'a minimalist office in the Zuidas business district', priceModifier: 1.2, riskBonus: -0.15, rapport: 0 },
   { countryId: 'netherlands', dealerId: 'net_3', name: 'Bram', gender: 'male', description: 'Coffee shop regular. Cheap, friendly, sometimes unreliable.', location: 'a back room of a busy coffee shop', priceModifier: 0.8, riskBonus: 0.1, rapport: 0 },
   // Spain (MDMA, ecstasy)
