@@ -375,7 +375,8 @@ function handleDealerSelect(state: GameState, action: GameAction & { type: 'RESP
   const options = getDealerOptions(country.id, state.dealerRapport);
   const selected = options.find(o => o.profile.dealerId === action.choiceId);
   if (!selected) return { ...state, lastEventMessage: 'Invalid selection.' };
-  return { ...state, gamePhase: 'buying', selectedDealer: selected.profile, pendingEvent: createDealerIntro(state), lastEventMessage: `Meeting ${selected.profile.name}...` };
+  const withDealer = { ...state, gamePhase: 'buying' as const, selectedDealer: selected.profile };
+  return { ...withDealer, pendingEvent: createDealerIntro(withDealer), lastEventMessage: `Meeting ${selected.profile.name}...` };
 }
 
 function handleDealerIntroOrCustomQty(state: GameState, action: GameAction & { type: 'RESPOND_EVENT'; choiceId: string }): GameState {
@@ -733,7 +734,8 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       const options = getDealerOptions(country.id, state.dealerRapport);
       const selected = options.find(o => o.profile.dealerId === action.dealerId);
       if (!selected) return { ...state, lastEventMessage: 'Invalid dealer selection.' };
-      return { ...state, gamePhase: 'buying', selectedDealer: selected.profile, pendingEvent: createDealerIntro(state), lastEventMessage: `Meeting ${selected.profile.name}...` };
+      const withDealer = { ...state, gamePhase: 'buying' as const, selectedDealer: selected.profile };
+      return { ...withDealer, pendingEvent: createDealerIntro(withDealer), lastEventMessage: `Meeting ${selected.profile.name}...` };
     }
 
     case 'BUY': {
