@@ -799,10 +799,18 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (remCap > 0 && weightNeeded / remCap >= 0.7) {
         const unit = buyGoodDef.unitOfMeasure ?? 'x';
         const capPct = Math.round((weightNeeded / remCap) * 100);
+        const capMsgs = [
+          `You're buying ${action.quantity} ${unit}s of ${buyGoodDef.name}? That's ${capPct}% of your carry capacity, Angelo. Customs will absolutely notice this much product on you, you greedy little cunt. You'll be sweating at the checkpoint. Dogs will sit. Officers will pull you aside. You might get through — but it's a fucking gamble.`,
+          `${capPct}% of your bag space, Angelo. You're not smuggling anymore, you're moving house. Customs are going to take one look at you waddling through the terminal like a pregnant fucking mule and pull you straight into secondary. "Anything to declare, sir?" Yeah mate — that you're a greedy little prick who doesn't know when to stop. It's your funeral.`,
+          `${action.quantity} fucking ${unit}s, Angelo? Really? You look like you're trying to supply the whole of Greater London single-handedly. They've got dogs at Heathrow, mate — German Shepherds, not chihuahuas. They will ABSOLUTELY smell this. You're gonna be the easiest bust they've had all week. The customs officer's already practising his "well done team" speech. Risk it if you want, you overambitious cunt.`,
+          `You're carrying ${action.quantity} ${unit}s of ${buyGoodDef.name}. That's not a personal stash, Angelo — that's a distribution network. ${capPct}% of your capacity. If they catch you with this much weight, they don't give you a fine. They give you a cellmate called Barry who wants to show you his stamp collection. Every. Single. Night. Are you SURE you want to go through customs looking like a Colombian freight ship? Your call, you mad bastard.`,
+          `Angelo, my son. ${action.quantity} ${unit}s. That is ${capPct}% of everything you can carry. You are not a smuggler anymore. You are a logistics company with a pulse. Customs will look at you the way a fat kid looks at the last slice of cake — they're going to GET you. They'll strip search you. They'll find things you didn't even know you had. And then they'll find the ${buyGoodDef.name}. And then you're going to prison. Where they'll call you "Fish." Because that's what happens to pretty boys like you, you daft little prick.`,
+        ];
+        const capMsg = capMsgs[Math.floor(Math.random() * capMsgs.length)];
         const riskEvent: ChoiceEvent = {
           id: 'high_cap_' + Date.now().toString(36),
           title: 'Risk Warning',
-          context: `You're buying ${action.quantity} ${unit}s of ${buyGoodDef.name}? That's ${capPct}% of your carry capacity, Angelo. Customs will absolutely notice this much product on you, you greedy little cunt. You'll be sweating at the checkpoint. Dogs will sit. Officers will pull you aside. You might get through — but it's a fucking gamble.`,
+          context: capMsg,
           choices: [
             { id: 'risk_it', text: 'Risk it — buy anyway', odds: 1.0, successEffects: nullEffects, failEffects: nullEffects },
             { id: 'go_back', text: 'Go back — lower quantity', odds: 1.0, successEffects: nullEffects, failEffects: nullEffects },
