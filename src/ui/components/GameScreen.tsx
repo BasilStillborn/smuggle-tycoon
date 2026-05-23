@@ -372,7 +372,6 @@ export function GameScreen({ onNewGame, onLeaderboard, initialState }: GameScree
 
               <InventoryPanel state={state} dispatch={dispatch} />
 
-              <div className="border-t-2 border-retro-border my-2" />
               <AssetShop state={state} dispatch={dispatch} />
 
               {/* End Trip — always visible, greyed out when unavailable */}

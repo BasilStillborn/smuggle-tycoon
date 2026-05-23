@@ -30,35 +30,31 @@ export function AssetShop({ state, dispatch }: AssetShopProps) {
   const ownedCount = owned.length;
 
   return (
-    <div className="border border-retro-border bg-retro-panel p-3">
+    <div className="border border-retro-border bg-retro-panel p-3 mt-4">
       <button
         onClick={() => { audioManager.playSfx('click'); setExpanded(!expanded); }}
-        className="touch-target w-full flex items-center justify-between text-left"
+        className="touch-target w-full flex items-center justify-between text-left border-b border-retro-border pb-2 mb-2"
       >
         <div className="text-retro-accent text-xs uppercase tracking-widest glow-text">
           Status Assets {ownedCount > 0 && <span className="text-gray-500">({ownedCount})</span>}
         </div>
-        <span className="text-gray-500 text-[10px]">{expanded ? '[]' : '[+]'}</span>
+        <span className="text-gray-500 text-[10px]">{expanded ? '▼' : '▶'}</span>
       </button>
 
-      {!expanded && (
-        <button
-          onClick={() => { audioManager.playSfx('click'); setExpanded(true); }}
-          className="touch-target w-full flex items-center justify-between border border-retro-border bg-[#0a0a0a] hover:bg-[#111] px-3 py-2 mt-1 transition-colors"
-        >
-          <span className="text-gray-400 text-[10px]">Browse Assets</span>
-          <span className="text-retro-accent text-[10px]">→</span>
-        </button>
-      )}
+      <div className="text-[9px] text-gray-500 mb-2">
+        Luxury items: watches, jewelry, clothes, cars, property. Boost credibility and unlock contacts.
+      </div>
+
+      <button
+        onClick={() => { audioManager.playSfx('click'); setExpanded(!expanded); }}
+        className="touch-target w-full border-2 border-retro-accent/30 bg-[#0a0a0a] hover:bg-[#111] hover:border-retro-accent/60 px-3 py-2 transition-colors"
+      >
+        <span className="text-retro-accent text-[10px] font-bold">{expanded ? '▲ Hide Assets' : '▼ Browse Assets'}</span>
+      </button>
 
       {expanded && (
       <>
-      <div className="text-[10px] text-gray-500 mb-3 mt-3">
-        Status assets: Type I (Cosmetic), Type II (Functional), Type III (Operational).
-      </div>
-
-      {/* Category filter */}
-      <div className="flex flex-wrap gap-1 mb-3">
+      <div className="flex flex-wrap gap-1 mb-3 mt-3">
         {CATEGORIES.map((c) => (
           <button
             key={c.key}
