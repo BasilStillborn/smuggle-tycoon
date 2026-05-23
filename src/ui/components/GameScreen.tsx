@@ -221,14 +221,15 @@ export function GameScreen({ onNewGame, onLeaderboard }: GameScreenProps) {
     return (
       <div className="min-h-screen bg-retro-bg text-retro-text p-6 font-mono flex flex-col items-center justify-center">
         <div className="border border-retro-border bg-retro-panel p-8 max-w-md w-full text-center">
-          <div className="text-retro-danger text-lg mb-4 glow-text-danger">RUN ENDED</div>
-          <div className="text-sm text-gray-400 mb-6 space-y-1">
-            <div>Final Bank: <span className="text-retro-success">${state.player.bank.toLocaleString()}</span></div>
-            <div>Final Cash: <span className={cashColor}>${state.player.cash.toLocaleString()}</span></div>
-            <div>Peak Net Worth: <span className="text-retro-accent">${state.player.peakNetWorth.toLocaleString()}</span></div>
-            <div>Total Trips: {state.player.totalTrips}</div>
-            <div>Total Busts: {state.player.totalBusts}</div>
-            <div>Final Reputation: {state.player.reputation}/100</div>
+          <div className="text-retro-danger text-lg mb-4 glow-text-danger">GAME OVER</div>
+          <div className="text-sm text-gray-300 mb-6 leading-relaxed space-y-2">
+            You've run out of fucking money, you twat. All those opportunities and you've screwed it up — and don't go blaming the Jews. They've got nothing to do with this. This is on you, boy. You're a bottle job just like your old man. You're gonna have to get a job delivery driving now, but don't go stealing the food or you'll get fired from that as well. Lazy cunt.
+          </div>
+          <div className="text-[10px] text-gray-600 mb-4 space-x-4">
+            <span>Bank: <span className="text-retro-success">${state.player.bank.toLocaleString()}</span></span>
+            <span>Peak: <span className="text-retro-accent">${state.player.peakNetWorth.toLocaleString()}</span></span>
+            <span>Trips: {state.player.totalTrips}</span>
+            <span>Busts: <span className="text-retro-danger">{state.player.totalBusts}</span></span>
           </div>
           <div className="flex gap-3">
             <button
