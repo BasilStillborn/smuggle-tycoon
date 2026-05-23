@@ -13,7 +13,17 @@ export function StatsPanel({ state }: StatsPanelProps) {
   const heatLevel = getHeatLevel(state.player);
   const used = getUsedCapacity(state.player);
   const remaining = getRemainingCapacity(state.player);
+  const stashWeight = state.player.stash.reduce((sum, item) => {
+    const g = state.goods.find(x => x.id === item.goodId);
+    return sum + (g ? g.weight * item.quantity : 0);
+  }, 0);
+  const totalWeight = used + stashWeight;
   const invValue = getInventoryValue(state.player, state.currentMarketPrices);
+  const stashValue = state.player.stash.reduce((sum, item) => {
+    const g = state.goods.find(x => x.id === item.goodId);
+    return sum + (g ? g.baseValuePerUnit * item.quantity : 0);
+  }, 0);
+  const totalValue = invValue + stashValue;
   const maxQty = state.player.inventory.reduce((m, i) => (i.quantity > m ? i.quantity : m), 0);
   const qRisk = getQuantityRiskMultiplier(Math.max(1, maxQty), 1);
 
@@ -58,32 +68,44 @@ export function StatsPanel({ state }: StatsPanelProps) {
         <HeatMeter heat={state.player.heat} maxHeat={MAX_HEAT} />
       </div>
 
-      {/* Inventory — click to expand */}
+      {/* Holdings — click to expand, shows inventory + stash */}
       <div className="mb-3 p-2 border border-retro-border bg-[#0a0a0a]">
         <button
           onClick={() => setShowInventory(!showInventory)}
           className="touch-target w-full flex justify-between text-[10px] text-gray-500 hover:text-gray-300 transition-colors text-left"
         >
-          <span>INVENTORY {showInventory ? '▼' : '▶'}</span>
-          <span>{used.toFixed(3)}/{state.player.inventoryCapacity}kg</span>
+          <span>HOLDINGS {showInventory ? '▼' : '▶'}</span>
+          <span>{totalWeight.toFixed(3)}/{state.player.inventoryCapacity}kg</span>
         </button>
         {showInventory && (
         <>
         <div className="text-[9px] text-gray-600 mb-1 mt-2 space-y-0.5">
-          <div>Available: {remaining}kg</div>
-          <div>Est. value: ${invValue.toLocaleString()}</div>
+          <div>Available: {remaining.toFixed(3)}kg</div>
+          <div>Est. value: <span className="text-retro-success">${totalValue.toLocaleString()}</span></div>
           <div>Risk: <span className={riskColor}>x{qRisk.toFixed(1)}</span></div>
         </div>
-        {state.player.inventory.length === 0 ? (
-          <div className="text-[9px] text-gray-600 italic">Empty</div>
+        {state.player.inventory.length === 0 && state.player.stash.length === 0 ? (
+          <div className="text-[9px] text-gray-600 italic">You're carrying nothing, Angelo. Nothing at all.</div>
         ) : (
-          <div className="space-y-0.5 max-h-16 overflow-y-auto">
+          <div className="space-y-0.5 max-h-20 overflow-y-auto">
             {state.player.inventory.map((item) => {
               const g = state.goods.find((x) => x.id === item.goodId);
               return (
                 <div key={item.goodId} className="flex justify-between text-[9px]">
-                  <span>{g?.name ?? item.goodId}</span>
-                  <span className="text-gray-400">{item.quantity}{g?.unitOfMeasure ?? ''}</span>
+                  <span className="text-green-400">{g?.name ?? item.goodId}</span>
+                  <span className="text-gray-400">{item.quantity}x</span>
+                </div>
+              );
+            })}
+            {state.player.stash.length > 0 && (
+              <div className="text-[8px] text-gray-600 border-t border-retro-border pt-0.5 mt-0.5">STASHED</div>
+            )}
+            {state.player.stash.map((item) => {
+              const g = state.goods.find((x) => x.id === item.goodId);
+              return (
+                <div key={'stash-' + item.goodId} className="flex justify-between text-[9px]">
+                  <span className="text-gray-500">{g?.name ?? item.goodId}</span>
+                  <span className="text-gray-600">{item.quantity}x</span>
                 </div>
               );
             })}
