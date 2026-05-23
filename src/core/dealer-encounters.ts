@@ -81,9 +81,9 @@ export const KINGPIN_POOL: KingpinProfile[] = [
   },
   {
     id: 'iqbal',
-    name: 'Iqbal',
-    description: 'Skinny little prick on an e-bike. Tracksuit. Thinks he\'s the dog\'s bollocks. Carries a knife he doesn\'t know how to use.',
-    location: 'a bench behind Chicken Cottage on the high street',
+    name: 'Quentin',
+    description: 'Camp as a rainbow. Gay as they come. Snorts gear like it\'s going out of fashion. Thinks he\'s Russell Brand after a three-day bender. Touches everyone.',
+    location: 'his grubby flat above a launderette in Dalston — mirrors everywhere, silk kimono collection, and a chaise longue covered in dry jizz',
     minStashValue: 750,
     sellPriceMod: 0.9,
     encounterWeights: { clean: 90, mugging: 5, raid: 5 },
@@ -719,7 +719,7 @@ const CLEAN_SETUPS: Record<string, string[]> = {
     `Sergio's in a bad mood. You can tell because he's actually speaking — rapid Albanian into his phone, gesturing at the ceiling. He hangs up. "Problems. Always problems." He takes a breath. "But business is business. You have the %GOOD%? Good. Let's not waste more time, Blacky."`,
     `You find Sergio in the back, counting stacks of cash with a machine. He doesn't acknowledge you until it finishes. The final tally: a number you don't catch. "That's last week. Now — this week." He points at your bag. "Show me what you brought, you little Blacky."`,
   ],
-  iqbal: [`You meet Iqbal behind Chicken Cottage. He looks at the %GOOD%. "Safe, bruv. Let's do this."`],
+  iqbal: [`You meet Quentin in his flat above the launderette — mirrors on every wall, a chaise longue in the corner that's seen things, things no furniture should see. He's in a silk kimono, nostrils dusted white. "Oh, you came! I knew you would, chocolate boy." He claps his hands. "%GOOD% on the table. Slowly. I want to watch." He does another line while you comply.`],
 };
 
 const CLEAN_CLOSE_SUCCESS: Record<string, string[]> = {
@@ -737,7 +737,7 @@ const CLEAN_CLOSE_SUCCESS: Record<string, string[]> = {
     `The deal is quick. Efficient. Sergio values speed — he doesn't like product sitting on the table longer than necessary. Cash counted, product bagged, handshake exchanged. His grip could crush walnuts. "Good. Now go, Blacky. I have other business." He's already on his phone before you reach the door.`,
     `"You see?" Sergio gestures at the CCTV monitor — the empty forecourt, the closed shutters. "Clean. Quiet. Nobody knows we're here. Nobody needs to know." He hands over the cash. "This is how business should be. Between people who understand each other, you little Coon."`,
   ],
-  iqbal: [`Iqbal grins. "Sound, bruv. Easy money." He hands over a crumpled envelope.`],
+  iqbal: [`Quentin fans himself with the cash, sniffing between sentences. "Delicious. Absolutely delicious. You're very good at this, chocolate boy — very good." He leans in close, gear-fuelled breath on your neck. "We should do this again. Maybe somewhere with fewer mirrors. Or more mirrors. I haven't decided." He hands over a crumpled envelope. It smells of poppers and poor decisions.`],
 };
 
 const CLEAN_CLOSE_FAIL: Record<string, string[]> = {
@@ -749,7 +749,7 @@ const CLEAN_CLOSE_FAIL: Record<string, string[]> = {
     `Sergio's phone rings. He answers in Albanian — rapid, sharp. His expression darkens. He hangs up. "There is a problem. Someone I know." He pushes the product back across the desk. "We do this another day. Go now — before the problem arrives, Blacky."`,
     `One of the cousins bursts in, speaking fast, pointing at the CCTV. Sergio's face goes hard. "Police. Unmarked car. Two streets away." He's already standing, shoving cash into a bag. "Out the back. Now. We never met, you Coon." He disappears through a side door. You do the same.`,
   ],
-  iqbal: [`Something goes wrong. Iqbal panics and rides off on his e-bike.`],
+  iqbal: [`Quentin's phone buzzes. He glances at it mid-snort and his whole face collapses. "Oh no. Oh no no no. That cunt from the council. They're trying to shut down my Wednesday night burlesque. Philistines! I'm an ARTIST!" He's already grabbing his feather boa. "We'll have to reschedule, chocolate boy. Don't pout — it's unbecoming. Oh, go on then, pout. You look fit when you're upset." He squeezes your arse on the way past. The chaise longue wobbles.`],
 };
 
 const CLEAN_NEGOTIATE_SUCCESS: Record<string, string[]> = {
@@ -767,7 +767,7 @@ const CLEAN_NEGOTIATE_SUCCESS: Record<string, string[]> = {
     `"You want more money?" Sergio's voice is flat. Then his face cracks into something almost like a smile. "Fine. I'll give you more. But you owe me, Blacky. Next time — you bring twice as much. Deal?" He slides the bonus across. "Deal."`,
     `He counts out the extra cash with deliberate slowness — making you wait, making you wonder if he's about to change his mind. "Twenty percent. Because you are either very brave or very stupid. I haven't decided which, you little Coon." He hands it over. "Let's find out next time."`,
   ],
-  iqbal: [`Iqbal looks confused but agrees. "Yeah, alright, whatever bruv."`],
+  iqbal: [`Quentin looks at you like you've just offered him a threesome with Russell Brand. "Oh. OH. You want MORE? Chocolate boy, I like you. I like you a lot." He runs a finger down your chest, leaves a tiny trail of coke residue on your shirt. "That's on me. Tell you what — bonus, because you've got lovely eyes. And because I want to see you without the shirt. Well, I'm SAYING it's because of the eyes." Extra ten percent. The finger stays on your chest longer than medically necessary.`],
 };
 
 const CLEAN_NEGOTIATE_FAIL: Record<string, string[]> = {
@@ -776,7 +776,7 @@ const CLEAN_NEGOTIATE_FAIL: Record<string, string[]> = {
     `You go for the crawlspace but Yossi's already up there — with the diamonds. Not enough room. You drop back down just as an officer enters. "Found one." Everything gone. Yossi looks down from the ceiling and shrugs apologetically.`,
   ],
   sergio: [`Sergio laughs. "Nice try, Blacky." Deal still on, no bonus.`],
-  iqbal: [`Iqbal shakes his head. "Nah bruv, price is the price innit." Deal proceeds normally.`],
+  iqbal: [`Quentin throws his head back and laughs — a theatrical, operatic sound that rattles the mirrors. Powdershake falls from his nostril. "Oh, chocolate boy. NO. You're adorable when you try to negotiate. Like a Jack Russell humping a sofa — lot of effort, fuck all result." He pats your cheek. Twice. "Price is the price. But I'll comp you a ticket to my show. I'm doing Liza. On ketamine." He snorts another line. "It's VERY avant-garde."`],
 };
 
 const MUGGING_SETUPS: Record<string, string[]> = {
@@ -788,7 +788,7 @@ const MUGGING_SETUPS: Record<string, string[]> = {
     `The bathroom. It's tiny — barely room for a toilet and a sink — but the window looks onto a flat roof. You climb out with the cash and product, crouch behind a ventilation unit, and wait. The helicopter circles — you feel the rotor wash — but it's focused on the front of the building. When it moves on, you climb down a drainpipe. Everything intact.`,
   ],
   sergio: [`Sergio's men step closer. "I think we take the product and keep the cash, you little Blacky."`],
-  iqbal: [`Iqbal pulls out his knife. "Actually bruv, I'm keeping the cash AND the product."`],
+  iqbal: [`Quentin's demeanour shifts — the camp drops away, replaced by something sharper. He snaps his fingers and two very large men in very tight vests step out of the bathroom. "Chocolate boy. I've decided I'm keeping the product AND the cash. Consider it a... charitable donation." He winks and does a line off the back of his hand. "Specifically, the art of ME having more than you. Jack Whitehall could probably get away with this. And he's a cunt."`],
 };
 
 const MUGGING_STARE_SUCCESS: Record<string, string[]> = {
@@ -800,7 +800,7 @@ const MUGGING_STARE_SUCCESS: Record<string, string[]> = {
     `The bathroom. It's tiny — barely room for a toilet and a sink — but the window looks onto a flat roof. You climb out with the cash and product, crouch behind a ventilation unit, and wait. The helicopter circles — you feel the rotor wash — but it's focused on the front of the building. When it moves on, you climb down a drainpipe. Everything intact.`,
   ],
   sergio: [`You hold Sergio's gaze. He backs down. "Only joking." The deal completes.`],
-  iqbal: [`Iqbal's hand shakes. "Alright, alright, chill bruv." He puts the knife away.`],
+  iqbal: [`You hold Quentin's gaze. He holds it back. The silence stretches — just the hum of the launderette below. Then his face cracks into a grin. "Ooh, you're GOOD. I like a man who doesn't blink." He waves the goons away. "Fuck off, lads. The grown-ups are doing business." Turns back to you, wipes his nose. "Russell Brand couldn't have done that. And Russell Brand has done a LOT." The deal completes normally.`],
 };
 
 const MUGGING_STARE_FAIL: Record<string, string[]> = {
@@ -809,7 +809,7 @@ const MUGGING_STARE_FAIL: Record<string, string[]> = {
     `You go for the crawlspace but Yossi's already up there — with the diamonds. Not enough room. You drop back down just as an officer enters. "Found one." Everything gone. Yossi looks down from the ceiling and shrugs apologetically.`,
   ],
   sergio: [`Sergio doesn't back down. His men take everything, you Coon.`],
-  iqbal: [`Iqbal's too scared to follow through. He panics, slashes wildly, and you both lose the deal.`],
+  iqbal: [`Quentin doesn't back down. He leans closer — too close. You can smell last night's coke, this morning's poppers, and something floral that might be his nan's perfume. "You're trembling, chocolate boy. I can feel it. And not in the fun way." His goons move in. Everything's gone — cash, product, whatever shred of masculinity you walked in here with. Quentin blows you a kiss. White powder puffs from his lip.`],
 };
 
 const MUGGING_FIGHT_SUCCESS: Record<string, string[]> = {
@@ -821,7 +821,7 @@ const MUGGING_FIGHT_SUCCESS: Record<string, string[]> = {
     `The bathroom. It's tiny — barely room for a toilet and a sink — but the window looks onto a flat roof. You climb out with the cash and product, crouch behind a ventilation unit, and wait. The helicopter circles — you feel the rotor wash — but it's focused on the front of the building. When it moves on, you climb down a drainpipe. Everything intact.`,
   ],
   sergio: [`You fight back, Blacky. In the chaos you grab the cash AND product. You're out before they recover.`],
-  iqbal: [`You grab Iqbal's skinny wrist and twist. He drops the knife immediately. "OW OW OW BRUV CHILL." You take the cash and product.`],
+  iqbal: [`You don't think — you just move. In the chaos of sequins and shattered mirror, you grab the cash AND product. Quentin shrieks — a genuine, trained operatic note that would impress Andrew Lloyd Webber. "MY CASH! MY PRODUCT! MY GOOD MIRROR, THE ONE WITHOUT JIZZ ON IT!" You're out the door before his goons can untangle themselves from a collapsed ballet barre. Worth every second.`],
 };
 
 const MUGGING_FIGHT_FAIL: Record<string, string[]> = {
@@ -830,7 +830,7 @@ const MUGGING_FIGHT_FAIL: Record<string, string[]> = {
     `You go for the crawlspace but Yossi's already up there — with the diamonds. Not enough room. You drop back down just as an officer enters. "Found one." Everything gone. Yossi looks down from the ceiling and shrugs apologetically.`,
   ],
   sergio: [`They're faster. Stronger. You wake up in the alley. Everything gone, you Blacky.`],
-  iqbal: [`Iqbal's wild swinging catches you across the face. While you're stunned, he grabs everything and pegs it on his e-bike.`],
+  iqbal: [`They're faster than you. One of them holds you while Quentin tuts disapprovingly, pausing only to sniff between his fingers. "Oh, chocolate boy. This is just EMBARRASSING now. For both of us. But mostly for you." He takes everything — cash, product, the score you had tucked in your sock. "I'm keeping this as a tip. You were a terrible audience. And a worse fighter."`],
 };
 
 const MUGGING_RUN_SUCCESS: Record<string, string[]> = {
@@ -840,7 +840,7 @@ const MUGGING_RUN_SUCCESS: Record<string, string[]> = {
     `"Another time, Avi!" You grab the envelope and bolt down the stairs. Through the diamond wholesaler, past the alarmed display cases, out onto Hatton Garden. The gold dealers are giving you strange looks but nobody stops you. You're on the Central Line before Avi's finished shouting at Yossi.`,
   ],
   sergio: [`You scoop the cash and bolt, you clever Coon. The product stays behind — but you're alive.`],
-  iqbal: [`You grab the envelope and leg it. Iqbal tries to chase you on his e-bike but the battery dies after twenty metres.`],
+  iqbal: [`You grab the cash and sprint. Behind you, Quentin's voice rings out — pure theatre kid projection, bouncing off every mirror: "COME BACK HERE, CHOCOLATE BOY! WE HAVEN'T FINISHED! I WAS GOING TO SHOW YOU MY CABARET ROUTINE!" You don't stop running until you're three Tube stops away. Product stays behind. Cash in pocket. You can still hear him in your head.`],
 };
 
 const MUGGING_RUN_FAIL: Record<string, string[]> = {
@@ -849,7 +849,7 @@ const MUGGING_RUN_FAIL: Record<string, string[]> = {
     `You go for the crawlspace but Yossi's already up there — with the diamonds. Not enough room. You drop back down just as an officer enters. "Found one." Everything gone. Yossi looks down from the ceiling and shrugs apologetically.`,
   ],
   sergio: [`You trip, Blacky. They catch you. Take everything.`],
-  iqbal: [`You slip on a discarded Chicken Cottage wrapper. Iqbal's on you before you can get up. Everything gone.`],
+  iqbal: [`You trip. On what? A feather boa. A cheap, shedding, pink feather boa, just lying there on the floor of a grubby Dalston flat like a prop from a show nobody asked for. Before you can get up, one of Quentin's goons is on you. Quentin looks down, genuinely disappointed, wiping his nose. "Oh dear. You tripped on the boa. That's symbolic, that is. I don't know of what, but it's definitely symbolic." Everything gone.`],
 };
 
 const RAID_SETUPS: Record<string, string[]> = {
@@ -861,7 +861,7 @@ const RAID_SETUPS: Record<string, string[]> = {
     `The bathroom. It's tiny — barely room for a toilet and a sink — but the window looks onto a flat roof. You climb out with the cash and product, crouch behind a ventilation unit, and wait. The helicopter circles — you feel the rotor wash — but it's focused on the front of the building. When it moves on, you climb down a drainpipe. Everything intact.`,
   ],
   sergio: [`The door splinters inward. "POLICE! GET DOWN!" Blue lights flash through the car wash windows. "MOVE, Blacky!"`],
-  iqbal: [`A police car screeches to a halt outside Chicken Cottage. "OI! YOU TWO! STAY WHERE YOU ARE!"`],
+  iqbal: [`The door to the flat splinters inward. "POLICE! EVERYBODY FREEZE!" Blue lights ricochet off every mirror — the whole room strobes like the world's shittest disco. Quentin drops his kimono in shock — full frontal, coke still on his top lip. "THIS IS AN OUTRAGE! I HAVE A PERFORMANCE ON THURSDAY! DO YOU KNOW HOW LONG 'DON'T CRY FOR ME ARGENTINA' TOOK TO LEARN?!" He's still naked. Nobody's enjoying this.`],
 };
 
 const RAID_GRAB_SUCCESS: Record<string, string[]> = {
@@ -873,7 +873,7 @@ const RAID_GRAB_SUCCESS: Record<string, string[]> = {
     `The bathroom. It's tiny — barely room for a toilet and a sink — but the window looks onto a flat roof. You climb out with the cash and product, crouch behind a ventilation unit, and wait. The helicopter circles — you feel the rotor wash — but it's focused on the front of the building. When it moves on, you climb down a drainpipe. Everything intact.`,
   ],
   sergio: [`You grab everything and dive through a back window. You got out with everything.`],
-  iqbal: [`You grab the cash, the product, and Iqbal's e-bike. "OI THAT'S MY BIKE!" Not anymore, mate.`],
+  iqbal: [`You grab everything — cash, product, and somehow Quentin's backup kimono — and launch yourself through the fire escape. Behind you: shouting, crashing, and Quentin's voice slicing through it all: "THAT KIMONO WAS VINTAGE, YOU ABSOLUTE BASTARD! MY AUNTIE BROUGHT THAT BACK FROM KYOTO! SHE'S DEAD NOW!" You're two streets away before you realise you're running in a silk robe.`],
 };
 
 const RAID_GRAB_FAIL: Record<string, string[]> = {
@@ -882,7 +882,7 @@ const RAID_GRAB_FAIL: Record<string, string[]> = {
     `You go for the crawlspace but Yossi's already up there — with the diamonds. Not enough room. You drop back down just as an officer enters. "Found one." Everything gone. Yossi looks down from the ceiling and shrugs apologetically.`,
   ],
   sergio: [`They're everywhere, Blacky. Cuffed before you reach the door. Everything confiscated.`],
-  iqbal: [`You try to run but a copper tackles you into a pile of bin bags. Everything's seized. At least the bin bags were soft.`],
+  iqbal: [`They're everywhere. Before you can reach the back window, an officer has you cuffed. Quentin is already crying — actual tears, mascara tracking through yesterday's foundation, snot mixing with the coke residue. "This is the WORST raid I've ever been in. And I've been in four. FIVE if you count Butlins 2009. That was a dark weekend, chocolate boy. A DARK weekend." Everything confiscated. You're charged. Quentin asks if you want to share a cell. You do not.`],
 };
 
 const RAID_SLIP_SUCCESS: Record<string, string[]> = {
@@ -894,7 +894,7 @@ const RAID_SLIP_SUCCESS: Record<string, string[]> = {
     `The bathroom. It's tiny — barely room for a toilet and a sink — but the window looks onto a flat roof. You climb out with the cash and product, crouch behind a ventilation unit, and wait. The helicopter circles — you feel the rotor wash — but it's focused on the front of the building. When it moves on, you climb down a drainpipe. Everything intact.`,
   ],
   sergio: [`You leave the cash and slip out a service entrance. The product is safe.`],
-  iqbal: [`You duck behind a wheelie bin as the police run past. They were after Iqbal all along. You slip away with the product.`],
+  iqbal: [`You leave the cash on the chaise longue and slip out through the launderette below. Through the ceiling you can hear Quentin: "OFFICER. OFFICER. Do you enjoy musical theatre? Because I'm getting VERY dramatic energy from you. Have you ever considered amateur dramatics? Because I can see you as Javert. Very authoritarian. Very repressed. You'd be PERFECT." The police are too bewildered to notice you. Product safe. Quentin's still monologuing.`],
 };
 
 const RAID_SLIP_FAIL: Record<string, string[]> = {
@@ -903,7 +903,7 @@ const RAID_SLIP_FAIL: Record<string, string[]> = {
     `You go for the crawlspace but Yossi's already up there — with the diamonds. Not enough room. You drop back down just as an officer enters. "Found one." Everything gone. Yossi looks down from the ceiling and shrugs apologetically.`,
   ],
   sergio: [`The back is covered. An officer grabs you. "Got one, you little Coon." Everything's gone.`],
-  iqbal: [`A police dog finds you behind the bin. It looks very pleased with itself. You are less pleased.`],
+  iqbal: [`The back window is jammed. An officer grabs you by the collar. Quentin spots you from across the room — still naked, still coked up, still somehow projecting. "OH, SO YOU'RE JUST LEAVING ME? TYPICAL. TYPICAL FUCKING MAN. First my ex-husband, now YOU." He turns to the officer. "Arrest him. But be gentle — he's very pretty when he's not betraying me." Everything's gone. Including your will to live.`],
 };
 
 const RAID_HIDE_SUCCESS: Record<string, string[]> = {
@@ -915,7 +915,7 @@ const RAID_HIDE_SUCCESS: Record<string, string[]> = {
     `The bathroom. It's tiny — barely room for a toilet and a sink — but the window looks onto a flat roof. You climb out with the cash and product, crouch behind a ventilation unit, and wait. The helicopter circles — you feel the rotor wash — but it's focused on the front of the building. When it moves on, you climb down a drainpipe. Everything intact.`,
   ],
   sergio: [`You squeeze into a storage closet. When the chaos passes, you slip out with everything.`],
-  iqbal: [`You hide in the Chicken Cottage bins. It smells rank but the police don't check. You emerge with everything intact, smelling faintly of old chicken.`],
+  iqbal: [`You squeeze into the wardrobe — sequins, velvet, something that might have been a corset in 1987. Through a gap in the hangers you watch the police sweep the flat. Quentin is giving a full statement — with interpretive dance, with ACTING, with actual tears. They're too mesmerised to search properly. When the chaos passes, you emerge covered in glitter and questionable stains. But you've got everything. Worth the dry cleaning bill.`],
 };
 
 const RAID_HIDE_FAIL: Record<string, string[]> = {
@@ -924,7 +924,7 @@ const RAID_HIDE_FAIL: Record<string, string[]> = {
     `You go for the crawlspace but Yossi's already up there — with the diamonds. Not enough room. You drop back down just as an officer enters. "Found one." Everything gone. Yossi looks down from the ceiling and shrugs apologetically.`,
   ],
   sergio: [`A dog finds you, Blacky. They drag you out. Everything bagged as evidence.`],
-  iqbal: [`A police officer opens the bin to throw away a coffee cup and finds you. "Well this is awkward."`],
+  iqbal: [`The wardrobe door swings open. Sequins avalanche everywhere — a glitter bomb in a flat that's already seen too much. An officer pulls you out by the collar. Quentin gasps — genuinely, deeply offended. "You were hiding in my CABARET COLLECTION? That's vintage, chocolate boy! Some of those sequins are older than YOU!" He turns to the officer. "I want him charged. For theft AND for crimes against fashion." Everything bagged as evidence. You're done.`],
 };
 
 // Helper to get random item from an array

@@ -220,8 +220,8 @@ export function GameScreen({ onNewGame, onLeaderboard, initialState }: GameScree
 
   const KINGPIN_NICKNAMES: Record<string, string> = {
     avi: '(the Jew)',
-    iqbal: '(the chav)',
-    sergio: '(the Albanian drug dealer)',
+    iqbal: '(the queen)',
+    sergio: '(the Albanian)',
   };
 
   const cashColor = state.player.cash < 0 ? 'text-retro-danger' : 'text-retro-success';

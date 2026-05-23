@@ -57,10 +57,9 @@ export function BriefingScreen({ onContinue }: BriefingScreenProps) {
             <p>
               Back in London, stash your goods, there are three dealers in your area who will buy your product..
               <span className="text-retro-accent">Avi</span>, the Hatton Garden Jew — typically greedy
-              but when he gets to know you, good deals can make you a lot of money. <span className="text-retro-accent">Sergio</span>{' '}the Albanian — you can't trust him, but you may not have a choice. <span className="text-retro-accent">Iqbal</span>,
-              grubby little chav on an e-bike. Hangs out behind Chicken Cottage. He gives it all the big 'un
-              but really he's a skinny useless prick, so don't take any shit from him. These lot wont meet for
-              pocket change deals though — build up your stash before giving them a call.
+              but when he gets to know you, good deals can make you a lot of money. <span className="text-retro-accent">Sergio</span>{' '}the Albanian — you can't trust him, but you may not have a choice.                <span className="text-retro-accent">Quentin</span>,
+               camp as a rainbow in a grubby flat above a Dalston launderette. Thinks he's Russell Brand, sniffs gear constantly, calls everyone "chocolate boy." Don't let him touch you — he WILL try. These lot won't meet for
+               pocket change deals though — build up your stash before giving them a call.
             </p>
             <p className="text-retro-accent text-xs italic pt-2">
               Why not GO BIG on your first few deals? You might just have beginner's luck

@@ -656,7 +656,7 @@ function doTravel(state: GameState, toCountryId: string, travelClass: TravelClas
     if (!state.firstRunTutorialShown && playerWithPeak.inventory.length > 0) {
       const tutorialEvent: ChoiceEvent = {
         id: 'tutorial_' + Date.now().toString(36), title: 'You Did It',
-        context: `You made it back. You might have finally found something you're actually good at.\n\nDealers in London only buy in bulk. Each kingpin has a minimum — Iqbal won't get out of bed for less than $500 worth of product. Avi wants $5,000 and Sergio wants $2,000.\n\nStash your goods after each trip. When you've built up enough, retrieve the product you want to sell and contact a kingpin.\n\nNow — book another flight and build your stash. You're going to need it.`,
+        context: `You made it back. You might have finally found something you're actually good at.\n\nDealers in London only buy in bulk. Each kingpin has a minimum — Quentin won't get out of bed for less than $750 worth of product. Avi wants $5,000 and Sergio wants $2,000.\n\nStash your goods after each trip. When you've built up enough, retrieve the product you want to sell and contact a kingpin.\n\nNow — book another flight and build your stash. You're going to need it.`,
         choices: [{ id: 'got_it', text: 'Got it — back to work', ...nullChoice }],
       };
       s.pendingEvent = tutorialEvent;
