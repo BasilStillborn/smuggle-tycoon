@@ -190,6 +190,7 @@ function createCustomQtyEvent(state: GameState): ChoiceEvent {
   (event as any)._maxQty = maxQty;
   (event as any)._unit = unit;
   (event as any)._goodName = selectedGood?.name ?? 'product';
+  (event as any)._cash = state.player.cash;
   return event;
 }
 

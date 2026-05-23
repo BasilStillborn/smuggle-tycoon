@@ -44,6 +44,7 @@ export function EventModal({ event, dispatch }: EventModalProps) {
   const buyPrice = isCustomQty ? ((event as any)._buyPrice as number) || 100 : 0;
   const maxQty = isCustomQty ? ((event as any)._maxQty as number) || 1 : 1;
   const unit = isCustomQty ? ((event as any)._unit as string) || 'x' : 'x';
+  const playerCash = isCustomQty ? ((event as any)._cash as number) || 0 : 0;
 
   useEffect(() => {
     setRevealed(false);
@@ -179,6 +180,10 @@ export function EventModal({ event, dispatch }: EventModalProps) {
               <div className="flex justify-between">
                 <span className="text-gray-500">Total cost:</span>
                 <span className="text-retro-accent font-bold">${(buyPrice * customQty).toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Remaining cash:</span>
+                <span className={`${playerCash - buyPrice * customQty < 0 ? 'text-retro-danger' : 'text-retro-success'} tabular-nums`}>${(playerCash - buyPrice * customQty).toLocaleString()}</span>
               </div>
               <div className="flex justify-between border-t border-retro-border pt-1 mt-1">
                 <span className="text-gray-500">Max affordable:</span>
