@@ -11,6 +11,7 @@ import { SafehousePanel } from './SafehousePanel';
 import { ScoreSubmitModal } from './ScoreSubmitModal';
 import { AliasModal } from './AliasModal';
 import { AssetShop } from './AssetShop';
+import { GameBriefingModal } from './GameBriefingModal';
 import { InventoryPanel } from './InventoryPanel';
 import { JournalScreen } from './JournalScreen';
 import { VisualState, getCombinedVisuals } from '../visual/VisualState';
@@ -39,6 +40,7 @@ export function GameScreen({ onNewGame, onLeaderboard }: GameScreenProps) {
   const [showJournal, setShowJournal] = useState(false);
   const [showGameMenu, setShowGameMenu] = useState(false);
   const [showEndConfirm, setShowEndConfirm] = useState(false);
+  const [showBriefing, setShowBriefing] = useState(false);
   const [showAlias, setShowAlias] = useState(false);
   const [globalRank, setGlobalRank] = useState<number | null>(null);
   const [bankTransferAmt, setBankTransferAmt] = useState(100);
@@ -263,6 +265,11 @@ export function GameScreen({ onNewGame, onLeaderboard }: GameScreenProps) {
                   #{globalRank > 999 ? (globalRank / 1000).toFixed(1) + 'K' : globalRank}
                 </span>
               )}
+              <button
+                onClick={() => { audioManager.playSfx('click'); setShowBriefing(true); }}
+                className="text-[10px] text-gray-500 hover:text-retro-accent border border-retro-border px-1.5 py-0.5 transition-colors"
+                title="Game brief / controls reference"
+              >[GUIDE]</button>
               <div className="text-retro-accent text-sm tracking-widest uppercase glow-text">ANGELO</div>
             </div>
             <div className="flex gap-2 text-xs text-gray-500 items-center">
@@ -483,6 +490,7 @@ export function GameScreen({ onNewGame, onLeaderboard }: GameScreenProps) {
       </div>
     )}
     {showAlias && <AliasModal onDone={() => setShowAlias(false)} onLoadSave={() => { dispatch({ type: 'LOAD' }); setShowAlias(false); }} />}
+    {showBriefing && <GameBriefingModal onClose={() => setShowBriefing(false)} />}
     </>
   );
 }
