@@ -305,7 +305,7 @@ export function GameScreen({ onNewGame, onLeaderboard }: GameScreenProps) {
             <div className="flex gap-2 text-xs text-gray-500 items-center">
               <span className="text-gray-400">Turn {state.turn}</span>
               <button
-                onClick={() => { audioManager.playSfx('click'); if (state.bankTutorialShown) { setShowBank(true); } else { dispatch({ type: 'BANK_TUTORIAL_SHOWN' }); setShowBank(true); } }}
+                onClick={() => { audioManager.playSfx('click'); setShowBank(true); }}
                 className="border-2 border-retro-accent/50 bg-retro-accent/10 hover:bg-retro-accent/20 text-retro-accent px-3 py-1 text-xs font-bold transition-colors"
                 title="Open banking"
               >[BANK]</button>

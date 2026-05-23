@@ -18,7 +18,6 @@ export function BankModal({ state, dispatch, onClose }: BankModalProps) {
   const maxWithdraw = state.player.bank;
   const maxDeposit = Math.max(0, state.player.cash);
   const overdraftLimit = getOverdraftLimit(state.player);
-  const wouldOverdraft = state.player.cash - Math.min(amount, maxWithdraw) < -overdraftLimit;
 
   const adjust = (delta: number) => {
     setAmount(prev => Math.max(1, Math.min(999999, prev + delta)));
@@ -99,6 +98,13 @@ export function BankModal({ state, dispatch, onClose }: BankModalProps) {
               </div>
             </div>
 
+            {/* Overdraft info — permanent reference */}
+            <div className="border border-retro-border bg-[#0a0a0a] p-2 mb-3 text-center">
+              <div className="text-[9px] text-gray-500">
+                Overdraft limit: <span className="text-retro-danger">-${fmt(overdraftLimit)}</span> — game over if your cash drops below this with no product to sell
+              </div>
+            </div>
+
             {/* Amount selector */}
             <div className="border border-retro-border bg-[#0a0a0a] p-4 mb-4">
               <div className="text-[10px] text-gray-500 uppercase tracking-wider mb-3 text-center">Transfer Amount</div>
@@ -125,13 +131,6 @@ export function BankModal({ state, dispatch, onClose }: BankModalProps) {
                   className="touch-target border border-retro-border bg-[#111] hover:bg-[#222] text-gray-500 px-2 py-1 text-[10px] disabled:opacity-20">All Cash</button>
               </div>
             </div>
-
-            {/* Overdraft warning */}
-            {wouldOverdraft && (
-              <div className="border border-retro-danger bg-[#1a0000] p-2 mb-3 text-center">
-                <div className="text-[10px] text-retro-danger"><span className="font-bold">WARNING:</span> This withdrawal would leave you below your overdraft limit. Game over if you have no product to sell.</div>
-              </div>
-            )}
 
             {/* Action buttons */}
             <div className="flex gap-2 mb-3">
