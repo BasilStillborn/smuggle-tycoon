@@ -40,7 +40,7 @@ export function getDealerOptions(countryId: string, rapport: Record<string, numb
 const DEALER_POOL: DealerProfile[] = [
   // Colombia (cocaine)
   { countryId: 'colombia', dealerId: 'col_1', name: 'Alejandro', gender: 'male', description: 'Cartel connected. High prices, pure product.', location: 'a private finca in the hills outside Medellín', priceModifier: 1.15, riskBonus: -0.05, rapport: 0 },
-  { countryId: 'colombia', dealerId: 'col_2', name: 'Carlos', gender: 'male', description: 'Street level. Cheap but unpredictable.', location: 'a noisy bar in the centre of Bogotá', priceModifier: 0.85, riskBonus: 0.10, rapport: 0 },
+  { countryId: 'colombia', dealerId: 'col_2', name: 'Pablo', gender: 'male', description: 'Started out selling fake lottery tickets, then discovered the white powder. Now the cartel owns half of Bogotá. Will shoot you in the face if you look at him wrong — police won\'t touch him. His henchmen will cut you from arsehole to breakfast time if you short change him by so much as a dime.', location: 'a back room behind a lottery ticket kiosk in the seediest part of Bogotá — a rusted fan, a crucifix, and a framed photo of a young Pablo in a fake gold chain', priceModifier: 1.25, riskBonus: 0.20, rapport: 0 },
   { countryId: 'colombia', dealerId: 'col_3', name: 'Valentina', gender: 'female', description: 'Mid-level operator. Reliable, fair pricing.', location: 'a quiet café in the Zona Rosa', priceModifier: 1.0, riskBonus: 0.0, rapport: 0 },
   // Netherlands (weed, hashish)
   { countryId: 'netherlands', dealerId: 'net_1', name: 'Pieter', gender: 'male', description: 'Houseboat philosopher. Always high. Grows his own truffles. Once tried to sell a sofa he thought was a dragon.', location: 'his houseboat on a quiet Amsterdam canal', priceModifier: 0.95, riskBonus: -0.05, rapport: 0 },
@@ -533,7 +533,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   // === TIER 1: Low credibility (0-25) ===
   {
     tier: 1,
-    dealerIds: ['col_1','col_2','col_3','afg_2','afg_3'],
+    dealerIds: ['col_1','col_3','afg_2','afg_3'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile, dealContext?: DealContext): ChoiceEvent => {
       const pr = p(dealer);
       return {
@@ -568,7 +568,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   },
   {
     tier: 1,
-    dealerIds: ['col_1','col_2','col_3','afg_2','afg_3'],
+    dealerIds: ['col_1','col_3','afg_2','afg_3'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile, dealContext?: DealContext): ChoiceEvent => {
       const pct = 0.05 + Math.random() * 0.05;
       const taxBase = dealContext ? Math.min(dealContext.totalCost, player.cash) : player.cash;
@@ -603,7 +603,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   },
   {
     tier: 2,
-    dealerIds: ['col_1','col_2','col_3','afg_2','afg_3'],
+    dealerIds: ['col_1','col_3','afg_2','afg_3'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Police Sting',
@@ -645,7 +645,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   },
   {
     tier: 3,
-    dealerIds: ['col_1','col_2','col_3','afg_2','afg_3'],
+    dealerIds: ['col_1','col_3','afg_2','afg_3'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Cartel Invitation',
@@ -659,7 +659,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   },
   {
     tier: 3,
-    dealerIds: ['col_1','col_2','col_3','esp_2','esp_3','net_1','net_2'],
+    dealerIds: ['col_1','col_3','esp_2','esp_3','net_1','net_2'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Fed Warning',
@@ -846,7 +846,54 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
       ],
     }),
   },
-  // === TIER 3 — Micky (net_3) ===
+  // === TIER 1 — Pablo (col_2) ===
+  {
+    tier: 1,
+    dealerIds: ['col_2'],
+    generate: (player: PlayerState, country: Country, dealer: DealerProfile, dealContext?: DealContext): ChoiceEvent => {
+      const pct = 0.05 + Math.random() * 0.05;
+      const increase = dealContext ? Math.floor(dealContext.totalCost * pct) : 300;
+      return {
+      id: nextId(),
+      title: 'The Lottery King',
+      context: `Pablo is sitting behind a wooden desk covered in scratch cards and a crucifix. The framed photo shows a younger Pablo — flashy gold chain, cocky grin. He points at it. "Eleven years ago. Selling fake lottery tickets in this very street. Now look at me." He leans back. "Price went up ${Math.round(pct * 100)}%. Best cocaine in Bogotá — you want discount, go buy baking soda from the street cunts. You want pure, you pay Pablo."`,
+      choices: [
+        { id: 'accept_hike', text: `Accept the new price (+$${increase}). Don't argue with a man who has a framed photo of himself.`, odds: 0.70 + player.credibility * 0.002, successEffects: { cashDelta: -increase, heatDelta: 5, reputationDelta: 0, credibilityDelta: 3, inventoryLost: false, message: `Pablo counts the cash twice — once with his eyes, once with his fingers. "Smart man, Angelo. Men who pay and don't complain — they live long." He pushes the product across the desk. "The next one will be cheaper. If you survive that long, you cheeky little cunt."` }, failEffects: { cashDelta: -increase, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: true, message: `You hand over the cash. Pablo smiles — and nods at the door. Two men enter. "Search him," Pablo says, not looking up. "I don't trust Englishmen who pay too easily." They find your backup cash, your phone, your dignity. They leave with everything. Pablo tosses a scratch card at you. "You lose sometimes. That's the game, you nonce."` } },
+        { id: 'negotiate', text: 'Push back. You came a long way. So did the cash.', odds: 0.30 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 10, inventoryLost: false, message: `Pablo stares. The fan spins. The crucifix glints. Then — a laugh. Low. Genuine. "I like you, Angelo. You've got balls." He scratches a lottery ticket. Wins nothing. "Original price. Because I respect men who push back. But next time — I'll double it if you try again, you British cunt."` }, failEffects: { cashDelta: 0, heatDelta: 15, reputationDelta: 0, credibilityDelta: -10, inventoryLost: false, message: `Pablo's smile vanishes. "You think this is a negotiation? This is Colombia, you stupid fucker. Not your little island with your little rules." He stands. "Get out. The price just tripled for next time — if there is a next time."` } },
+        { id: 'walk', text: 'Stand up. The framed photo is giving you the creeps.', odds: 0.95, successEffects: { cashDelta: 0, heatDelta: -3, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: `Pablo doesn't look up. "Your choice, Angelo." He scratches another ticket. "You know how many men have walked out of this room? Hundreds. You know how many came back? All of them." He loses again. "Everyone comes back to Pablo eventually, cunt." The fan keeps spinning.` }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: '' } },
+      ],
+      };
+    },
+  },
+  // === TIER 2 — Pablo (col_2) ===
+  {
+    tier: 2,
+    dealerIds: ['col_2'],
+    generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
+      id: nextId(),
+      title: 'The Arsehole Tax',
+      context: `Pablo's office has a new addition — a machete on the wall. "Present from my cousin. He used it to collect debts." Pablo picks it up, weighs it in his hand. "He's in prison now. But the machete — the machete stays." He drops it on the desk. "I have a problem, Angelo. Too much product, not enough buyers. I need you to take double the usual. For sixty percent more profit. But there's a catch — if you short change me, even by a dollar..." He picks up the machete. "My men will find you. They will hold you down. And they will cut you from arsehole to breakfast time. And I will watch. And I will enjoy it. You understand, you Coon?"`,
+      choices: [
+        { id: 'take_double', text: 'Take double. The machete is just for decoration. Probably.', odds: 0.45 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 5, credibilityDelta: 12, inventoryLost: false, message: `Pablo smiles. The machete stays on the desk. "Good choice, Angelo. You're going far — if you don't get greedy." The product is pure. The profit is massive. Pablo wraps the machete back on the wall. "For next time. When you're ready for triple." He doesn't look at you when he says it. You're not sure if that's threatening or not. It's definitely threatening.` }, failEffects: { cashDelta: -2000, heatDelta: 25, reputationDelta: 0, credibilityDelta: -10, inventoryLost: true, message: `The deal is a setup. Two Colombian police in plainclothes burst in — but they're not police. They're Pablo's men wearing fake badges. "Testing you, Angelo." Pablo shakes his head. "You failed. My men say you flinched. I don't do business with men who flinch." The product goes back in the safe. Your cash goes in his pocket. "Come back when you've grown a pair. The machete will be waiting, you spastic."` } },
+        { id: 'stick_standard', text: 'Stick to the original amount. The machete is very convincing.', odds: 0.75 + player.credibility * 0.002, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 2, credibilityDelta: 5, inventoryLost: false, message: `Pablo shrugs. "Smart. The machete works better than words, eh?" He puts it back on the wall. "Standard deal. Same price. You survive. Maybe next time you try the machete deal." He scratches a lottery ticket. Wins five dollars. Smiles. "Today is a good day, Angelo. Don't ruin it."` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -3, inventoryLost: true, message: `Pablo hands you the product — but it's light. Half the usual. "Supply chain problems," he says, smiling. You can't argue. The machete is watching. "You'll survive on half, Angelo. It'll make you appreciate the full amount next time." Lesson learned: Pablo is not a man you argue with when there's a machete in the room.` } },
+      ],
+    }),
+  },
+  // === TIER 3 — Pablo (col_2) ===
+  {
+    tier: 3,
+    dealerIds: ['col_2'],
+    generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
+      id: nextId(),
+      title: 'The Medellín Pipeline',
+      context: `Pablo's office has been renovated. The rusted fan is gone. Air conditioning hums. The framed photo of young Pablo is replaced with a much larger one — Pablo shaking hands with a man you recognise from international news. "The organisation has been watching you, Angelo." He leans forward. "You're not a street dealer anymore. You're a businessman. And I have an offer: direct supply from Medellín. No middlemen. No markup. Fifty thousand dollars worth of pure cocaine, moved through the port, distributed in London. Your cut: twenty percent. But this isn't a game, Angelo. If you steal from the organisation, they will find you. They will find your family. They will make you watch. And then they will cut you from arsehole to breakfast time — but slowly. Very slowly."`,
+      choices: [
+        { id: 'get_in', text: 'Accept. This is what you came to Colombia for.', odds: 0.30 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 8, credibilityDelta: 12, inventoryLost: false, message: `Pablo opens a drawer. Inside: a burner phone, a shipping manifest, and a wad of cash. "Welcome to the organisation, Angelo. You work for me now. But in six months — you work for yourself. That's how it works." The pipeline is smooth. The product is pristine. Your earnings triple overnight. Pablo sends you a new photo — this time of both of you, arms around each other. "Remember where you started, you lucky little cunt."` }, failEffects: { cashDelta: -3000, heatDelta: 30, reputationDelta: 0, credibilityDelta: -12, inventoryLost: true, message: `The shipment is intercepted at the port. Pablo's phone rings — he listens, face darkening. "The police. Someone talked." He looks at you. "Was it you, Angelo?" His hand drifts to the drawer — the one with the gun. "It doesn't matter. The organisation needs a lesson. And you — you're going to be the lesson." His men grab you. They take the cash. The product. Your dignity. You wake up in an alley. Alive. That's the warning. Next time, you won't wake up, you Coon.` } },
+        { id: 'negotiate', text: 'Twenty percent is good. But thirty percent is better.', odds: 0.50 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 8, inventoryLost: false, message: `Pablo stares at you. The air conditioning hums. Then — a slow, wide smile. "You know who the last man was who negotiated with the organisation?" He waits. "He's dead, Angelo. BUT..." He holds up a finger. "He's dead because he stole. Not because he asked. I like your stones. Twenty-five percent. Final. Don't push again, you cheeky British cunt."` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: false, message: `Pablo's smile disappears. The temperature in the room drops. "You're lucky I like you, Angelo. The organisation does not negotiate." He closes the drawer. "The offer is withdrawn. You had your chance. Next time — maybe. If you survive that long." The deal evaporates. The pipeline closes. You walk out with nothing but the memory of the air conditioning.` } },
+        { id: 'refuse', text: 'Refuse. The organisation sounds like a lot of paperwork.', odds: 0.80, successEffects: { cashDelta: 0, heatDelta: -5, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: `Pablo shrugs. "Your choice. The organisation doesn't chase. We wait." He scratches a lottery ticket. Loses. "Everyone comes back eventually, Angelo." He doesn't look at you. "When you're ready — you know where to find me. The machete will be waiting. But so will the deal." You walk out. The air conditioning follows you into the Bogotá heat.` }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: '' } },
+      ],
+    }),
+  },
   {
     tier: 3,
     dealerIds: ['net_3'],

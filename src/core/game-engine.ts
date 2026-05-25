@@ -36,7 +36,7 @@ const BEST_LOCATION_ID: Record<string, string> = {
 
 const FAREWELLS: Record<string, string> = {
   col_1: `$name nods once. "Pleasure doing business with you, Angelo. Now fuck off."`,
-  col_2: `$name glances at the door. "Right. Get out before you draw attention to us, you spastic."`,
+  col_2: `$name counts the cash without looking up. "A pleasure doing business with you, Angelo." He pockets it. "Now fuck off before my men get bored and decide to practise on you." He gestures at the door. "And don't short change me next time. You know what happens to men who short change Pablo."`,
   col_3: `$name opens $pron laptop without looking up. "The door is behind you, Angelo. Don't come back without more cash."`,
   net_1: `$name gives you a distant wave, eyes at half-mast. "Safe man. Yeah cool dude. Tell no one, you know what I mean? I need to lie down — those fucking truffles are kicking in, man. I'm seeing sounds. The canal's singing to me."`,
   net_2: `$name blows you a kiss across the velvet curtains. "Transaction complete, dorogoy. Delete everything. You were never here." She taps $pron phone. "But you will be again. They always come back. Especially the ones who look at me like you do, you filthy little nonce." The Stoli bottle catches the red light from the window.`,
@@ -51,7 +51,7 @@ const FAREWELLS: Record<string, string> = {
 
 const HAGGLE_WIN: Record<string, string> = {
   col_1: `$name inclines his head — the barest fraction. "Angelo. You have nerve. I respect nerve." He pauses. "Fifteen percent off. Because I like you. That is the only reason, you clever little cunt."`,
-  col_2: `$name wipes sweat from his forehead. "Okay, okay, Angelo. You drive a hard bargain. Fifteen off. But if anyone asks, I charged you full price, you spastic." He looks around nervously.`,
+  col_2: `$name studies you — then a slow, dangerous smile. "I started selling fake lottery tickets in this very street, Angelo. Nobody ever haggled with me then. But you... you've got some of what I had." He spits on the floor. "Fifteen percent off. But you short change me by so much as a dime..." He draws a finger across his throat. "My men will cut you from arsehole to breakfast time. You understand, you cheeky little cunt?"`,
   col_3: `$name studies you for a long moment. Then she closes her laptop. "Twenty percent off, Angelo. And don't expect it again, you cheeky little cunt."`,
   net_1: `$name laughs and passes you the joint. "Safe, safe, safe. You're all right, Angelo mate. Here — friendship discount. Take it. I grew these mushrooms myself by the way — organic. No chemicals. They'll make you see God. Or at least a very friendly giraffe."`,
   net_2: `$name tilts her head — studying you like a painting she's considering buying. Then that slow Russian smile. "Fifteen percent off, Angelo. Because you're cute when you're nervous." She leans across the desk. "But if you tell anyone $name gave you a discount, I will ruin you. Not kill you — ruin you. Much worse. And then I'll fuck your best friend just to prove a point."`,
@@ -66,7 +66,7 @@ const HAGGLE_WIN: Record<string, string> = {
 
 const HAGGLE_LOSE: Record<string, string> = {
   col_1: `$name doesn't blink. "I don't negotiate, Angelo. The price is the price. Now it's twenty percent higher for wasting my time. Take it or leave it, you little cunt."`,
-  col_2: `$name's face twists. "Angelo. You come to MY city, in MY bar, and try to mug ME off? The price just went up twenty percent, you cheeky little cunt. Take it or piss off."`,
+  col_2: `$name's face goes dark. "Do you know who I AM, Angelo?" He slams the table. "I own this street! I own this city! The police don't touch me! And you come into MY back room and try to HAGGLE?" He stands. "Twenty percent more. Pay it or I let my men practise on your face, you fucking nonce."`,
   col_3: `$name closes her laptop with a sharp click. "I don't have time for amateurs who think they can haggle with me, Angelo. The price is now twenty percent higher. Accept it, you fucking retard, or get out."`,
   net_1: `$name's whole face drops. "Bro. Bro. That's not cool, man. Not cool at all. I'm on a bad trip now, Angelo — you've ruined the vibe. Price just went up. I need to recentre my chakras. Got any Valium? Fucking spastic."`,
   net_2: `$name's smile doesn't change — but the room gets colder. How does she do that? "No, dorogoy. We agreed on a price. Now you want to change it?" She lights a cigarette. Slow. Deliberate. "Twenty percent more. Because you've wasted my time." She checks $pron phone. "My girls make more than this on a Tuesday lunchtime. Decide, you spastic."`,
@@ -81,7 +81,7 @@ const HAGGLE_LOSE: Record<string, string> = {
 
 const WALK_AWAYS: Record<string, string> = {
   col_1: `You stand. Angelo. $name doesn't move. "Pity." One word. Cold as the finca stones.`,
-  col_2: `$name looks almost relieved. "Yeah. Yeah, okay, Angelo. Maybe next time. When I'm less... you know." He gestures vaguely at everything.`,
+  col_2: `$name doesn't look up. "Your choice, Angelo. Come back when you're ready. Or don't." He scratches a lottery ticket. Loses. Tosses it. "Bogotá has many dealers. But only one Pablo. And only one arsehole waiting to be cut."`,
   col_3: `$name doesn't look up from her laptop. "Door's behind you, Angelo." She's already typing.`,
   net_1: `$name gives you a distant wave, eyes at half-mast. "No worries, Angelo. The canal's nice this time of year. Watch out for the ducks — I fed them hash brownies last week and they're still not right. Safe travels, man. Come back when you're less... whatever you are right now."`,
   net_2: `$name doesn't look up from her phone. "The door is behind you, dorogoy. If you change your mind — and you will — ask for the Russian." She glances up. One eyebrow. "They'll know who you mean."`,
