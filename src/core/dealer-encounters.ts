@@ -47,7 +47,7 @@ const DEALER_POOL: DealerProfile[] = [
   { countryId: 'netherlands', dealerId: 'net_2', name: 'Lena', gender: 'female', description: 'Premium supplier. Top quality, top price.', location: 'a minimalist office in the Zuidas business district', priceModifier: 1.2, riskBonus: -0.15, rapport: 0 },
   { countryId: 'netherlands', dealerId: 'net_3', name: 'Bram', gender: 'male', description: 'Coffee shop regular. Cheap, friendly, sometimes unreliable.', location: 'a back room of a busy coffee shop', priceModifier: 0.8, riskBonus: 0.1, rapport: 0 },
   // Spain (MDMA, ecstasy)
-  { countryId: 'spain', dealerId: 'esp_1', name: 'Rafael', gender: 'male', description: 'Ibiza connection. Premium party supplies.', location: 'a private villa in the hills above Barcelona', priceModifier: 1.15, riskBonus: 0.0, rapport: 0 },
+  { countryId: 'spain', dealerId: 'esp_1', name: 'Howard', gender: 'male', description: 'Ex coal miner from the Valleys. Emigrated after Thatcher shut the pits. Now sells weed out of an old VW camper van. Fair prices. Won\'t double cross you. Police know his face but can never prove anything.', location: 'his rusted VW camper van parked up on a quiet hillside overlooking Barcelona — beanbags, fairy lights, and a Welsh dragon sticker on the back window', priceModifier: 1.15, riskBonus: 0.0, rapport: 0 },
   { countryId: 'spain', dealerId: 'esp_2', name: 'Isabel', gender: 'female', description: 'North Africa pipeline. Good hashish, fair prices.', location: 'a tapas bar in the Albaicín, Granada', priceModifier: 0.9, riskBonus: 0.02, rapport: 0 },
   { countryId: 'spain', dealerId: 'esp_3', name: 'Jorge', gender: 'male', description: 'New to the game. Eager, negotiable, unpredictable.', location: 'a beachfront promenade in Marbella', priceModifier: 0.75, riskBonus: 0.18, rapport: 0 },
   // Afghanistan (opioids, heroin)
@@ -550,7 +550,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   },
   {
     tier: 1,
-    dealerIds: ['net_1','net_2','net_3','esp_1','esp_2','esp_3'],
+    dealerIds: ['net_1','net_2','net_3','esp_2','esp_3'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile, dealContext?: DealContext): ChoiceEvent => {
       const pct = 0.05 + Math.random() * 0.05;
       const increase = dealContext ? Math.floor(dealContext.totalCost * pct) : 300;
@@ -589,7 +589,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   // === TIER 2: Medium credibility (25-60) ===
   {
     tier: 2,
-    dealerIds: ['net_1','net_2','net_3','esp_1','esp_2','esp_3'],
+    dealerIds: ['net_1','net_2','net_3','esp_2','esp_3'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Private Bar Meeting',
@@ -631,7 +631,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   // === TIER 3: High credibility (60-100) ===
   {
     tier: 3,
-    dealerIds: ['net_1','net_2','net_3','esp_1','esp_2','esp_3'],
+    dealerIds: ['net_1','net_2','net_3','esp_2','esp_3'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Five-Star Proposition',
@@ -659,7 +659,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   },
   {
     tier: 3,
-    dealerIds: ['col_1','col_2','col_3','esp_1','esp_2','esp_3','net_1','net_2','net_3'],
+    dealerIds: ['col_1','col_2','col_3','esp_2','esp_3','net_1','net_2','net_3'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Fed Warning',
@@ -668,6 +668,55 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
         { id: 'pay_off', text: 'Pay $5,000. Make the file disappear.', odds: 0.50 + player.credibility * 0.003, successEffects: { cashDelta: -5000, heatDelta: -20, reputationDelta: 3, credibilityDelta: 10, inventoryLost: false, message: 'The voice pauses, then: "Done." You check your sources through back channels. Your file is clean. Five grand bought you a ghost.' }, failEffects: { cashDelta: -5000, heatDelta: 20, reputationDelta: 0, credibilityDelta: -10, inventoryLost: false, message: 'It was a scam. A very good one. The voice disappears along with your five grand. Your file is still very much active. And now you\'re five thousand lighter.' } },
         { id: 'lie_low', text: 'Lie low. Cancel everything. Wait it out.', odds: 0.75, successEffects: { cashDelta: 0, heatDelta: -15, reputationDelta: 0, credibilityDelta: 5, inventoryLost: false, message: 'You cancel the run and vanish for a week. When you resurface — radio silence. The heat has passed. Smart move.' }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -3, inventoryLost: false, message: 'The warning was real. They raid your usual spots. You\'re not there — but your name is now pinned to the board. Heat\'s on.' } },
         { id: 'ignore', text: 'Ignore it. Deals don\'t wait for paranoia.', odds: 0.35, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 5, credibilityDelta: 10, inventoryLost: false, message: 'Angelo proceeds. The warning was a bluff, those nonces — a competitor trying to spook you off the market. The deal completes without a hitch.' }, failEffects: { cashDelta: 0, heatDelta: 30, reputationDelta: 0, credibilityDelta: -15, inventoryLost: true, message: 'They weren\'t bluffing. The deal is raided mid-exchange. You lose everything — and now you definitely have a file.' } },
+      ],
+    }),
+  },
+  // === TIER 1 — Howard (esp_1) ===
+  {
+    tier: 1,
+    dealerIds: ['esp_1'],
+    generate: (player: PlayerState, country: Country, dealer: DealerProfile, dealContext?: DealContext): ChoiceEvent => {
+      const pct = 0.05 + Math.random() * 0.05;
+      const increase = dealContext ? Math.floor(dealContext.totalCost * pct) : 300;
+      return {
+      id: nextId(),
+      title: 'The Hillside Meeting',
+      context: `Howard waves you into the back of his VW camper van — beanbags, fairy lights, the faint smell of weed and old Welsh coal dust. "Sit down, butt. They've been watching the road all week — plainclothes. Supply's tight. Price went up ${Math.round(pct * 100)}%. Nothing I can do about it, mun."`,
+      choices: [
+        { id: 'accept_hike', text: `Accept the new price (+$${increase}). Howard's never lied to you.`, odds: 0.70 + player.credibility * 0.002, successEffects: { cashDelta: -increase, heatDelta: 5, reputationDelta: 0, credibilityDelta: 3, inventoryLost: false, message: `Howard nods slowly, passing you the joint. "Tidy. You're learning, Angelo. A good deal is one where both men walk away a bit unhappy — old pit saying." The deal is done. You overpaid — but Howard's product quality makes up for it.` }, failEffects: { cashDelta: -increase, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: true, message: `Howard takes your money, then his face drops. He's looking past you through the van window. "Police. Plainclothes — the same two from Tuesday. Lie flat, mun." They don't find you. But they find the product. By the time they've finished searching the van, the package is in an evidence bag and you're hiding behind a beanbag.` } },
+        { id: 'negotiate', text: 'Push back. Howard\'s a reasonable man.', odds: 0.30 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 10, inventoryLost: false, message: `Howard studies you for a long moment — then that slow Welsh grin breaks through. "Fair play, Angelo. You've got a bit of the union rep in you. Nobody's haggled with me since 1987. Alright — original price. Respect." The smoke curls around the fairy lights.` }, failEffects: { cashDelta: 0, heatDelta: 15, reputationDelta: 0, credibilityDelta: -10, inventoryLost: false, message: `Howard shakes his head, not offended — just sad. "Can't do it, butt. Price is the price. I learned that from my father — and he learned it from the coal face." He fires up the van. "Come back when you're serious." The fairy lights flicker as he drives off.` } },
+        { id: 'walk', text: 'Stand up and leave. The vibe feels off.', odds: 0.95, successEffects: { cashDelta: 0, heatDelta: -3, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: `Howard doesn't try to stop you. "Good instinct, mun. Trust your gut — especially when the police have been staring at my van for three days." As you walk down the hillside, you see exactly that: an unmarked car parked two hundred metres down the lane. Howard was right.` }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: '' } },
+      ],
+      };
+    },
+  },
+  // === TIER 2 — Howard (esp_1) ===
+  {
+    tier: 2,
+    dealerIds: ['esp_1'],
+    generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
+      id: nextId(),
+      title: 'The Union Meeting',
+      context: `Howard's parked the camper van somewhere different tonight — further up the mountain, away from the usual spot. He gestures at a crate in the back. "Had a call from an old mate from the Valleys. He's growing something special in the Rhondda — shipped it down. Wants me to move double the usual. What do you think, butt? Feeling brave or playing safe?"`,
+      choices: [
+        { id: 'take_double', text: 'Take double volume. Big risk, big reward.', odds: 0.45 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 5, credibilityDelta: 12, inventoryLost: false, message: `Howard beams — proper Valleys smile. "There it is! That's the spirit, mun. My old crew chief would've loved you — never backed down from a challenge. Right, let's load you up." The batch is exceptional — Welsh-grown, Spanish-sun-dried. You flip it fast. Double profit. Double reputation. Howard gives you a thumbs up from the driver's seat.` }, failEffects: { cashDelta: -2000, heatDelta: 25, reputationDelta: 0, credibilityDelta: -10, inventoryLost: true, message: `You should've known better. Howard's mate from the Rhondda? The parcel's been flagged at the port. Spanish customs have been tracking it for weeks. Howard takes the heat — "I'll be fine, butt. I've been arrested more times than I've had hot dinners" — but you lose the cash and the product. You hear him shouting in Welsh as you leave. It doesn't sound complimentary.` } },
+        { id: 'stick_standard', text: 'Stick to the original amount. Howard respects caution.', odds: 0.75 + player.credibility * 0.002, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 2, credibilityDelta: 5, inventoryLost: false, message: `Howard nods approvingly. "Wise. Very wise. You know what they say — 'the best miners are the ones who come home.'" He taps the side of his nose. The standard deal goes through without a hitch. He rolls you a joint for the road. "Come back when you're ready for the big stuff."` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -3, inventoryLost: true, message: `Howard shrugs — he's not angry, just disappointed. "The sample was lovely, Angelo. Lovely. But the main batch? Fucking Cardiff ditch weed, mun. I'm embarrassed — and I don't embarrass easy." He gives you a discount on your next visit as an apology. It doesn't make up for the loss.` } },
+        { id: 'decline', text: 'Decline. Too many red flags tonight.', odds: 0.90, successEffects: { cashDelta: 0, heatDelta: -5, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: `Howard doesn't argue. "Fair enough, butt." He scribbles something on a napkin. "That's my other number. The one the police don't know about. Call me when you're feeling bolder." Two days later you hear the Spanish Guardia raided the Rhondda shipment at the docks. Howard was one step ahead. The napkin is still in your pocket.` }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: '' } },
+      ],
+    }),
+  },
+  // === TIER 3 — Howard (esp_1) ===
+  {
+    tier: 3,
+    dealerIds: ['esp_1'],
+    generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
+      id: nextId(),
+      title: 'The Old Smuggler\'s Wisdom',
+      context: `Howard's van is tidier than usual — the beanbags are brushed, the fairy lights are working, the Welsh dragon sticker has been replaced with a fresh one. He's sitting cross-legged on the floor, leaning forward like he's about to share state secrets. "Angelo, butt — I've been doing this a long time. Longer than most. And I've got a contact who wants fifty grand's worth moved through the port. Quietly. The way they did it in the seventies — false papers, false names, the works. Twenty percent is yours. But this isn't like our usual deals. This is the kind of job that makes you a legend or puts you in prison for seven years. You in?"`,
+      choices: [
+        { id: 'take_job', text: 'Accept. This is the big leagues.', odds: 0.40 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 8, credibilityDelta: 15, inventoryLost: false, message: `Howard's eyes light up. "Tidy, mun! Absolutely tidy!" He reaches under the driver's seat and pulls out a folder — names, dates, shipping manifests, the works. Old-school. Proper smuggler craftsmanship. "This is how they did it before computers, Angelo. Paper trails that lead nowhere." The operation runs like clockwork. You earn every dollar — and Howard earns your undying respect.` }, failEffects: { cashDelta: -3000, heatDelta: 30, reputationDelta: 0, credibilityDelta: -10, inventoryLost: true, message: `The paperwork was too old. The shipping manifest had a typo — a Welsh word that Spanish customs didn't recognise but still flagged. It was enough. Howard tries to warn you — "Scatter, butt! SCATTER!" — but it's too late. Two men grab you. The cash and product stay behind. Howard drives off in the van, shouting apologies in Welsh out the window.` } },
+        { id: 'negotiate_cut', text: 'Counter at thirty percent. Your risk, your price.', odds: 0.50 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 8, inventoryLost: false, message: `Howard pauses. Then that slow Welsh grin. "Thirty percent. You know what, Angelo? That's fair. That's actually fair." He puts his calloused miner's hand out. "Deal. The union taught me one thing: never agree to the first offer. Good lad." The most profitable run you've ever done. Howard gives you a Welsh coal keyring as a souvenir. "Solid as the pits, mun."` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: false, message: `Howard chuckles, but it's sad. "I can't, butt. Twenty percent is what it is. The old ways were built on trust, not negotiation. The offer's off the table." He doesn't seem angry. Just... old. You leave with nothing. The camper van's engine rattles as you walk away.` } },
+        { id: 'decline_offer', text: 'Politely decline. You don\'t know this contact well enough.', odds: 0.90, successEffects: { cashDelta: 0, heatDelta: -5, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: `Howard doesn't push. "Wise, mun. Very wise." He pulls out a small Welsh flag from the glove compartment. "Take this. For luck. And when you ARE sure — you know where to find me." The van rumbles off into the Spanish night. The flag is now in your wallet.` }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: '' } },
       ],
     }),
   },
