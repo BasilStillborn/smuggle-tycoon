@@ -18,6 +18,7 @@ export interface PlayerState {
   peakNetWorth: number;
   ownedAssets: string[];
   unlockedContacts: string[];
+  visitedCountries: string[];
 }
 
 export type AssetClass = 'cosmetic' | 'functional' | 'operational';

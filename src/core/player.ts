@@ -25,6 +25,7 @@ export function createPlayer(): PlayerState {
     peakNetWorth: 0,
     ownedAssets: [],
     unlockedContacts: [],
+    visitedCountries: [],
   };
 }
 

@@ -379,14 +379,21 @@ function handleArrival(state: GameState): GameState {
   const country = getCountry(state.player.currentCountryId);
   if (!country) return state;
   const options = getDealerOptions(country.id, state.dealerRapport);
+  const firstVisit = !state.player.visitedCountries.includes(country.id);
   const dealerLines = options.map((opt) => `[${opt.profile.name}] — ${opt.profile.description}\n  ${opt.profile.location}`);
   const dealerEvent: ChoiceEvent = {
     id: 'dealer_select_' + Date.now().toString(36),
     title: `Choose Your Contact — ${country.city}`,
-    context: `You need a supplier. Who do you want to meet?\n\n${dealerLines.join('\n\n')}`,
+    context: firstVisit ? `You need a supplier. Who do you want to meet?\n\n${dealerLines.join('\n\n')}` : 'Pick your contact.',
     choices: options.map(opt => ({ id: opt.profile.dealerId, text: `${opt.profile.name} — ${opt.profile.location}`, ...nullChoice })),
   };
-  return { ...state, gamePhase: 'selecting_dealer', pendingEvent: dealerEvent, lastEventMessage: 'Choose your supplier.' };
+  return {
+    ...state,
+    gamePhase: 'selecting_dealer',
+    pendingEvent: dealerEvent,
+    lastEventMessage: 'Choose your supplier.',
+    player: firstVisit ? { ...state.player, visitedCountries: [...state.player.visitedCountries, country.id] } : state.player,
+  };
 }
 
 function handleDealerSelect(state: GameState, action: GameAction & { type: 'RESPOND_EVENT'; choiceId: string }): GameState {
@@ -790,16 +797,25 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       const country = getCountry(state.player.currentCountryId)!;
       const options = getDealerOptions(country.id, state.dealerRapport);
       if (options.length === 0) return { ...state, lastEventMessage: 'No dealers available in this country. Try another destination.' };
+      const firstVisit = !state.player.visitedCountries.includes(country.id);
       const dealerLines = options.map((opt, i) => {
         const rapportLabel = opt.rapportLevel > 0 ? ` (familiar: ${opt.rapportLevel})` : '';
-        return `[${i + 1}] ${opt.profile.name} — ${opt.profile.description}${rapportLabel}\n  ${opt.profile.location}`;
+        return firstVisit
+          ? `[${i + 1}] ${opt.profile.name} — ${opt.profile.description}${rapportLabel}\n  ${opt.profile.location}`
+          : `[${i + 1}] ${opt.profile.name} — ${opt.profile.location}`;
       });
       const dealerEvent: ChoiceEvent = {
         id: 'dealer_select_' + Date.now().toString(36), title: `Choose Your Contact — ${country.city}`,
-        context: `You need a supplier. Who do you want to meet?\n\n${dealerLines.join('\n\n')}`,
+        context: firstVisit ? `You need a supplier. Who do you want to meet?\n\n${dealerLines.join('\n\n')}` : 'Pick your contact.',
         choices: options.map(opt => ({ id: opt.profile.dealerId, text: `${opt.profile.name} — ${opt.profile.location}`, ...nullChoice })),
       };
-      return { ...state, gamePhase: 'selecting_dealer', pendingEvent: dealerEvent, lastEventMessage: 'Choose your supplier.' };
+      return {
+        ...state,
+        gamePhase: 'selecting_dealer',
+        pendingEvent: dealerEvent,
+        lastEventMessage: 'Choose your supplier.',
+        player: firstVisit ? { ...state.player, visitedCountries: [...state.player.visitedCountries, country.id] } : state.player,
+      };
     }
 
     case 'SELECT_DEALER': {
