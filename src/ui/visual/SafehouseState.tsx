@@ -9,10 +9,10 @@ export interface SafehouseLevel {
 
 export const SAFEHOUSE_LEVELS: SafehouseLevel[] = [
   { level: 1, name: 'Parents Basement', description: "your mum does your washing, your stepdad gives you a hard time.. but its free", advanceAt: 0, demoteAt: 0, color: 'text-gray-600' },
-  { level: 2, name: '1 bed Flat', description: "A modest flat. Front door key included. Landlord asks no questions.", advanceAt: 20000, demoteAt: 5000, color: 'text-gray-400' },
-  { level: 3, name: 'Secure Apartment', description: 'Reinforced door. Bulletproof glass. Discreet.', advanceAt: 50000, demoteAt: 25000, color: 'text-blue-400' },
-  { level: 4, name: 'Private Villa', description: 'Gated compound. Underground garage. Staff quarters.', advanceAt: 150000, demoteAt: 75000, color: 'text-purple-400' },
-  { level: 5, name: 'Corporate Safehouse', description: 'Full security detail. Off-grid systems. Your own airstrip.', advanceAt: 500000, demoteAt: 250000, color: 'text-retro-accent' },
+  { level: 2, name: '1 bed Flat', description: "A modest flat. Front door key included. Landlord asks no questions.", advanceAt: 25000, demoteAt: 6000, color: 'text-gray-400' },
+  { level: 3, name: 'Secure Apartment', description: 'Reinforced door. Bulletproof glass. Discreet.', advanceAt: 60000, demoteAt: 30000, color: 'text-blue-400' },
+  { level: 4, name: 'Private Villa', description: 'Gated compound. Underground garage. Staff quarters.', advanceAt: 200000, demoteAt: 100000, color: 'text-purple-400' },
+  { level: 5, name: 'Corporate Safehouse', description: 'Full security detail. Off-grid systems. Your own airstrip.', advanceAt: 600000, demoteAt: 300000, color: 'text-retro-accent' },
 ];
 
 export const SAFEHOUSE_ADVANCE_TITLES: Record<number, string> = {
