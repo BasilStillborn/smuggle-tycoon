@@ -136,24 +136,48 @@ export function AssetShop({ state, dispatch }: AssetShopProps) {
                   </div>
                 )}
               </div>
-              <button
-                onClick={() => {
-                  if (!isOwned && canBuy) {
-                    audioManager.playSfx('click');
-                    dispatch({ type: 'BUY_ASSET', assetId: asset.id });
-                  }
-                }}
-                disabled={isOwned || !canBuy}
-                className={`touch-target shrink-0 border px-3 py-2 text-[10px] transition-colors ${
-                  isOwned
-                    ? 'border-retro-border text-gray-600 cursor-default'
-                    : canBuy
-                      ? 'border-retro-accent text-retro-accent bg-[#111] hover:bg-[#222]'
-                      : 'border-retro-border text-gray-600 cursor-not-allowed'
-                }`}
-              >
-                {isOwned ? 'Owned' : `Buy $${asset.price}`}
-              </button>
+              <div className="flex gap-1.5 shrink-0">
+                {isOwned ? (
+                  <>
+                    <span className="border border-retro-border text-gray-600 px-3 py-2 text-[10px] self-center">OWNED</span>
+                    {(() => {
+                      const payoutRatio = asset.class === 'cosmetic' ? 0.5 : asset.class === 'functional' ? 0.4 : 0.3;
+                      const sellPrice = Math.floor(asset.price * payoutRatio);
+                      return (
+                        <button
+                          onClick={() => {
+                            audioManager.playSfx('click');
+                            if (!state.assetSellTutorialShown) {
+                              dispatch({ type: 'ASSET_SELL_TUTORIAL' });
+                            }
+                            dispatch({ type: 'SELL_ASSET', assetId: asset.id });
+                          }}
+                          className="touch-target border border-retro-danger/50 bg-[#1a0000] hover:bg-[#2a0000] text-retro-danger px-2 py-2 text-[10px] transition-colors"
+                        >
+                          Sell ${sellPrice}
+                        </button>
+                      );
+                    })()}
+                  </>
+                ) : (
+                  <button
+                    onClick={() => {
+                      if (canBuy) {
+                        audioManager.playSfx('click');
+                        dispatch({ type: 'BUY_ASSET', assetId: asset.id });
+                      }
+                    }}
+                    disabled={!canBuy}
+                    className={`touch-target border px-3 py-2 text-[10px] transition-colors ${
+                      canBuy
+                        ? 'border-retro-accent text-retro-accent bg-[#111] hover:bg-[#222]'
+                        : 'border-retro-border text-gray-600 cursor-not-allowed'
+                    }`}
+                  >
+                    Buy ${asset.price}
+                  </button>
+                )}
+              </div>
             </div>
           );
         })}

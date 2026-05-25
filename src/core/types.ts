@@ -219,6 +219,7 @@ export interface GameState {
   marketRefreshTutorialShown: boolean;
   lieLowTutorialShown: boolean;
   holdingsTutorialShown: boolean;
+  assetSellTutorialShown: boolean;
 }
 
 export interface JournalRunEntry {
@@ -249,6 +250,7 @@ export type GameAction =
   | { type: 'MARKET_REFRESH_TUTORIAL' }
   | { type: 'LIE_LOW_TUTORIAL' }
   | { type: 'HOLDINGS_TUTORIAL' }
+  | { type: 'ASSET_SELL_TUTORIAL' }
   | { type: 'RESPOND_EVENT'; choiceId: string }
   | { type: 'BUY_ASSET'; assetId: string }
   | { type: 'SELL_ASSET'; assetId: string }

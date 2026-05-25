@@ -97,8 +97,8 @@ const WALK_AWAYS: Record<string, string> = {
 // ─── Phase guard ─────────────────────────────────────────────
 
 const PHASE_ACTIONS: Record<GamePhase, string[]> = {
-  home: ['START_TRIP', 'SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'TRAVEL', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'STASH_GOODS', 'RETRIEVE_GOODS', 'CONTACT_KINGPIN', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE', 'BANK_TUTORIAL_SHOWN', 'MARKET_REFRESH_TUTORIAL', 'LIE_LOW_TUTORIAL', 'HOLDINGS_TUTORIAL'],
-  selling: ['SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'CONTACT_KINGPIN', 'MEET_KINGPIN', 'SELL', 'STASH_GOODS', 'RETRIEVE_GOODS', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE', 'BANK_TUTORIAL_SHOWN', 'MARKET_REFRESH_TUTORIAL', 'LIE_LOW_TUTORIAL', 'HOLDINGS_TUTORIAL'],
+  home: ['START_TRIP', 'SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'TRAVEL', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'STASH_GOODS', 'RETRIEVE_GOODS', 'CONTACT_KINGPIN', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE', 'BANK_TUTORIAL_SHOWN', 'MARKET_REFRESH_TUTORIAL', 'LIE_LOW_TUTORIAL', 'HOLDINGS_TUTORIAL', 'ASSET_SELL_TUTORIAL'],
+  selling: ['SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'CONTACT_KINGPIN', 'MEET_KINGPIN', 'SELL', 'STASH_GOODS', 'RETRIEVE_GOODS', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE', 'BANK_TUTORIAL_SHOWN', 'MARKET_REFRESH_TUTORIAL', 'LIE_LOW_TUTORIAL', 'HOLDINGS_TUTORIAL', 'ASSET_SELL_TUTORIAL'],
   buying: ['BUY', 'TRAVEL', 'FLY_HOME', 'CONTACT_KINGPIN', 'RESPOND_EVENT'],
   selecting_dealer: ['SELECT_DEALER', 'FLY_HOME', 'CONTACT_KINGPIN', 'RESPOND_EVENT'],
   arrived: ['AFTER_CUSTOMS', 'CONTACT_KINGPIN', 'RESPOND_EVENT', 'TRAVEL'],
@@ -129,7 +129,7 @@ export function createGameState(): GameState {
     selectedDealer: null, selectedKingpin: null,
     dealerRapport: {}, marketMemory: {}, journalEntries: [],
     securitySniffsPassed: 0, buyDealsCompleted: 0, sellDealsCompleted: 0,
-    firstRunTutorialShown: false, safehouseTier: 1, bankTutorialShown: false, marketRefreshTutorialShown: false, lieLowTutorialShown: false, holdingsTutorialShown: false,
+    firstRunTutorialShown: false, safehouseTier: 1, bankTutorialShown: false, marketRefreshTutorialShown: false, lieLowTutorialShown: false, holdingsTutorialShown: false, assetSellTutorialShown: false,
   };
 }
 
@@ -597,6 +597,9 @@ function dispatchEventResponse(state: GameState, action: GameAction & { type: 'R
   if (id.startsWith('holdings_tutorial_')) {
     return { ...state, pendingEvent: null, lastEventMessage: '' };
   }
+  if (id.startsWith('assetsell_tutorial_')) {
+    return { ...state, pendingEvent: null, lastEventMessage: '' };
+  }
   if (id.startsWith('high_cap_')) {
     if (action.choiceId === 'go_back') {
       return { ...state, pendingEvent: createDealerIntro(state), pendingBuy: null, lastEventMessage: 'Choose a smaller quantity.' };
@@ -1002,6 +1005,16 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         choices: [{ id: 'understood', text: 'Understood', ...nullChoice }],
       };
       return { ...state, pendingEvent: holdEvt, holdingsTutorialShown: true, lastEventMessage: '' };
+    }
+
+    case 'ASSET_SELL_TUTORIAL': {
+      const sellEvt: ChoiceEvent = {
+        id: 'assetsell_tutorial_' + Date.now().toString(36),
+        title: 'Selling Assets',
+        context: `Things must've gone really wrong if you're having to sell some of this stuff to make ends meet, Angelo. You buy a gold watch for five grand — you'll get two and a half back if you're lucky. It's worse for cars and boats. Forty percent of what you paid. Operational gear? Thirty percent. You're basically paying a stupidity tax. So before you sell, ask yourself: is this REALLY the moment you became the kind of cunt who pawns his own watch to buy product?\n\nSell at your own risk, you desperate little prick.`,
+        choices: [{ id: 'understood', text: 'Understood', ...nullChoice }],
+      };
+      return { ...state, pendingEvent: sellEvt, assetSellTutorialShown: true, lastEventMessage: '' };
     }
 
     case 'WAIT': {
