@@ -48,9 +48,9 @@ export function GameScreen({ onNewGame, onLeaderboard, initialState }: GameScree
   const [showAlias, setShowAlias] = useState(false);
   const [globalRank, setGlobalRank] = useState<number | null>(null);
 
-  // Show alias entry on load — always appears, pre-populated if saved
+  // Show alias entry on load — only if no alias saved (first-time flow handles it in BriefingScreen)
   useEffect(() => {
-    setShowAlias(true);
+    if (!localStorage.getItem('angelo_alias')) setShowAlias(true);
   }, []);
 
   // Fetch player rank daily

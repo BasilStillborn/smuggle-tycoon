@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { audioManager } from '../../audio';
 
 interface BriefingScreenProps {
@@ -6,10 +6,23 @@ interface BriefingScreenProps {
 }
 
 export function BriefingScreen({ onContinue }: BriefingScreenProps) {
+  const [alias, setAlias] = useState(() => localStorage.getItem('angelo_alias') ?? '');
+  const [error, setError] = useState('');
+
   const handleContinue = useCallback(() => {
+    const trimmed = alias.trim();
+    if (trimmed.length === 0) {
+      setError('You need a name, you daft prick.');
+      return;
+    }
+    if (trimmed.length > 15) {
+      setError('Keep it under 15 characters, it\'s not your full CV.');
+      return;
+    }
     audioManager.playSfx('click');
+    localStorage.setItem('angelo_alias', trimmed);
     onContinue();
-  }, [onContinue]);
+  }, [alias, onContinue]);
 
   return (
     <div
@@ -31,46 +44,73 @@ export function BriefingScreen({ onContinue }: BriefingScreenProps) {
 
       <div className="relative z-10 max-w-lg w-full text-center animate-fadeIn max-h-[85vh] overflow-y-auto">
         <div className="border border-retro-border bg-retro-panel p-6">
-          <div className="text-retro-accent text-xs uppercase tracking-widest mb-6 glow-text">
+          <div className="text-retro-accent text-xs uppercase tracking-widest mb-4 glow-text">
             Your First Move
           </div>
 
-          <div className="text-xs text-gray-300 leading-relaxed space-y-3 font-mono">
+          <div className="text-xs text-gray-300 leading-relaxed space-y-3 font-mono text-left">
             <p>
-              You have <span className="text-retro-success">$5,000</span> to your name.
-            </p>
-            <p>
-              Withdraw cash using the <span className="text-retro-accent">ATM</span> at the top.
-              Every dollar you carry is product money — and bribe money at customs.
+              There's a leaderboard out there, Angelo. Real names. Real money. The only question is: can you be the baddest motherfucker in the world and hold the highest score? Because that's the whole point of this — everything else is just noise.
             </p>
             <p>
-              Pick a product in the <span className="text-retro-accent">Market</span> — notice when demand
-              is higher for each product — then book a flight. Colombia is best for cocaine. Afghanistan
-              for heroin. The Netherlands for weed. etc
+              You start with <span className="text-retro-success">£5,000</span> in the bank. You're nobody.
             </p>
-            <p>
-              At your destination, meet a dealer. Negotiate. Buy your product. Then fly home — through
-              customs. Bribe the officer, bluff your way past, or walk straight through. Try not to act
-              suspicious. Luxury personal items will give you extra street cred — a gold watch or a
-              tailored suit will get you noticed.
-            </p>
-            <p>
-              Back in London, stash your goods, there are three dealers in your area who will buy your product..
-              <span className="text-retro-accent">Avi</span>, the Hatton Garden Jew — typically greedy
-              but when he gets to know you, good deals can make you a lot of money. <span className="text-retro-accent">Sergio</span>{' '}the Albanian — you can't trust him, but you may not have a choice.                <span className="text-retro-accent">Quentin</span>,
-               gay as a rainbow in a grubby flat above a Dalston launderette. Thinks he's Russell Brand but looks like Keith Chegwin. Snorts gear constantly, calls you "chocolate boy." Don't let him touch you — he WILL try. These lot won't meet for
-               pocket change deals though — build up your stash before giving them a call.
-            </p>
-            <p className="text-retro-accent text-xs italic pt-2">
-              Why not GO BIG on your first few deals? You might just have beginner's luck
-            </p>
+
+            <div className="border-t border-retro-border pt-3">
+              <div className="text-retro-accent text-[10px] uppercase tracking-widest mb-3">How It Works</div>
+
+              <p>
+                <span className="text-retro-accent font-bold">1. THE MONEY</span> — Click <span className="text-retro-accent">[BANK]</span> at the top. Withdraw cash. Every pound you carry is product money and bribe money. Don't leave home skint.
+              </p>
+
+              <p>
+                <span className="text-retro-accent font-bold">2. THE PRODUCT</span> — Pick something in the Market panel. Check the demand. Check who buys it back in London. Don't buy something if nobody wants it, you daft prick.
+              </p>
+
+              <p>
+                <span className="text-retro-accent font-bold">3. THE FLIGHT</span> — Book a ticket. Colombia for cocaine. Afghanistan for heroin. Spain for ecstasy. Netherlands for weed, etc. Pick your destination, pack your cash, get on the plane.
+              </p>
+
+              <p>
+                <span className="text-retro-accent font-bold">4. THE DEAL</span> — Meet the local dealer. Some of these dealers are good men trying to make an honest living, just in a dishonest way. Others are complete cunts who don't fuck around. And some are basically just fucking warlords. So be very careful who you choose to deal with. Try to make it out of there alive.
+              </p>
+
+              <p>
+                <span className="text-retro-accent font-bold">5. CUSTOMS</span> — This is where it gets tasty. Bribe the officer. Bluff your way through. Or walk straight past like you own the terminal. Acting cocky gets you searched. Acting scared gets you searched faster. Find the middle ground. Keep £500 spare for bribes — minimum.
+              </p>
+
+              <p>
+                <span className="text-retro-accent font-bold">6. LUXURY</span> — A gold watch gets you respect. A tailored suit opens doors. But walking through Heathrow looking like a Saudi prince draws attention. Dress for the occasion, not the catwalk.
+              </p>
+
+              <p>
+                <span className="text-retro-accent font-bold">7. BACK HOME</span> — Stash your product in the Inventory panel. Build up enough and the kingpins start answering your calls. Get it right and your score climbs. Get it wrong and you're back in mum's basement.
+              </p>
+            </div>
+          </div>
+
+          {/* Alias input */}
+          <div className="border-t border-retro-border pt-4 mt-4">
+            <input
+              type="text"
+              maxLength={15}
+              value={alias}
+              onChange={(e) => { setAlias(e.target.value); setError(''); }}
+              onKeyDown={(e) => { if (e.key === 'Enter') handleContinue(); }}
+              placeholder="Enter your alias..."
+              autoFocus
+              className="w-full bg-[#0a0a0a] border border-retro-border text-gray-300 px-3 py-2 text-xs outline-none focus:border-retro-accent text-center"
+            />
+            {error && <div className="text-retro-danger text-[10px] mt-1">{error}</div>}
+            <div className="text-[8px] text-gray-700 mt-1">Max 15 characters — the underworld will know your name</div>
           </div>
 
           <button
             onClick={handleContinue}
-            className="touch-target mt-6 border-2 border-retro-accent bg-retro-accent/10 hover:bg-retro-accent/20 text-retro-accent px-8 py-3 text-sm transition-all duration-300 font-bold tracking-widest uppercase shrink-0"
+            disabled={alias.trim().length === 0}
+            className="touch-target mt-4 border-2 border-retro-accent bg-retro-accent/10 hover:bg-retro-accent/20 text-retro-accent px-8 py-3 text-sm transition-all duration-300 font-bold tracking-widest uppercase shrink-0 disabled:opacity-30"
           >
-            (Let's go!)
+            Right, now fuck off
           </button>
         </div>
       </div>
