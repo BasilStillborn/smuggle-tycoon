@@ -16,8 +16,10 @@ function calcBuyPrice(
 
 function calcSellPrice(
   buyPrice: number,
+  demand: number,
 ): number {
-  return Math.max(1, Math.floor(buyPrice * 1.5));
+  const multiplier = 1.0 + (demand / 100) * 2.0;
+  return Math.max(1, Math.floor(buyPrice * multiplier));
 }
 
 export function generateMarketPrices(
@@ -31,10 +33,10 @@ export function generateMarketPrices(
 
   return GOODS.map((good) => {
     const buyPrice = calcBuyPrice(good, country, enforcement);
-    const sellPrice = calcSellPrice(buyPrice);
     const baseDemand = Math.floor(5 + Math.random() * 95);
     const demandShift = Math.floor((100 - enforcement) * 0.2);
     const demand = Math.max(5, Math.min(100, baseDemand + demandShift));
+    const sellPrice = calcSellPrice(buyPrice, demand);
     const spreadPct = Math.round(((sellPrice - buyPrice) / buyPrice) * 100);
     return {
       goodId: good.id,
