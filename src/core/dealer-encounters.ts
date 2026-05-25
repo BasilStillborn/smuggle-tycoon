@@ -51,7 +51,7 @@ const DEALER_POOL: DealerProfile[] = [
   { countryId: 'spain', dealerId: 'esp_2', name: 'Isabel', gender: 'female', description: 'North Africa pipeline. Good hashish, fair prices.', location: 'a tapas bar in the Albaicín, Granada', priceModifier: 0.9, riskBonus: 0.02, rapport: 0 },
   { countryId: 'spain', dealerId: 'esp_3', name: 'Jorge', gender: 'male', description: 'New to the game. Eager, negotiable, unpredictable.', location: 'a beachfront promenade in Marbella', priceModifier: 0.75, riskBonus: 0.18, rapport: 0 },
   // Afghanistan (opioids, heroin)
-  { countryId: 'afghanistan', dealerId: 'afg_1', name: 'Rashid', gender: 'male', description: 'Tribal elder. Controls the poppy fields. Best price for bulk.', location: 'a walled compound outside Kandahar', priceModifier: 0.8, riskBonus: 0.05, rapport: 0 },
+  { countryId: 'afghanistan', dealerId: 'afg_1', name: 'Mohamed', gender: 'male', description: 'He once had the most respectful job in his village, an abortionist. Follows the Koran to the letter, honoring family ties, practicing relentless honesty and beating his wife (lightly). head of the local mosque where he preaches sermons of hatred towards the west.', location: 'his mosque in Kabul — prayer mats on the floor, a Kalashnikov on the wall, and a ledger of every man who owes him money', priceModifier: 0.7, riskBonus: 0.15, rapport: 0 },
   { countryId: 'afghanistan', dealerId: 'afg_2', name: 'Hamid', gender: 'male', description: 'Ex-mujahideen. Respects courage. Dangerous if crossed.', location: 'a tea house in the Khyber Pass trading post', priceModifier: 0.9, riskBonus: 0.12, rapport: 0 },
   { countryId: 'afghanistan', dealerId: 'afg_3', name: 'Laila', gender: 'female', description: 'Operates under the radar. Professional, discreet.', location: 'a hidden basement lab on the outskirts of Kabul', priceModifier: 1.05, riskBonus: -0.08, rapport: 0 },
 ];
@@ -533,7 +533,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   // === TIER 1: Low credibility (0-25) ===
   {
     tier: 1,
-    dealerIds: ['col_1','col_2','col_3','afg_1','afg_2','afg_3'],
+    dealerIds: ['col_1','col_2','col_3','afg_2','afg_3'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile, dealContext?: DealContext): ChoiceEvent => {
       const pr = p(dealer);
       return {
@@ -568,7 +568,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   },
   {
     tier: 1,
-    dealerIds: ['col_1','col_2','col_3','afg_1','afg_2','afg_3'],
+    dealerIds: ['col_1','col_2','col_3','afg_2','afg_3'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile, dealContext?: DealContext): ChoiceEvent => {
       const pct = 0.05 + Math.random() * 0.05;
       const taxBase = dealContext ? Math.min(dealContext.totalCost, player.cash) : player.cash;
@@ -603,7 +603,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   },
   {
     tier: 2,
-    dealerIds: ['col_1','col_2','col_3','afg_1','afg_2','afg_3'],
+    dealerIds: ['col_1','col_2','col_3','afg_2','afg_3'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Police Sting',
@@ -617,7 +617,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   },
   {
     tier: 2,
-    dealerIds: ['afg_1','afg_2','afg_3','net_1','net_2','net_3'],
+    dealerIds: ['afg_2','afg_3','net_1','net_2','net_3'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Bonus Offer',
@@ -645,7 +645,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   },
   {
     tier: 3,
-    dealerIds: ['col_1','col_2','col_3','afg_1','afg_2','afg_3'],
+    dealerIds: ['col_1','col_2','col_3','afg_2','afg_3'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Cartel Invitation',
@@ -717,6 +717,69 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
         { id: 'take_job', text: 'Accept. This is the big leagues.', odds: 0.40 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 8, credibilityDelta: 15, inventoryLost: false, message: `Howard's eyes light up. "Tidy, mun! Absolutely tidy!" He reaches under the driver's seat and pulls out a folder — names, dates, shipping manifests, the works. Old-school. Proper smuggler craftsmanship. "This is how they did it before computers, Angelo. Paper trails that lead nowhere." The operation runs like clockwork. You earn every dollar — and Howard earns your undying respect.` }, failEffects: { cashDelta: -3000, heatDelta: 30, reputationDelta: 0, credibilityDelta: -10, inventoryLost: true, message: `The paperwork was too old. The shipping manifest had a typo — a Welsh word that Spanish customs didn't recognise but still flagged. It was enough. Howard tries to warn you — "Scatter, butt! SCATTER!" — but it's too late. Two men grab you. The cash and product stay behind. Howard drives off in the van, shouting apologies in Welsh out the window.` } },
         { id: 'negotiate_cut', text: 'Counter at thirty percent. Your risk, your price.', odds: 0.50 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 8, inventoryLost: false, message: `Howard pauses. Then that slow Welsh grin. "Thirty percent. You know what, Angelo? That's fair. That's actually fair." He puts his calloused miner's hand out. "Deal. The union taught me one thing: never agree to the first offer. Good lad." The most profitable run you've ever done. Howard gives you a Welsh coal keyring as a souvenir. "Solid as the pits, mun."` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: false, message: `Howard chuckles, but it's sad. "I can't, butt. Twenty percent is what it is. The old ways were built on trust, not negotiation. The offer's off the table." He doesn't seem angry. Just... old. You leave with nothing. The camper van's engine rattles as you walk away.` } },
         { id: 'decline_offer', text: 'Politely decline. You don\'t know this contact well enough.', odds: 0.90, successEffects: { cashDelta: 0, heatDelta: -5, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: `Howard doesn't push. "Wise, mun. Very wise." He pulls out a small Welsh flag from the glove compartment. "Take this. For luck. And when you ARE sure — you know where to find me." The van rumbles off into the Spanish night. The flag is now in your wallet.` }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: '' } },
+      ],
+    }),
+  },
+  // === TIER 1 — Mohamed (afg_1) ===
+  {
+    tier: 1,
+    dealerIds: ['afg_1'],
+    generate: (player: PlayerState, country: Country, dealer: DealerProfile, dealContext?: DealContext): ChoiceEvent => {
+      const pct = 0.05 + Math.random() * 0.05;
+      const increase = dealContext ? Math.floor(dealContext.totalCost * pct) : 300;
+      return {
+      id: nextId(),
+      title: 'The Mosque Meeting',
+      context: `Mohamed washes his hands in a copper bowl. Doesn't look up. "You're late, you Western cunt. I despise lateness. My people invented mathematics while yours were living in caves, and you can't even arrive on time." He dries his hands on a small towel. "Price went up ${Math.round(pct * 100)}%. Your governments' sanctions. Your fucking drone strikes. You pay the difference."`,
+      choices: [
+        { id: 'accept_hike', text: `Accept the new price (+$${increase}). Don't argue with the abortionist.`, odds: 0.70 + player.credibility * 0.002, successEffects: { cashDelta: -increase, heatDelta: 5, reputationDelta: 0, credibilityDelta: 3, inventoryLost: false, message: `Mohamed counts the cash — twice. "Submission is wisdom. The Koran teaches this. Your people will learn it too, one day. At the end of a sword." He hands over the product. "The transaction is blessed. Now fuck off." You're out before the Kalashnikov gets involved.` }, failEffects: { cashDelta: -increase, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: true, message: `Mohamed takes your money. Then nods at his sons. "Search the Western cunt." Nothing — but they take their time. Take the product. Take your dignity. "Perhaps next week you'll come with more respect. And more cash. Now crawl back to your whore mother in London."` } },
+        { id: 'negotiate', text: 'Push back. You came a long way for this.', odds: 0.30 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 10, inventoryLost: false, message: `Mohamed studies you like you're something he found on his shoe. "I removed foetuses for twenty years, cunt. Dead babies, every day. You think your English words will move ME?" He pauses — the faintest crack in the stone. "Alright. Original price. Because Allah respects persistence — even from infidels. But push me again and I'll show you what the inside of a woman looks like. On YOU."` }, failEffects: { cashDelta: 0, heatDelta: 15, reputationDelta: 0, credibilityDelta: -10, inventoryLost: false, message: `Mohamed doesn't flinch. "You insult my mosque. You insult my family. You insult Islam itself — standing there in your Western clothes with your Western arrogance." He gestures at the Kalashnikov. "Leave. Now. Or I swear on the Prophet's name, I will make an example of you that will be taught in this mosque for a hundred years."` } },
+        { id: 'walk', text: 'Back out. Gut says run.', odds: 0.95, successEffects: { cashDelta: 0, heatDelta: -3, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: `Mohamed watches you stand. "Wise. Even a pig knows when the butcher is coming." He waves at the door. "Go. Before I ask Allah for guidance — and He tells me to keep you." Their eyes follow you until the gate closes. You hear him behind you: "The West WILL fall. It is written. And you, little cunt — you will fall with it."` }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: '' } },
+      ],
+      };
+    },
+  },
+  // === TIER 1 — Mohamed (afg_1) ===
+  {
+    tier: 1,
+    dealerIds: ['afg_1'],
+    generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
+      id: nextId(),
+      title: 'The Village Collection',
+      context: `Four armed men. Mohamed's sons. He's speaking Pashto — rapid, sharp. When he sees you, he switches. "Ah. The English infidel. These are my sons. They don't speak your language. They don't need to — they understand blood." One cracks his knuckles. Gun in his waistband. "The price has changed, cunt. Allah provides. But tonight, Allah provides to ME."`,
+      choices: [
+        { id: 'pay_up', text: 'Pay what he asks. Four guns, one you.', odds: 0.55 + player.credibility * 0.002, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 0, credibilityDelta: 2, inventoryLost: false, message: `Mohamed counts the cash, then spits in the dust. "Fair price. Fair deal. The Prophet watched this transaction." He gestures — a son throws you the package. Says something in Pashto. They laugh. Mohamed translates: "He says you smell like a pig. I agree." You take the product and leave. Quickly.` }, failEffects: { cashDelta: -500, heatDelta: 20, reputationDelta: 0, credibilityDelta: -10, inventoryLost: true, message: `Mohamed takes the money, nods at his sons. You're on the ground, boot on your throat. "The product stays. The money stays. Consider it reparations for twenty years of Western bombs, fucker." You're dragged to the main road. Left in the dust. "Tell London. Tell them Mohamed el Mohamed sends his regards. And his boot."` } },
+        { id: 'stand_ground', text: 'Refuse. A deal\'s a deal.', odds: 0.25 + player.notoriety * 0.004, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 5, credibilityDelta: 10, inventoryLost: false, message: `Mohamed pauses. Studies you. Then — a bark of laughter. "The Englishman has stones! I did not expect this from a people who drink warm beer and apologise to furniture." He waves his sons back. "The agreed price. Respect." Hands you the package himself. "Brave or stupid. Allah has not told me which. Yet."` }, failEffects: { cashDelta: 0, heatDelta: 30, reputationDelta: 0, credibilityDelta: -20, inventoryLost: true, message: `Mohamed sighs. Almost disappointed. "The West. Always stubborn. Always wrong." He says something in Pashto. Before you can move, a son has your arms. Another empties your pockets. "I am a man of God. But my sons are young. They need practice on Western flesh." They leave you in the road. Product gone. Cash gone. One of them spits on your shoe.` } },
+        { id: 'run_back', text: 'Four armed men. Time to fucking move.', odds: 0.60, successEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: `You bolt. Mohamed shouts in Pashto — fury, not pursuit. "RUN! Run like your army ran from Afghanistan, cunt! Next time I'll put a bullet in your spine myself!" No deal. No blood. The sound of laughter echoes down the mountain road.` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: false, message: `Your foot catches a stone. Before you can rise, two sons are above you. Mohamed calls them off — but not quickly. "Pathetic. Look at the mighty Westerner. Crawling in the dust like the dog he is." He takes your cash. Your product. "For the mosque. Allah appreciates your donation, nonce."` } },
+      ],
+    }),
+  },
+  // === TIER 2 — Mohamed (afg_1) ===
+  {
+    tier: 2,
+    dealerIds: ['afg_1'],
+    generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
+      id: nextId(),
+      title: 'The Ledger of Debts',
+      context: `Mohamed sits cross-legged with a leather-bound book. Doesn't look up. "This is my ledger. Every infidel who owes me. Every Western cunt who crossed me. Every man I put in the ground. All of them. In this book." He turns a page. "I'm adding a new entry today, fucker. Yours. The question is — what colour ink? Black for money. Red for blood."`,
+      choices: [
+        { id: 'take_bonus', text: 'Take the extra product. Mohamed\'s ink can wait.', odds: 0.55 + player.credibility * 0.003, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 3, credibilityDelta: 8, inventoryLost: false, message: `Mohamed writes in black. Slowly. Deliberately. "You now have a credit line. Dangerous — but valuable. Like a snake you keep in your pocket." The product is pure. Triple profit. His name opens doors in places Westerners don't go. But every deal you do now — he knows. He's watching. The ledger grows.` }, failEffects: { cashDelta: -2000, heatDelta: 20, reputationDelta: 0, credibilityDelta: -8, inventoryLost: true, message: `The bonus product is real. But so is the entry in red. "A favour owed. I collect favours, cunt. Like your empire collected colonies — with patience. And violence. And time." For weeks you feel eyes on you. Pashto voices in your sleep. One day the favour comes due. You pray it's money he wants.` } },
+        { id: 'refuse_bonus', text: 'Stick to the deal. Generosity from this man terrifies you.', odds: 0.85, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 0, credibilityDelta: 3, inventoryLost: false, message: `Mohamed closes the ledger — but not before writing. "Cautious. I respect caution. Like a rat respects the shadow of a hawk." The deal goes clean. "I'll check on you. From time to time. To see if the West has made you soft. Softer." He gestures at the door. The Kalashnikov rattles its goodbye.` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: `Mohamed shrugs. "Your loss." He writes anyway. You glimpse it — a number. Not your name. "Go. But know this: the mosque has a long memory. Longer than your country's. Longer than your Queen. And Allah does not forget. Neither do I."` } },
+      ],
+    }),
+  },
+  // === TIER 3 — Mohamed (afg_1) ===
+  {
+    tier: 3,
+    dealerIds: ['afg_1'],
+    generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
+      id: nextId(),
+      title: 'The Sermon of Hatred',
+      context: `Evening prayer. Mohamed's voice through the wall: "...the Western whores! The crusader filth! The Zionist puppets who bomb our children and call it freedom! Their time is ending — the Prophet promised us this! Islam will rise from the ashes of their empire and every mosque will fly the black flag from London to New York!" He stops. You've been seen. He gestures you into the back room. The Kalashnikov is no longer on the wall. It's in his hand.`,
+      choices: [
+        { id: 'get_in', text: 'Accept. The mosque protects its own.', odds: 0.30 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 8, credibilityDelta: 12, inventoryLost: false, message: `Mohamed writes your name. In Arabic. In the ledger. "You are now connected. The mosque protects what it owns. And it owns you now, cunt." Direct pipeline. No middlemen. Triple earnings. Muslim contacts across five countries reach out within hours. The mosque is a network. And you're in it. For better. Or much, much worse.` }, failEffects: { cashDelta: -3000, heatDelta: 30, reputationDelta: 0, credibilityDelta: -12, inventoryLost: true, message: `It's a shakedown. They take everything — "security deposit" he calls it, smiling. His sons dump you at the edge of Kabul. "The mosque does not forget. It does not forgive. And it does not return deposits, fucker." You walk. Barefoot. Broke. The sermon continues behind you. Something about vengeance. Something about fire.` } },
+        { id: 'negotiate', text: 'Talk through the doorway. Don\'t step fully in.', odds: 0.50 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 6, inventoryLost: false, message: `Mohamed approves — grudgingly. "A man who doesn't rush. Rare among your people. Usually you Westerners charge in, guns blazing, then wonder why everyone hates you." A smaller deal. Good margin. Less exposure. He writes a partial entry. "Room to grow. Room to prove yourself. Don't disappoint me, cunt. I've killed men for less."` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: false, message: `The door closes. Hard. "You waste the mosque's time. Time is the one thing Allah does not refund." The sermon resumes behind you. The insult of your hesitation will linger. Contacts go cold. Suppliers ghost you. You're marked — not dangerous enough to kill, not useful enough to keep.` } },
+        { id: 'refuse', text: 'Refuse. You don\'t answer to mosques. Or cartels. Or men who preach genocide.', odds: 0.80, successEffects: { cashDelta: 0, heatDelta: -5, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: `The door closes without a sound. Through the wall, the sermon continues: "...and the disbelievers will be cast into the fire, and the fire will not be quenched..." You walk. Independent. Alive. But a message reaches you three days later: "Six months. Then it becomes a debt. And I always collect." The Kalashnikov is in your dreams now.` }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: '' } },
       ],
     }),
   },
