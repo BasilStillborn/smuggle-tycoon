@@ -49,9 +49,10 @@ CREATE POLICY "Anyone can submit score"
   );
 
 -- Prevent duplicate aliases — one entry per player
--- Run this manually in your Supabase SQL editor if upgrading an existing table:
--- ALTER TABLE leaderboard_entries ADD CONSTRAINT unique_alias UNIQUE (alias);
+-- Enforce unique alias: one row per player, highest score kept
+-- Run this if upgrading an existing table:
 -- DELETE FROM leaderboard_entries a USING leaderboard_entries b WHERE a.alias = b.alias AND a.score < b.score;
+ALTER TABLE leaderboard_entries ADD CONSTRAINT unique_alias UNIQUE (alias);
 
 -- Allow updates (for score upgrades from existing aliases)
 CREATE POLICY "Anyone can update their own score"

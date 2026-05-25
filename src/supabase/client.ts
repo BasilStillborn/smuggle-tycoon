@@ -113,46 +113,77 @@ export async function submitScore(alias: string, gameState: {
   }
 
   try {
-    // Check for existing alias — prevent duplicates, only keep highest score
-    const checkUrl = `$${SUPABASE_URL}/rest/v1/${TABLE}?alias=eq.${encodeURIComponent(payload.alias)}&order=score.desc&limit=1`;
+    // Check for existing alias
+    const checkUrl = `$${SUPABASE_URL}/rest/v1/${TABLE}?alias=eq.${encodeURIComponent(payload.alias)}&select=id,score&limit=1`;
     const checkRes = await fetch(checkUrl, {
       headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer $${SUPABASE_ANON_KEY}` },
     });
+    let existingId: string | null = null;
     if (checkRes.ok) {
       const existing: any[] = await checkRes.json();
-      if (existing.length > 0 && existing[0].score >= score) {
-        return { success: false, rank: null, message: `Alias already on leaderboard. Your current best is $${existing[0].score.toLocaleString()}. Beat that to update.` };
+      if (existing.length > 0) {
+        existingId = existing[0].id;
+        if (existing[0].score >= score) {
+          return { success: false, rank: null, message: `Alias already on leaderboard with $${existing[0].score.toLocaleString()}. Beat that to update.` };
+        }
       }
     }
 
-    const res = await fetch(`$${SUPABASE_URL}/rest/v1/${TABLE}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        apikey: SUPABASE_ANON_KEY,
-        Authorization: `Bearer $${SUPABASE_ANON_KEY}`,
-        Prefer: 'return=representation',
-      },
-      body: JSON.stringify({
-        alias: payload.alias,
-        character_name: payload.characterName,
-        final_cash: payload.finalCash,
-        peak_net_worth: payload.peakNetWorth,
-        current_wealth: payload.currentWealth,
-        total_profit: payload.totalProfit,
-        total_trips: payload.totalTrips,
-        total_busts: payload.totalBusts,
-        reputation: payload.reputation,
-        survival_time: payload.survivalTime,
-        countries_visited: payload.countriesVisited,
-        score,
-        score_hash: payload.scoreHash,
-      }),
-    });
-
-    if (!res.ok) {
-      const body = await res.text();
-      return { success: false, rank: null, message: `Server rejected submission ($${res.status}).` };
+    // Upsert: UPDATE existing alias if higher score, else INSERT new
+    if (existingId) {
+      const patchRes = await fetch(`$${SUPABASE_URL}/rest/v1/${TABLE}?id=eq.${existingId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer $${SUPABASE_ANON_KEY}`,
+          Prefer: 'return=representation',
+        },
+        body: JSON.stringify({
+          final_cash: payload.finalCash,
+          peak_net_worth: payload.peakNetWorth,
+          current_wealth: payload.currentWealth,
+          total_profit: payload.totalProfit,
+          total_trips: payload.totalTrips,
+          total_busts: payload.totalBusts,
+          reputation: payload.reputation,
+          survival_time: payload.survivalTime,
+          countries_visited: payload.countriesVisited,
+          score,
+          score_hash: payload.scoreHash,
+        }),
+      });
+      if (!patchRes.ok) {
+        return { success: false, rank: null, message: `Failed to update score.` };
+      }
+    } else {
+      const insertRes = await fetch(`$${SUPABASE_URL}/rest/v1/${TABLE}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer $${SUPABASE_ANON_KEY}`,
+          Prefer: 'return=representation',
+        },
+        body: JSON.stringify({
+          alias: payload.alias,
+          character_name: payload.characterName,
+          final_cash: payload.finalCash,
+          peak_net_worth: payload.peakNetWorth,
+          current_wealth: payload.currentWealth,
+          total_profit: payload.totalProfit,
+          total_trips: payload.totalTrips,
+          total_busts: payload.totalBusts,
+          reputation: payload.reputation,
+          survival_time: payload.survivalTime,
+          countries_visited: payload.countriesVisited,
+          score,
+          score_hash: payload.scoreHash,
+        }),
+      });
+      if (!insertRes.ok) {
+        return { success: false, rank: null, message: `Failed to submit score.` };
+      }
     }
 
     // Get rank by counting entries with higher scores
