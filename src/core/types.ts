@@ -144,7 +144,7 @@ export interface KingpinProfile {
   location: string;
   minStashValue: number;
   sellPriceMod: number; // 1.3 = 30% above market rate
-  encounterWeights: { clean: number; mugging: number; raid: number };
+  encounterWeights: { clean: number; raid: number };
   buys: string[];
 }
 

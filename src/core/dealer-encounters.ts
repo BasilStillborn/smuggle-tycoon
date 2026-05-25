@@ -67,7 +67,7 @@ export const KINGPIN_POOL: KingpinProfile[] = [
     location: 'a private office above a diamond wholesaler in Hatton Garden',
     minStashValue: 5000,
     sellPriceMod: 1.3,
-    encounterWeights: { clean: 85, mugging: 10, raid: 5 },
+    encounterWeights: { clean: 85, raid: 15 },
     buys: ['ecstasy', 'cocaine'],
   },
   {
@@ -77,7 +77,7 @@ export const KINGPIN_POOL: KingpinProfile[] = [
     location: 'a car wash in Barking that never seems to actually wash cars',
     minStashValue: 1500,
     sellPriceMod: 1.15,
-    encounterWeights: { clean: 80, mugging: 15, raid: 5 },
+    encounterWeights: { clean: 80, raid: 20 },
     buys: ['heroin', 'meth'],
   },
   {
@@ -87,7 +87,7 @@ export const KINGPIN_POOL: KingpinProfile[] = [
     location: 'his grubby flat above a launderette in Dalston — mirrors everywhere, silk kimono collection, and a chaise longue covered in dry jizz',
     minStashValue: 750,
     sellPriceMod: 0.9,
-    encounterWeights: { clean: 90, mugging: 5, raid: 5 },
+    encounterWeights: { clean: 90, raid: 10 },
     buys: ['cocaine', 'hashish', 'weed'],
   },
 ];
@@ -1066,70 +1066,6 @@ const CLEAN_NEGOTIATE_FAIL: Record<string, string[]> = {
   iqbal: [`Quentin throws his head back and laughs — a theatrical, operatic sound that rattles the mirrors. Powdershake falls from his nostril. "Oh, chocolate boy. NO. You're adorable when you try to negotiate. Like a Jack Russell humping a sofa — lot of effort, fuck all result." He pats your cheek. Twice. "Price is the price. But I'll comp you a ticket to my show. I'm doing Liza. On ketamine." He snorts another line. "It's VERY avant-garde."`],
 };
 
-const MUGGING_SETUPS: Record<string, string[]> = {
-  avi: [
-    `Yossi steps forward — the big silent one, hands like spades. He doesn't say a word. Just holds out his palm. Behind him, Avi turns his chair to face the window. Doesn't want to watch. "Sorry, bubbeleh," he says to the glass. "My nephew made a better offer on the product. You understand. Business."`,
-    `The door locks. A click you feel in your spine. Through the intercom, Avi's voice — apologetic, tired. "I really am sorry, bubbeleh. But my nephew saw the quality and offered double. Leave the cash and the product. Walk out. I'll make sure they don't follow you."`,
-    `Avi's office suddenly feels smaller. Two men you haven't seen before are standing behind you — blocking the door. Avi spreads his hands, palms up. "Don't make this ugly, bubbeleh. My cousin's boys — they're not nice people. They're the people you call when nice doesn't work. Hand it over."`,
-  ],
-  sergio: [`Sergio's men step closer. "I think we take the product and keep the cash, you little Blacky."`],
-  iqbal: [`Quentin's demeanour shifts — the camp drops away, replaced by something sharper. He snaps his fingers and two very large men in very tight vests step out of the bathroom. "Chocolate boy. I've decided I'm keeping the product AND the cash. Consider it a... charitable donation." He winks and does a line off the back of his hand. "Specifically, the art of ME having more than you. Jack Whitehall could probably get away with this. And he's a cunt."`],
-};
-
-const MUGGING_STARE_SUCCESS: Record<string, string[]> = {
-  avi: [
-    `You hold Yossi's gaze. Don't blink. "Your nephew can make his own deals. This one's mine." Yossi glances at Avi. A long pause. Then Avi nods — just a fraction. "The goy's got stones, Yossi. Real ones. I could sell those." He waves his hand. "Take your product. Take your cash. Next time I'll send the nephew out of the country first."`,
-    `You step closer. "Tell your nephew I said to fuck off." The room freezes. Then Avi laughs — a short, surprised bark. He takes off his glasses, rubs his eyes. "You're meshuggeneh. Completely meshuggeneh. I like it. Yossi — let him through." The big man steps aside. The deal completes. Avi's still chuckling. "Reminds me of my father, that one."`,
-  ],
-  sergio: [`You hold Sergio's gaze. He backs down. "Only joking." The deal completes.`],
-  iqbal: [`You hold Quentin's gaze. He holds it back. The silence stretches — just the hum of the launderette below. Then his face cracks into a grin. "Ooh, you're GOOD. I like a man who doesn't blink." He waves the goons away. "Fuck off, lads. The grown-ups are doing business." Turns back to you, wipes his nose. "Russell Brand couldn't have done that. And Russell Brand has done a LOT." The deal completes normally.`],
-};
-
-const MUGGING_STARE_FAIL: Record<string, string[]> = {
-  avi: [
-    `They don't blink either. Yossi doesn't move — barely breathes. Avi shrugs from his chair. "I tried, bubbeleh. The cash stays. The product stays. You want to walk out with your legs working — walk now."`,
-    `The one with the gold tooth grins at you. "We're not scared of Englishmen, mate." He takes the cash. Takes the product. Avi watches from behind his desk, silent. Doesn't meet your eyes. "Next time bring more money and less attitude, you cheeky little gonif."`,
-  ],
-  sergio: [`Sergio doesn't back down. His men take everything, you Coon.`],
-  iqbal: [`Quentin doesn't back down. He leans closer — too close. You can smell last night's coke, this morning's poppers, and something floral that might be his nan's perfume. "You're trembling, chocolate boy. I can feel it. And not in the fun way." His goons move in. Everything's gone — cash, product, whatever shred of masculinity you walked in here with. Quentin blows you a kiss. White powder puffs from his lip.`],
-};
-
-const MUGGING_FIGHT_SUCCESS: Record<string, string[]> = {
-  avi: [
-    `You lunge for the cash — no, you lunge for the DOOR, cash in one hand, product in the other. Through the office, past the diamond cases, down the fire stairs. Yossi's shouting — "AFTER HIM!" — but Yossi's men are diamond dealers, not sprinters. You hit Hatton Garden pavement running. Fifteen minutes later, counting the cash on a Central Line seat.`,
-    `You grab everything and fight through the door. An elbow catches gold-tooth's nose — you hear the crunch. A knee finds someone's groin. Avi's voice behind you: "MESHUGGENEH! HE'S A MESHUGGENEH!" You're three blocks away before the shouting stops. Pocket full of cash. Bag full of product. Hatton Garden fading behind you.`,
-  ],
-  sergio: [`You fight back, Blacky. In the chaos you grab the cash AND product. You're out before they recover.`],
-  iqbal: [`You don't think — you just move. In the chaos of sequins and shattered mirror, you grab the cash AND product. Quentin shrieks — a genuine, trained operatic note that would impress Andrew Lloyd Webber. "MY CASH! MY PRODUCT! MY GOOD MIRROR, THE ONE WITHOUT JIZZ ON IT!" You're out the door before his goons can untangle themselves from a collapsed ballet barre. Worth every second.`],
-};
-
-const MUGGING_FIGHT_FAIL: Record<string, string[]> = {
-  avi: [
-    `They're on you before you reach the door. Yossi's knee in your spine — you hit the floor. Avi sighs. "Meshuggeneh. You could have walked out. Now Yossi has to fill in a report and he hates paperwork." Everything taken. Cash. Product. Your dignity. "Come back when you've learned some respect, bubbeleh. The door's always open. The deal isn't."`,
-    `You swing. It connects — gold-tooth's head snaps back. But they keep coming. Two more from the back room. Avi shakes his head. "You had stones, I'll give you that. But stones don't beat numbers." The cash is gone before you hit the floor. The product is already on Avi's scale. "Show's over, bubbeleh. You made it ugly. I made you pay for it."`,
-  ],
-  sergio: [`They're faster. Stronger. You wake up in the alley. Everything gone, you Blacky.`],
-  iqbal: [`They're faster than you. One of them holds you while Quentin tuts disapprovingly, pausing only to sniff between his fingers. "Oh, chocolate boy. This is just EMBARRASSING now. For both of us. But mostly for you." He takes everything — cash, product, the score you had tucked in your sock. "I'm keeping this as a tip. You were a terrible audience. And a worse fighter."`],
-};
-
-const MUGGING_RUN_SUCCESS: Record<string, string[]> = {
-  avi: [
-    `You grab the cash envelope and BOLT. Down the stairs, through the workshop, out the fire exit. Behind you: "YOSSI! THE GOY IS RUNNING!" But Yossi is sixty-three and his knees are shot. You're on the Central Line before Avi's finished shouting. Cash saved. Product left behind. Sometimes you have to know what to sacrifice, you spastic.`,
-    `"HAVE A GOOD NIGHT, AVI!" You don't wait for a reply. The cash is in your pocket and you're through the door before anyone moves. Hatton Garden at night — closed shops, empty streets. You vanish into the crowd at Chancery Lane station. Product stays behind. Pride intact. Well — mostly intact.`,
-  ],
-  sergio: [`You scoop the cash and bolt, you clever Coon. The product stays behind — but you're alive.`],
-  iqbal: [`You grab the cash and sprint. Behind you, Quentin's voice rings out — pure theatre kid projection, bouncing off every mirror: "COME BACK HERE, CHOCOLATE BOY! WE HAVEN'T FINISHED! I WAS GOING TO SHOW YOU MY CABARET ROUTINE!" You don't stop running until you're three Tube stops away. Product stays behind. Cash in pocket. You can still hear him in your head.`],
-};
-
-const MUGGING_RUN_FAIL: Record<string, string[]> = {
-  avi: [
-    `The fire exit is locked. Of COURSE it's locked. Yossi catches you at the top of the stairs — not even out of breath. "Wrong door, schmuck." He pats you down. Takes the cash. The product. Your favourite lighter. Everything. "Next time use the front door. Or don't come at all, you cheeky little gonif."`,
-    `You make it two floors down before gold-tooth catches your collar. Headfirst into the wall. When you come to, Avi is standing over you — holding your cash, your product, and what looks like your wallet. "You dropped this, bubbeleh. Should have paid the protection. Yossi — help him find the exit."`,
-  ],
-  sergio: [`You trip, Blacky. They catch you. Take everything.`],
-  iqbal: [`You trip. On what? A feather boa. A cheap, shedding, pink feather boa, just lying there on the floor of a grubby Dalston flat like a prop from a show nobody asked for. Before you can get up, one of Quentin's goons is on you. Quentin looks down, genuinely disappointed, wiping his nose. "Oh dear. You tripped on the boa. That's symbolic, that is. I don't know of what, but it's definitely symbolic." Everything gone.`],
-};
-
 const RAID_SETUPS: Record<string, string[]> = {
   avi: [
     `The vault. Avi's personal vault — the one where he keeps the diamonds. He punches in a code, the door swings open. "In. Don't touch anything." You squeeze between the safe deposit boxes with the cash and product. The door closes. Absolute silence. Absolute darkness. You wait. Twenty minutes. An hour. Then — the door opens. Avi, looking exhausted. "They're gone. They took my filing cabinet but not my diamonds. Schmucks."`,
@@ -1221,14 +1157,12 @@ export function generateKingpinEncounter(
   goodName: string,
   totalValue: number,
 ): ChoiceEvent {
-  const { clean, mugging, raid } = kingpin.encounterWeights;
-  const total = clean + mugging + raid;
+  const { clean, raid } = kingpin.encounterWeights;
+  const total = clean + raid;
   const roll = Math.random() * total;
 
   if (roll < clean) {
     return generateKingpinClean(player, kingpin, goodName, totalValue);
-  } else if (roll < clean + mugging) {
-    return generateKingpinMugging(player, kingpin, goodName, totalValue);
   } else {
     return generateKingpinRaid(player, kingpin, goodName, totalValue);
   }
@@ -1253,25 +1187,6 @@ function generateKingpinClean(player: PlayerState, k: KingpinProfile, goodName: 
       { id: 'negotiate', text: 'Push for a better price.', odds: 0.55,
         successEffects: { cashDelta: Math.floor(totalValue * 0.2), heatDelta: 10, reputationDelta: 4, credibilityDelta: 8, inventoryLost: true, message: fill(pick(kp(CLEAN_NEGOTIATE_SUCCESS, k)), goodName) },
         failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: -2, credibilityDelta: -5, inventoryLost: false, message: fill(pick(kp(CLEAN_NEGOTIATE_FAIL, k)), goodName) } },
-    ],
-  };
-}
-
-function generateKingpinMugging(player: PlayerState, k: KingpinProfile, goodName: string, totalValue: number): ChoiceEvent {
-  return {
-    id: nextKingpinId(),
-    title: 'Something Feels Wrong',
-    context: fill(pick(kp(MUGGING_SETUPS, k)), goodName),
-    choices: [
-      { id: 'stare_down', text: 'Stare him down. You don\'t scare me.', odds: 0.65,
-        successEffects: { cashDelta: 0, heatDelta: 15, reputationDelta: 5, credibilityDelta: 10, inventoryLost: true, message: fill(pick(kp(MUGGING_STARE_SUCCESS, k)), goodName) },
-        failEffects: { cashDelta: 0, heatDelta: 25, reputationDelta: -5, credibilityDelta: -10, inventoryLost: true, message: fill(pick(kp(MUGGING_STARE_FAIL, k)), goodName) } },
-      { id: 'fight', text: 'Fight back. No one takes from you.', odds: 0.50,
-        successEffects: { cashDelta: 2000, heatDelta: 25, reputationDelta: 10, credibilityDelta: 15, inventoryLost: true, message: fill(pick(kp(MUGGING_FIGHT_SUCCESS, k)), goodName) },
-        failEffects: { cashDelta: -2000, heatDelta: 30, reputationDelta: -8, credibilityDelta: -15, inventoryLost: true, message: fill(pick(kp(MUGGING_FIGHT_FAIL, k)), goodName) } },
-      { id: 'run', text: 'Run. Live to deal another day.', odds: 0.80,
-        successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: 3, inventoryLost: true, message: fill(pick(kp(MUGGING_RUN_SUCCESS, k)), goodName) },
-        failEffects: { cashDelta: 0, heatDelta: 20, reputationDelta: 0, credibilityDelta: -10, inventoryLost: true, message: fill(pick(kp(MUGGING_RUN_FAIL, k)), goodName) } },
     ],
   };
 }
