@@ -52,8 +52,7 @@ const DEALER_POOL: DealerProfile[] = [
   { countryId: 'spain', dealerId: 'esp_3', name: 'Jorge', gender: 'male', description: 'New to the game. Eager, negotiable, unpredictable.', location: 'a beachfront promenade in Marbella', priceModifier: 0.75, riskBonus: 0.18, rapport: 0 },
   // Afghanistan (opioids, heroin)
   { countryId: 'afghanistan', dealerId: 'afg_1', name: 'Mohamed', gender: 'male', description: 'He once had the most respectful job in his village, an abortionist. Follows the Koran to the letter, honoring family ties, practicing relentless honesty and beating his wife (lightly). head of the local mosque where he preaches sermons of hatred towards the west.', location: 'his mosque in Kabul — prayer mats on the floor, a Kalashnikov on the wall, and a ledger of every man who owes him money', priceModifier: 0.7, riskBonus: 0.15, rapport: 0 },
-  { countryId: 'afghanistan', dealerId: 'afg_2', name: 'Hamid', gender: 'male', description: 'Ex-mujahideen. Respects courage. Dangerous if crossed.', location: 'a tea house in the Khyber Pass trading post', priceModifier: 0.9, riskBonus: 0.12, rapport: 0 },
-  { countryId: 'afghanistan', dealerId: 'afg_3', name: 'Laila', gender: 'female', description: 'Operates under the radar. Professional, discreet.', location: 'a hidden basement lab on the outskirts of Kabul', priceModifier: 1.05, riskBonus: -0.08, rapport: 0 },
+  { countryId: 'afghanistan', dealerId: 'afg_2', name: 'Mohamed Durrani Allah', gender: 'male', description: 'Pakistani opium exporter. His family were Afghan aristocracy in the early 19th century — he still has high-level connections, or so he claims. Probably a rapist. Knows child sex traffickers. Deals a bit of opium on the side. Dangerous, angry, and increasingly irrelevant. Thinks he is high society but the connections are running dry.', location: 'a crumbling colonial-era villa in Kabul — faded silk curtains, empty liquor cabinets, and framed portraits of ancestors who once ruled provinces', priceModifier: 1.15, riskBonus: 0.20, rapport: 0 },
 ];
 
 // ============================================================
@@ -533,7 +532,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   // === TIER 1: Low credibility (0-25) ===
   {
     tier: 1,
-    dealerIds: ['col_1','col_3','afg_2','afg_3'],
+    dealerIds: ['col_1','col_3','afg_2'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile, dealContext?: DealContext): ChoiceEvent => {
       const pr = p(dealer);
       return {
@@ -568,7 +567,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   },
   {
     tier: 1,
-    dealerIds: ['col_1','col_3','afg_2','afg_3'],
+    dealerIds: ['col_1','col_3','afg_2'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile, dealContext?: DealContext): ChoiceEvent => {
       const pct = 0.05 + Math.random() * 0.05;
       const taxBase = dealContext ? Math.min(dealContext.totalCost, player.cash) : player.cash;
@@ -603,7 +602,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   },
   {
     tier: 2,
-    dealerIds: ['col_1','col_3','afg_2','afg_3'],
+    dealerIds: ['col_1','col_3','afg_2'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Police Sting',
@@ -617,7 +616,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   },
   {
     tier: 2,
-    dealerIds: ['afg_2','afg_3','net_1','net_2'],
+    dealerIds: ['afg_2','net_1','net_2'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Bonus Offer',
@@ -645,7 +644,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   },
   {
     tier: 3,
-    dealerIds: ['col_1','col_3','afg_2','afg_3'],
+    dealerIds: ['col_1','col_3','afg_2'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Cartel Invitation',
@@ -905,6 +904,54 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
         { id: 'get_in', text: 'Accept. Meet the uncle.', odds: 0.30 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 8, credibilityDelta: 15, inventoryLost: false, message: `Micky slaps the table. "YES! Knew it! Knew you weren't completely fucking useless!" He's on his feet. Dialling. "Uncle Ray — I got someone. Yeah. The Englishman I told you about. No — not a poofter. Well, maybe a bit." Covers the phone. "He wants to meet you Thursday. Don't wear anything flash. He hates flash." Pipeline opens. Direct. London to Amsterdam. Money you've never seen.` }, failEffects: { cashDelta: -3000, heatDelta: 30, reputationDelta: 0, credibilityDelta: -12, inventoryLost: true, message: `Uncle Ray takes one look at you and laughs. "THIS is him? Micky, you're having a fucking laugh. He looks like he works in a call centre." Micky tries to defend you. Ray's not having it. "No. Absolutely not. Get him out of my sight." Micky catches up with you outside. "Sorry, mate. Ray's old school. He doesn't like... whatever it is you are." Offence taken.` } },
         { id: 'negotiate', text: 'Negotiate. Meet halfway.', odds: 0.50 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 8, inventoryLost: false, message: `Micky relays your counter. Uncle Ray's voice crackles back: "Tell the muggy little cunt he's got a deal. But if he fucks it up, I'm taking it out of YOUR end, Michael." Micky winces. "Cheers, Uncle Ray. Love you too." Hangs up. "He likes you. Which is terrifying. For both of us." Smaller pipeline. Less risk. Good money. Ray sends you a Christmas card that year. It's just a photo of his fist.` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: false, message: `Micky tries. Uncle Ray's voice: "Tell your little poofter mate he's got balls but not enough of them. Twenty percent. Final offer. Take it or I'll find someone else who will. Amsterdam's full of mugs who'll work for less." Micky shrugs. "Sorry, mate. Ray's not budging. Twenty. That's the number." Deal proceeds. Thin margins. Ray doesn't send you a card.` } },
         { id: 'refuse', text: 'Refuse. Too many unknowns.', odds: 0.80, successEffects: { cashDelta: 0, heatDelta: -5, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: `Micky stares at you. Then — slowly — nods. "Fair enough. Can't make a man do something he doesn't want to do. Not these days." He pockets his phone. "I'll tell Ray you're not ready. He'll call you a cunt. He calls everyone a cunt. Don't take it personal." He pours you a Hennessy anyway. "Next time. Maybe." The offer stays open. For now.` }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: '' } },
+      ],
+    }),
+  },
+  // === TIER 1 — Mohamed Durrani Allah (afg_2) ===
+  {
+    tier: 1,
+    dealerIds: ['afg_2'],
+    generate: (player: PlayerState, country: Country, dealer: DealerProfile, dealContext?: DealContext): ChoiceEvent => {
+      const pct = 0.05 + Math.random() * 0.05;
+      const increase = dealContext ? Math.floor(dealContext.totalCost * pct) : 300;
+      return {
+      id: nextId(),
+      title: 'The Fallen Durrani',
+      context: `The villa has seen better centuries. Faded silk curtains, a cracked silver tea service on an otherwise empty table, and portraits of men in uniforms from empires that no longer exist. Mohamed Durrani Allah gestures at a chair — the stuffing is coming out. "Sit, Angelo. My grandfather negotiated treaties with the British in this very room. Now I negotiate opium deals with an Englishman who smells of fried food and poor decisions. The world has fallen far." He pours tea — lukewarm. "Price went up ${Math.round(pct * 100)}%. My Pakistani contacts — they are not reasonable men. They are the kind of men who sell children through the Khyber. I do not argue with them. Neither should you."`,
+      choices: [
+        { id: 'accept_hike', text: `Accept the new price (+$${increase}). The portraits are watching.`, odds: 0.70 + player.credibility * 0.002, successEffects: { cashDelta: -increase, heatDelta: 5, reputationDelta: 0, credibilityDelta: 3, inventoryLost: false, message: `Mohamed Durrani Allah bows his head — the barest incline. "Wise. My father always said: 'Pay the opium exporter, argue with the viceroy.' You have the instincts of a Durrani, Angelo. High praise." He pushes the product across the cracked table. "One day you will sit in a room like this, surrounded by portraits of yourself. And you will remember who gave you your start. A man who outlasted empires."` }, failEffects: { cashDelta: -increase, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: true, message: `You hand over the cash. Mohamed Durrani Allah counts it, sniffs, counts it again. "Short by forty dollars." You know it's not. He knows it's not. But the two men in the corner — they don't know it's not. "Leave the difference — and your dignity — on the table." They take your product as collateral. You leave lighter and stupider. "Come back when you can count, you British nonce."` } },
+        { id: 'negotiate', text: 'Push back. Your money spends the same as a Durrani\'s.', odds: 0.30 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 10, inventoryLost: false, message: `A long silence. One of the portraits seems to shift. Then — a laugh, rusty from disuse. "You cheeky cunt. I like it." He scratches his signet ring. "Original price. Because you remind me of my younger brother — before the Taliban shot him. He talked back too. Right up until the end." He slides the product over. "Don't end like my brother, Angelo."` }, failEffects: { cashDelta: 0, heatDelta: 15, reputationDelta: 0, credibilityDelta: -10, inventoryLost: false, message: `Mohamed Durrani Allah stands slowly. The chair scrapes. "You come into my home — the home of a man whose ancestors ruled while yours foraged for roots — and you insult me?" His voice drops. "My contacts in Peshawar run girls through the border. They owe me. One phone call and you are a product, Angelo. Not a customer. Leave. Now. Before I make that call, you insolent cunt."` } },
+        { id: 'walk', text: 'Stand up. This room smells like decay.', odds: 0.95, successEffects: { cashDelta: 0, heatDelta: -3, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: `Mohamed Durrani Allah doesn't move. He stares at a portrait on the wall — a man on a horse, sword raised. "My great-great-grandfather. He beheaded a British officer for entering his tent without permission. Different times." He turns to you. "I would do the same. But I need the money. So go. Tell your children you sat in the presence of Afghan royalty. They won't believe you."` }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: '' } },
+      ],
+      };
+    },
+  },
+  // === TIER 2 — Mohamed Durrani Allah (afg_2) ===
+  {
+    tier: 2,
+    dealerIds: ['afg_2'],
+    generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
+      id: nextId(),
+      title: 'The Silk Road Remnants',
+      context: `Mohamed Durrani Allah is in better spirits today — which means he's drunk. The empty liquor cabinet is open. Inside: a single bottle of something that was once whiskey. "My Pakistani contact came through. Double the usual volume, Angelo. Half the work." He pours two glasses — his is full, yours is a thimble. "He's not a pleasant man. But then — neither am I. He runs product through the Khyber. Girls. Boys. Whatever pays. I don't ask." He downs his drink. "You want the double or not, you cheeky Blacky?"`,
+      choices: [
+        { id: 'take_double', text: "Take double. You're not here to judge his friends.", odds: 0.45 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 5, credibilityDelta: 12, inventoryLost: false, message: `Mohamed Durrani Allah refills his glass. "Excellent. The Durrani bloodline extends another day." He produces a second bottle — this one sealed. "Real Scotch. Gift from a diplomat who owed me. We can be civilized, Angelo. When the situation calls for it." The product is pure. The profit is enormous. He raises his glass: "To the aristocracy. Dead, but not forgotten."` }, failEffects: { cashDelta: -2000, heatDelta: 25, reputationDelta: 0, credibilityDelta: -10, inventoryLost: true, message: `The Pakistani contact was compromised. Taliban checkpoints on the road. The shipment is seized. Mohamed Durrani Allah's phone rings — he listens, face pale. "They took everything. My product. My money. My dignity." He looks at you — and for a moment, the aristocrat is gone. Just a frightened old man. "You should leave, Angelo. Before they come for me. And whoever is with me." You leave. Fast. You hear shouts behind you in Pashto.` } },
+        { id: 'stick_standard', text: 'Stick to the original amount. Traffickers make you nervous.', odds: 0.75 + player.credibility * 0.002, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 2, credibilityDelta: 5, inventoryLost: false, message: `Mohamed Durrani Allah shrugs. "Prudent. My father always said: 'Better one province ruled well than three provinces ruled badly.'" He pauses. "He said that before the communists shot him, of course. But the principle stands." The standard deal goes through. He doesn't offer you the second bottle.` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -3, inventoryLost: true, message: `The product is cut. Badly. Baking soda mixed with talcum powder — street-level garbage. Mohamed Durrani Allah inspects it himself. "That Pakistani bastard." He's furious — but it's aimed at himself. "I trusted him. Like I trusted the British. Like I trusted the Soviets. Like I trusted the Americans." He pours the last of the whiskey. "Everyone fucks the Durranis eventually, Angelo. Today it was your turn."` } },
+      ],
+    }),
+  },
+  // === TIER 3 — Mohamed Durrani Allah (afg_2) ===
+  {
+    tier: 3,
+    dealerIds: ['afg_2'],
+    generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
+      id: nextId(),
+      title: 'The Last Favour',
+      context: `The villa is emptier than before. One of the portraits is missing — a dark rectangle on the wallpaper where it used to hang. "Sold it," Mohamed Durrani Allah says without looking at you. "A Durrani does not sell his ancestors. A desperate man does." He pours tea — no whiskey today. "I have a proposition, Angelo. A large shipment — fifty thousand worth of pure opium — needs to move through Taliban territory to the border. My name used to open those roads. Now..." He gestures at the missing portrait. "Now I need a man who is not a Durrani. A man who can be disavowed. Thirty percent is yours. But if you are caught, I will deny knowing you. And the Taliban will cut your head off. Slowly. They have cameras for that now. It is a different world, Angelo."`,
+      choices: [
+        { id: 'get_in', text: 'Accept. The missing portrait haunts you less than poverty.', odds: 0.30 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 8, credibilityDelta: 15, inventoryLost: false, message: `Mohamed Durrani Allah closes his eyes — relief or prayer, you can't tell. "The Durrani name still means something. I knew it would." He hands you a map, a phone number, and a wad of cash for bribes. "The Taliban commander on this route — he owes my family. From before the war. Before everything." The shipment moves clean. Thirty percent is ten times what you've ever made. When you return, the portrait is back on the wall. "My son shipped it from Dubai. The Durranis endure, Angelo. We always endure."` }, failEffects: { cashDelta: -3000, heatDelta: 30, reputationDelta: 0, credibilityDelta: -12, inventoryLost: true, message: `The Taliban commander does not remember the favour. Or chooses not to. The checkpoint is a death trap. You escape with your life — barely — but the product stays in the back of a truck that drives away toward a compound you will never find. Mohamed Durrani Allah's phone is dead when you call. The villa is locked. The portrait is still missing. You have been disavowed. Exactly as promised.` } },
+        { id: 'negotiate', text: 'Thirty is good. Forty is what desperate men pay.', odds: 0.50 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 8, inventoryLost: false, message: `He stares at you. The empty wall where the portrait hung seems to grow larger. Then — a slow, bitter laugh. "You see weakness and you press. I would have done the same at your age." He shrugs. "Thirty-five. Because I am not desperate enough to give you forty. But I am desperate enough to negotiate with a man who just watched me sell my ancestor's portrait, you cheeky cunt."` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: false, message: `He closes his eyes. "A Durrani does not negotiate from desperation. A Durrani finds another way." He opens them. "The offer is withdrawn. I will find someone else. Someone who does not smell the blood in the water." The missing portrait seems to mock you on the way out. "Come back when you have learned respect, Angelo. If there is still a door to come back through."` } },
+        { id: 'refuse', text: 'Refuse. You don\'t do Taliban checkpoints for any price.', odds: 0.80, successEffects: { cashDelta: 0, heatDelta: -5, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: `Mohamed Durrani Allah nods slowly. "I understand. I would refuse too, if I were you." He walks to the empty wall. "My father used to say: 'A wise man knows which wars to fight.' He fought the wrong one. So did I." He doesn't turn around. "Go, Angelo. But if you change your mind — the road through the Khyber will still be there. And so will the Durrani. Always."` }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: '' } },
       ],
     }),
   },

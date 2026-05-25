@@ -45,8 +45,7 @@ const FAREWELLS: Record<string, string> = {
   esp_2: `$name lights a cigarette. "Business concluded. Now get out of my bar before someone recognises you, you fucking spastic."`,
   esp_3: `$name fumbles with a drawer. "¡Adiós, Angelo! I had a loyalty card for you but I think I lost it. Come back anyway, you Coon!"`,
   afg_1: `$name slams $pron ledger shut. "The Prophet says a fair deal is blessed. You paid, you cunt. Now get the fuck out before the Western drones spot you on my doorstep." A son opens the gate. The Kalashnikov rattles against the wall. "Your country will burn one day. All of them will burn. But today — today you walk. Go."`,
-  afg_2: `$name stares at you with unblinking intensity. "We are done here. If you speak of this meeting, I will know. Now go, you cheeky Blacky."`,
-  afg_3: `From behind you, barely audible: "Yeah. Keep walking, retard. See you next time." $name has already turned away.`,
+  afg_2: `$name adjusts his collar — a habit from when he had something worth adjusting. "The transaction is complete, Angelo. My ancestors ruled this land while yours were painting themselves blue. Remember that as you leave, you insolent Blacky."`,
 };
 
 const HAGGLE_WIN: Record<string, string> = {
@@ -60,8 +59,7 @@ const HAGGLE_WIN: Record<string, string> = {
   esp_2: `$name snorts. "Alright, Angelo. You've got more spine than most of the cunts who sit in that chair. Fifteen percent off. Don't push your luck, you fucking spastic."`,
   esp_3: `$name pumps his fist. "YES! I knew negotiating was the right move, Angelo! Oh, uh — I mean. Fifteen off. Very professional. Very serious." He tries to look cool. It doesn't work, the little Blacky.`,
   afg_1: `$name's eyes narrow. The silence is heavy. Then — a flicker. "You have more spine than the last three Englishmen who sat there. They pissed themselves. You didn't." He pauses. "The Koran teaches us to honour courage. Fifteen percent off. But if you tell ANYONE I gave a discount to a Western cunt, I will deny it. Then I'll find you. And I was an abortionist for twenty years, fucker — I know how to cut things out of people."`,
-  afg_2: `$name stares at you. Then he laughs — a short, hard sound. "Angelo. You fight like a Pashtun. I respect that." He knocks twenty percent off. "Do not expect this again, you mad Coon."`,
-  afg_3: `$name doesn't react. Then she pushes the steel table slightly. "Fifteen percent, Angelo. Because I'm curious what you'll do with it, you strange little nonce."`,
+  afg_2: `$name studies you — then a thin, aristocratic smile. "You have some of the old Durrani fire in you, Angelo. My grandfather would have liked you. Before the communists shot him." He gestures grandly. "Fifteen percent off. A gift from the aristocracy to the peasantry. You may kiss my ring." He extends a hand with a tarnished signet ring. He's serious.`,
 };
 
 const HAGGLE_LOSE: Record<string, string> = {
@@ -75,8 +73,7 @@ const HAGGLE_LOSE: Record<string, string> = {
   esp_2: `$name laughs — a dry, humourless sound. "Ballsy. Stupid, but ballsy, Angelo. The price just went up twenty percent. You can pay it or you can fuck off back to whatever rock you crawled out from under, you spastic."`,
   esp_3: `$name looks crushed. "Oh. Oh, no, Angelo. I was really hoping you'd just... accept it? I'm not very good at the 'price just went up' thing. But — it did. It went up, you Blacky. I read about this in a business book."`,
   afg_1: `$name stands. Fast. The Kalashnikov sways. "You come to MY mosque. In MY country. Which your people have been bombing for twenty fucking years. And you try to HAGGLE with ME?" His voice drops to a whisper. "Thirty percent higher, you disrespectful little nonce. Pay it. Or my sons will show you what the West has done to us — on YOUR body." He sits. Smiles. "Allah is patient. I am not."`,
-  afg_2: `$name leans forward. "Angelo. I have killed men for less disrespect than you just showed me. The price is twenty percent higher. If you argue again, it goes up another twenty, you Blacky. And my patience is not infinite."`,
-  afg_3: `$name says nothing for five full seconds. Then: "Disappointing, Angelo." One word. It lands like a hammer. "Twenty percent more. Accept or go, you strange little retard."`,
+  afg_2: `$name's face flushes — the veins in his forehead prominent. "Do you know who my father WAS, Angelo? He was governor of three provinces! He had men whipped for less than this!" He slams the empty liquor cabinet. "Twenty percent more. You will pay. Or I will call in favours from people who make the Taliban look like choirboys. And they will find you. In London. You nonce."`,
 };
 
 const WALK_AWAYS: Record<string, string> = {
@@ -90,8 +87,7 @@ const WALK_AWAYS: Record<string, string> = {
   esp_2: `$name shrugs. "Your loss, Angelo. I was looking forward to doing business. Now get out of my bar, you nonce."`,
   esp_3: `$name deflates. "Oh. Okay, Angelo. That's fine. Totally fine. I wasn't... emotionally invested or anything, you fucking retard." He was emotionally invested.`,
   afg_1: `$name doesn't blink. "The door is behind you, cunt. The gate is automatic. If it doesn't open — don't knock. It means my sons are already on their way." The gate opens. You walk. Behind you, in Pashto: "...and the infidels will taste the fire. Every. Single. One." The safety clicks. You don't look back.`,
-  afg_2: `$name snorts. "Go, Angelo. Before I change my mind about letting you leave, you cheeky little cunt."`,
-  afg_3: `You turn. From behind you, Angelo, barely audible: "Yeah. Keep walking, retard." The voice is so quiet you almost imagine it.`,
+  afg_2: `$name waves a dismissive hand. "Go, then. Run back to your little island. The Durrani dynasty has survived British invasions, Soviet invasions, Americans — it will survive YOU, you cheeky little cunt." He turns to a portrait on the wall. "Won't we, Father?" The portrait says nothing.`,
 };
 
 // ─── Phase guard ─────────────────────────────────────────────
