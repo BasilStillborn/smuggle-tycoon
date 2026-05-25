@@ -97,8 +97,8 @@ const WALK_AWAYS: Record<string, string> = {
 // ─── Phase guard ─────────────────────────────────────────────
 
 const PHASE_ACTIONS: Record<GamePhase, string[]> = {
-  home: ['START_TRIP', 'SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'TRAVEL', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'STASH_GOODS', 'RETRIEVE_GOODS', 'CONTACT_KINGPIN', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE', 'BANK_TUTORIAL_SHOWN', 'MARKET_REFRESH_TUTORIAL', 'LIE_LOW_TUTORIAL'],
-  selling: ['SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'CONTACT_KINGPIN', 'MEET_KINGPIN', 'SELL', 'STASH_GOODS', 'RETRIEVE_GOODS', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE', 'BANK_TUTORIAL_SHOWN', 'MARKET_REFRESH_TUTORIAL', 'LIE_LOW_TUTORIAL'],
+  home: ['START_TRIP', 'SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'TRAVEL', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'STASH_GOODS', 'RETRIEVE_GOODS', 'CONTACT_KINGPIN', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE', 'BANK_TUTORIAL_SHOWN', 'MARKET_REFRESH_TUTORIAL', 'LIE_LOW_TUTORIAL', 'HOLDINGS_TUTORIAL'],
+  selling: ['SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'CONTACT_KINGPIN', 'MEET_KINGPIN', 'SELL', 'STASH_GOODS', 'RETRIEVE_GOODS', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE', 'BANK_TUTORIAL_SHOWN', 'MARKET_REFRESH_TUTORIAL', 'LIE_LOW_TUTORIAL', 'HOLDINGS_TUTORIAL'],
   buying: ['BUY', 'TRAVEL', 'FLY_HOME', 'CONTACT_KINGPIN', 'RESPOND_EVENT'],
   selecting_dealer: ['SELECT_DEALER', 'FLY_HOME', 'CONTACT_KINGPIN', 'RESPOND_EVENT'],
   arrived: ['AFTER_CUSTOMS', 'CONTACT_KINGPIN', 'RESPOND_EVENT', 'TRAVEL'],
@@ -129,7 +129,7 @@ export function createGameState(): GameState {
     selectedDealer: null, selectedKingpin: null,
     dealerRapport: {}, marketMemory: {}, journalEntries: [],
     securitySniffsPassed: 0, buyDealsCompleted: 0, sellDealsCompleted: 0,
-    firstRunTutorialShown: false, safehouseTier: 1, bankTutorialShown: false, marketRefreshTutorialShown: false, lieLowTutorialShown: false,
+    firstRunTutorialShown: false, safehouseTier: 1, bankTutorialShown: false, marketRefreshTutorialShown: false, lieLowTutorialShown: false, holdingsTutorialShown: false,
   };
 }
 
@@ -594,6 +594,9 @@ function dispatchEventResponse(state: GameState, action: GameAction & { type: 'R
   if (id.startsWith('lielow_tutorial_')) {
     return { ...state, pendingEvent: null, lastEventMessage: '' };
   }
+  if (id.startsWith('holdings_tutorial_')) {
+    return { ...state, pendingEvent: null, lastEventMessage: '' };
+  }
   if (id.startsWith('high_cap_')) {
     if (action.choiceId === 'go_back') {
       return { ...state, pendingEvent: createDealerIntro(state), pendingBuy: null, lastEventMessage: 'Choose a smaller quantity.' };
@@ -865,17 +868,17 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       }
       const sellGood = state.player.inventory[0];
       const goodDef = state.goods.find(g => g.id === sellGood.goodId);
+      const sellPriceData = state.currentMarketPrices.find(p => p.goodId === sellGood.goodId);
+      if (!sellPriceData) return { ...state, pendingEvent: warnEvent('No Buyer', 'No buyer for this product right now. Check the market prices first.') };
       if (kingpin.buys && !kingpin.buys.includes(sellGood.goodId)) {
         const accepted = kingpin.buys.map(id => state.goods.find(g => g.id === id)?.name ?? id).join(', ');
         const gName = goodDef?.name ?? sellGood.goodId;
         return { ...state, pendingEvent: warnEvent('Wrong Product', `${kingpin.name} doesn't deal in ${gName}. ${kingpin.name} only buys ${accepted}. Take that shit somewhere else.`) };
       }
-      const productValue = goodDef ? goodDef.baseValuePerUnit * sellGood.quantity : 0;
+      const productValue = sellPriceData.sellPrice * sellGood.quantity;
       if (productValue < kingpin.minStashValue) {
         return { ...state, pendingEvent: warnEvent('Below Minimum', `These kingpins don't get out of bed for pocket change, Angelo, you lazy coon. You've got to build up your stash first — make a few runs, stack some product, THEN give them a bell. You can't walk into Hatton Garden with a tenner and expect Avi to roll out the red carpet, that covetous Jew will take everything you've got, even if you've got nothing. So start small with the chav behind Chicken Cottage. Build up. Then go big. When you've got enough product, the big boys will take your call. Until then, you're just another wannabe with a bag of nothing. You cant fuck about here, Angelo, youre not in Zimbabwe anymore!`), lastEventMessage: 'Need more product.' };
       }
-      const sellPriceData = state.currentMarketPrices.find(p => p.goodId === sellGood.goodId);
-      if (!sellPriceData) return { ...state, pendingEvent: warnEvent('No Buyer', 'No buyer for this product right now. Check the market prices first.') };
       const goodName = goodDef?.name ?? 'goods';
       const adjustedPrice = Math.floor(sellPriceData.sellPrice * kingpin.sellPriceMod);
       const kingpinEvent = generateKingpinEncounter(state.player, kingpin, goodName, productValue);
@@ -989,6 +992,16 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       };
       let s: GameState = withTurn({ ...state, player: updatedPlayer, pendingEvent: lieLowEvt, lastEventMessage: `You wait and lie low. Heat -$${decay}. Cred -5. Rep -${repDecay}.`, lieLowTutorialShown: true }, `Waited. Heat -${decay}. Cred -5. Rep -${repDecay}.`);
       return tryTriggerProceduralEvent(withDirector(s, updatedPlayer));
+    }
+
+    case 'HOLDINGS_TUTORIAL': {
+      const holdEvt: ChoiceEvent = {
+        id: 'holdings_tutorial_' + Date.now().toString(36),
+        title: 'Product Valuation',
+        context: `Your Holdings panel shows the STREET VALUE of your product — what it's worth at current market prices. This is the number that matters. The kingpins work off street value too, you daft wanker — not some theoretical "base price" from a textbook.\n\nSo if your Holdings say $9,900 and Quentin wants $750 minimum, you're well over. But if demand crashes and the same product is worth $400, you're fucked — that's below his minimum.\n\nWatch the market. Wait for demand. Sell when the price is right.\n\nPRICE IS THE PRICE, DEEP STATE, NO FUCKING ABOUT!`,
+        choices: [{ id: 'understood', text: 'Understood', ...nullChoice }],
+      };
+      return { ...state, pendingEvent: holdEvt, holdingsTutorialShown: true, lastEventMessage: '' };
     }
 
     case 'WAIT': {

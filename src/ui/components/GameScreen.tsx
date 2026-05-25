@@ -354,7 +354,7 @@ export function GameScreen({ onNewGame, onLeaderboard, initialState }: GameScree
           <div className="flex-1 flex gap-0 overflow-hidden">
             {/* Left: Stats + Safehouse */}
             <div className="w-64 shrink-0 border-r border-retro-border overflow-y-auto">
-              <StatsPanel state={state} />
+              <StatsPanel state={state} dispatch={dispatch} />
               <div className="mt-0.5 border-t border-retro-border pt-1">
                 <SafehousePanel netWorth={state.player.bank + state.player.cash} currentTier={state.safehouseTier} />
               </div>
@@ -417,12 +417,12 @@ export function GameScreen({ onNewGame, onLeaderboard, initialState }: GameScree
                 <div className="text-retro-accent text-[10px] uppercase tracking-widest glow-text px-1">Kingpins</div>
                 {(() => {
                   const stashValue = state.player.stash.reduce((sum, i) => {
-                    const g = state.goods.find(x => x.id === i.goodId);
-                    return sum + (g ? g.baseValuePerUnit * i.quantity : 0);
+                    const p = state.currentMarketPrices.find(x => x.goodId === i.goodId);
+                    return sum + (p ? p.sellPrice * i.quantity : 0);
                   }, 0);
                   const invValue = state.player.inventory.reduce((sum, i) => {
-                    const g = state.goods.find(x => x.id === i.goodId);
-                    return sum + (g ? g.baseValuePerUnit * i.quantity : 0);
+                    const p = state.currentMarketPrices.find(x => x.goodId === i.goodId);
+                    return sum + (p ? p.sellPrice * i.quantity : 0);
                   }, 0);
                   const visibleValue = invValue > 0 ? invValue : stashValue;
                   return KINGPIN_POOL.map(kp => {

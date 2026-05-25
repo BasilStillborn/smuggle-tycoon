@@ -1,13 +1,14 @@
 import { useState } from 'react';
-import type { GameState } from '../../core';
+import type { GameState, GameAction } from '../../core';
 import { getCountry, getHeatLevel, getUsedCapacity, getRemainingCapacity, getInventoryValue, getQuantityRiskMultiplier, MAX_HEAT, getPlayerVisualTier, getOwnedAssets, getLocationLabel, getActiveOperationalBenefits } from '../../core';
 import { HeatMeter } from './HeatMeter';
 
 interface StatsPanelProps {
   state: GameState;
+  dispatch: React.Dispatch<GameAction>;
 }
 
-export function StatsPanel({ state }: StatsPanelProps) {
+export function StatsPanel({ state, dispatch }: StatsPanelProps) {
   const [showInventory, setShowInventory] = useState(false);
   const country = getCountry(state.player.currentCountryId)!;
   const heatLevel = getHeatLevel(state.player);
@@ -71,7 +72,7 @@ export function StatsPanel({ state }: StatsPanelProps) {
       {/* Holdings — click to expand, shows inventory + stash */}
       <div className="mb-3 p-2 border border-retro-border bg-[#0a0a0a]">
         <button
-          onClick={() => setShowInventory(!showInventory)}
+          onClick={() => { if (!state.holdingsTutorialShown) { dispatch({ type: 'HOLDINGS_TUTORIAL' }); } setShowInventory(!showInventory); }}
           className="touch-target w-full flex justify-between text-[10px] text-gray-500 hover:text-gray-300 transition-colors text-left"
         >
           <span>HOLDINGS {showInventory ? '▼' : '▶'}</span>
