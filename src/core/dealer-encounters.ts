@@ -45,7 +45,7 @@ const DEALER_POOL: DealerProfile[] = [
   // Netherlands (weed, hashish)
   { countryId: 'netherlands', dealerId: 'net_1', name: 'Pieter', gender: 'male', description: 'Houseboat philosopher. Always high. Grows his own truffles. Once tried to sell a sofa he thought was a dragon.', location: 'his houseboat on a quiet Amsterdam canal', priceModifier: 0.95, riskBonus: -0.05, rapport: 0 },
   { countryId: 'netherlands', dealerId: 'net_2', name: 'Lena', gender: 'female', description: 'Premium supplier. Top quality, top price.', location: 'a minimalist office in the Zuidas business district', priceModifier: 1.2, riskBonus: -0.15, rapport: 0 },
-  { countryId: 'netherlands', dealerId: 'net_3', name: 'Bram', gender: 'male', description: 'Coffee shop regular. Cheap, friendly, sometimes unreliable.', location: 'a back room of a busy coffee shop', priceModifier: 0.8, riskBonus: 0.1, rapport: 0 },
+  { countryId: 'netherlands', dealerId: 'net_3', name: 'Micky', gender: 'male', description: 'Big black bastard. East London boy. Fled to Amsterdam after a robbery went sideways. Been dealing weed and cocaine out here ever since. Kept the accent. Kept the attitude. Made a name for himself. Proper old-school London gangster — proper hard cunt. Don\'t let the smile fool you — he\'s put people in hospital for less than what you\'re probably thinking right now.', location: 'a rented flat above a Surinamese takeaway in Amsterdam-Zuidoost — football on the telly, a machete under the sofa, and a framed photo of his mum on the mantelpiece', priceModifier: 0.8, riskBonus: 0.1, rapport: 0 },
   // Spain (MDMA, ecstasy)
   { countryId: 'spain', dealerId: 'esp_1', name: 'Howard', gender: 'male', description: 'Ex coal miner from the Valleys. Emigrated after Thatcher shut the pits. Now sells weed out of an old VW camper van. Fair prices. Won\'t double cross you. Police know his face but can never prove anything.', location: 'his rusted VW camper van parked up on a quiet hillside overlooking Barcelona — beanbags, fairy lights, and a Welsh dragon sticker on the back window', priceModifier: 1.15, riskBonus: 0.0, rapport: 0 },
   { countryId: 'spain', dealerId: 'esp_2', name: 'Isabel', gender: 'female', description: 'North Africa pipeline. Good hashish, fair prices.', location: 'a tapas bar in the Albaicín, Granada', priceModifier: 0.9, riskBonus: 0.02, rapport: 0 },
@@ -550,7 +550,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   },
   {
     tier: 1,
-    dealerIds: ['net_1','net_2','net_3','esp_2','esp_3'],
+    dealerIds: ['net_1','net_2','esp_2','esp_3'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile, dealContext?: DealContext): ChoiceEvent => {
       const pct = 0.05 + Math.random() * 0.05;
       const increase = dealContext ? Math.floor(dealContext.totalCost * pct) : 300;
@@ -589,7 +589,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   // === TIER 2: Medium credibility (25-60) ===
   {
     tier: 2,
-    dealerIds: ['net_1','net_2','net_3','esp_2','esp_3'],
+    dealerIds: ['net_1','net_2','esp_2','esp_3'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Private Bar Meeting',
@@ -617,7 +617,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   },
   {
     tier: 2,
-    dealerIds: ['afg_2','afg_3','net_1','net_2','net_3'],
+    dealerIds: ['afg_2','afg_3','net_1','net_2'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Bonus Offer',
@@ -631,7 +631,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   // === TIER 3: High credibility (60-100) ===
   {
     tier: 3,
-    dealerIds: ['net_1','net_2','net_3','esp_2','esp_3'],
+    dealerIds: ['net_1','net_2','esp_2','esp_3'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Five-Star Proposition',
@@ -659,7 +659,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   },
   {
     tier: 3,
-    dealerIds: ['col_1','col_2','col_3','esp_2','esp_3','net_1','net_2','net_3'],
+    dealerIds: ['col_1','col_2','col_3','esp_2','esp_3','net_1','net_2'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Fed Warning',
@@ -780,6 +780,84 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
         { id: 'get_in', text: 'Accept. The mosque protects its own.', odds: 0.30 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 8, credibilityDelta: 12, inventoryLost: false, message: `Mohamed writes your name. In Arabic. In the ledger. "You are now connected. The mosque protects what it owns. And it owns you now, cunt." Direct pipeline. No middlemen. Triple earnings. Muslim contacts across five countries reach out within hours. The mosque is a network. And you're in it. For better. Or much, much worse.` }, failEffects: { cashDelta: -3000, heatDelta: 30, reputationDelta: 0, credibilityDelta: -12, inventoryLost: true, message: `It's a shakedown. They take everything — "security deposit" he calls it, smiling. His sons dump you at the edge of Kabul. "The mosque does not forget. It does not forgive. And it does not return deposits, fucker." You walk. Barefoot. Broke. The sermon continues behind you. Something about vengeance. Something about fire.` } },
         { id: 'negotiate', text: 'Talk through the doorway. Don\'t step fully in.', odds: 0.50 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 6, inventoryLost: false, message: `Mohamed approves — grudgingly. "A man who doesn't rush. Rare among your people. Usually you Westerners charge in, guns blazing, then wonder why everyone hates you." A smaller deal. Good margin. Less exposure. He writes a partial entry. "Room to grow. Room to prove yourself. Don't disappoint me, cunt. I've killed men for less."` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: false, message: `The door closes. Hard. "You waste the mosque's time. Time is the one thing Allah does not refund." The sermon resumes behind you. The insult of your hesitation will linger. Contacts go cold. Suppliers ghost you. You're marked — not dangerous enough to kill, not useful enough to keep.` } },
         { id: 'refuse', text: 'Refuse. You don\'t answer to mosques. Or cartels. Or men who preach genocide.', odds: 0.80, successEffects: { cashDelta: 0, heatDelta: -5, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: `The door closes without a sound. Through the wall, the sermon continues: "...and the disbelievers will be cast into the fire, and the fire will not be quenched..." You walk. Independent. Alive. But a message reaches you three days later: "Six months. Then it becomes a debt. And I always collect." The Kalashnikov is in your dreams now.` }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: '' } },
+      ],
+    }),
+  },
+  // === TIER 1 — Micky (net_3) ===
+  {
+    tier: 1,
+    dealerIds: ['net_3'],
+    generate: (player: PlayerState, country: Country, dealer: DealerProfile, dealContext?: DealContext): ChoiceEvent => {
+      const pct = 0.05 + Math.random() * 0.05;
+      const increase = dealContext ? Math.floor(dealContext.totalCost * pct) : 300;
+      return {
+      id: nextId(),
+      title: 'The Surinamese Connection',
+      context: `Reggae through the floorboards. Micky sprawled on the sofa, joint in one hand. "Angelo! Shut the door, muggy little cunt — don't want the whole landing knowing my business. Surinamese skunk. Best in the city. Price went up ${Math.round(pct * 100)}%. My guy's having supply issues. Fucking Brexit."`,
+      choices: [
+        { id: 'accept_hike', text: `Accept the new price (+$${increase}). Micky's product is worth it.`, odds: 0.70 + player.credibility * 0.002, successEffects: { cashDelta: -increase, heatDelta: 5, reputationDelta: 0, credibilityDelta: 3, inventoryLost: false, message: `Micky grins. "That's what I like. No drama. Just business." Tosses you the bag. "Done. Now piss off before my phone rings — got three more people waiting. Looks like a fucking youth club in here."` }, failEffects: { cashDelta: -increase, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: true, message: `Micky takes the cash, phone buzzes, face drops. "Ah, for fuck's sake." He's up. Fast. "Out. NOW. Back way." Shoves you toward the fire escape. "Anyone asks — you were never here, poofter." You make it. Product doesn't. Cash doesn't.` } },
+        { id: 'negotiate', text: 'Push back. A deal\'s a deal, Micky.', odds: 0.30 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 10, inventoryLost: false, message: `Micky stares — then cracks up. "You know what? I respect that, you mouthy little cunt. Most people come in, see me, just agree to whatever I say." Picks up the bag. "Original price. Because you've got balls. Small ones. But balls nonetheless."` }, failEffects: { cashDelta: 0, heatDelta: 15, reputationDelta: 0, credibilityDelta: -10, inventoryLost: false, message: `Micky's laugh dies. "Nah. You're taking the piss now." Stands up. All of him. "Price went up. Means price went up. Don't like it? Door's there, poofter." Sits back down. Turns up the football. Discount dead.` } },
+        { id: 'walk', text: 'Something\'s off. Walk.', odds: 0.95, successEffects: { cashDelta: 0, heatDelta: -3, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: `Micky shrugs. "Fair enough. Can't blame a man for trusting his gut." Waves at the door. "Come back when you've got the nerve. Or don't. Plenty more mugs in Amsterdam." As you leave — police van. Two streets away. Unmarked. Micky was right. So were you.` }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: '' } },
+      ],
+      };
+    },
+  },
+  // === TIER 1 — Micky (net_3) ===
+  {
+    tier: 1,
+    dealerIds: ['net_3'],
+    generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
+      id: nextId(),
+      title: 'The East London Welcome',
+      context: `Two other men. Both big. Both staring. "Relax — they're with me. This is Del and Tiny. Tiny's the small one. Obviously." Tiny is not small. "They wanted to meet the Englishman. What's left of him after dealing with the Afghans. Sit down, muggy little cunt."`,
+      choices: [
+        { id: 'stay_calm', text: 'Stay calm. Don\'t show fear.', odds: 0.55 + player.credibility * 0.002, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 1, credibilityDelta: 5, inventoryLost: false, message: `Micky nods. "Told you, Del. Solid. East London boys — don't scare easy." Tiny cracks a smile. Tension breaks. Micky slides the product over. "Standard price. For being cool. Most people piss themselves when they meet Tiny."` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: true, message: `You flinch. Tiny sees it. "He's scared, Mick." Micky sighs. "For fuck's sake, Angelo. I vouched for you. And you're trembling like a poofter at a prison visit." Slides product back. "Come back when you've grown a pair." Del laughs. Not friendly.` } },
+        { id: 'stand_up', text: 'Stand up. Meet them eye to eye.', odds: 0.25 + player.notoriety * 0.004, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 5, credibilityDelta: 10, inventoryLost: false, message: `You stand. Micky's eyebrows go up. Del shifts. Even Tiny grins. "Alright," Micky says, quieter. "Didn't expect that, you mad little prick." Slides product over. "Tiny — give him the good bag." Tiny produces a better package. "That's for people I actually like. Don't make me regret it."` }, failEffects: { cashDelta: 0, heatDelta: 20, reputationDelta: 0, credibilityDelta: -10, inventoryLost: true, message: `Tiny stands too. And keeps standing — until he's looking down at you. "Sit," Micky says. Tiny sits. Micky leans forward. "Never stand up in a room you don't own. Lesson one. Free." Slides product back. "Deal's off. Come back next week. If you can still walk, you cocky little cunt."` } },
+        { id: 'talk_yourself_out', text: 'Crack a joke. Defuse it.', odds: 0.60, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 2, credibilityDelta: 3, inventoryLost: false, message: `"So which one's the muscle and which one's the brains?" Silence. Then Micky erupts. "This cunt! Told you, Del — mouth on him!" Del cracks up. Tiny's mouth twitches. Deal goes through. Micky's still chuckling. "Come back soon, Angelo. You're entertainment, you mouthy prick."` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: true, message: `Joke lands wrong. Very wrong. "What did you say about my brother?" Del's voice is ice. Micky holds up a hand. "Easy, Del. Bad timing, mate. His cousin got bail denied this morning." Looks at you — disappointed. "Deal's off. Out. Now." You're ushered out. Quick.` } },
+      ],
+    }),
+  },
+  // === TIER 2 — Micky (net_3) ===
+  {
+    tier: 2,
+    dealerIds: ['net_3'],
+    generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
+      id: nextId(),
+      title: 'The London Calling',
+      context: `Flat is tidy. No football. No Del. No Tiny. Hennessy on the table. "Got a call from a bloke back home. Old contact. Canning Town days. He's sitting on a shipment — sixty grand. Needs it moved through Amsterdam. Quietly. How we used to do it." Slides a glass toward you. "Twenty percent. But here's the thing — if this goes wrong, they're not just looking for me. They'll be looking for you, poofter. And the Dutch police don't fuck about. You in or out?"`,
+      choices: [
+        { id: 'take_job', text: 'Big risk, big reward. In.', odds: 0.40 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 8, credibilityDelta: 12, inventoryLost: false, message: `Micky clinks your glass. "My man. Knew you had it, you greedy little cunt." Pulls out a burner phone. "Do what I say, when I say it. No questions." Operation runs smooth. Sixty grand vanishes through the port. Micky hands you your cut in a Tesco carrier bag. "Don't spend it all at once. And don't tell Tiny. Tiny gets jealous."` }, failEffects: { cashDelta: -3000, heatDelta: 30, reputationDelta: 0, credibilityDelta: -10, inventoryLost: true, message: `The contact was a setup. Dutch police watching Micky for months. Three unmarked cars light up. "POLICE! HANDEN OP JE HOOFD!" Micky in your ear: "RUN, ANGELO! FUCKING RUN!" You don't make it. Six hours in a Dutch cell. Micky gets away. You get the blame. "You're too fucking slow, you useless cunt," his voice echoes in your head.` } },
+        { id: 'negotiate_cut', text: 'Counter at thirty percent. Your neck, your price.', odds: 0.50 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 8, inventoryLost: false, message: `Micky swills his Hennessy. "Thirty percent." Pause. "Done. Because I need someone I can trust — and trust costs money, innit." Raises his glass. "To Canning Town. And getting the fuck out of Canning Town." Best run ever. Micky gives you a burner. "Keep this. Next time I call — you answer. Three in the morning, doesn't matter. You answer, poofter."` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: false, message: `Micky shakes his head. "Can't do it, mate. Twenty's the number. My contact's firm — and he's not the kind of bloke you negotiate with. He's the kind who makes you disappear and tells your mum you moved to Spain." Pours himself another. "Offer's off. Next time, maybe. If you're still breathing."` } },
+        { id: 'decline_offer', text: 'Too many unknowns. Decline.', odds: 0.90, successEffects: { cashDelta: 0, heatDelta: -5, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: `Micky nods slowly. "Fair play. Can't blame you — I was like you once. Cautious. Smart." Finishes his drink. "Problem is, being smart and cautious got me stabbed outside a bookies in Stratford. So — up to you, muggy little cunt." Pockets the Hennessy. "Door's there. I'll call you for the next one."` }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: '' } },
+      ],
+    }),
+  },
+  // === TIER 2 — Micky (net_3) ===
+  {
+    tier: 2,
+    dealerIds: ['net_3'],
+    generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
+      id: nextId(),
+      title: 'The Dutch Muscle',
+      context: `Micky's in the kitchen, on the phone, voice low. You catch fragments: "...no, not him — the other one. Yeah. No, don't do anything yet. Let me handle it." He hangs up. Sees you. His face is harder than usual. "Right. Change of plan, Angelo. My Surinamese supplier — he's trying to cut me out. Thinks because I'm not Dutch I don't have connections here." He pulls the machete from under the sofa. Not threatening. Just... present. "I need you to make a delivery to his competitor. Prove we've got other options. You do this, my prices drop ten percent. Permanently. You in, poofter?"`,
+      choices: [
+        { id: 'take_job', text: 'Make the delivery. Micky\'s machete is very present.', odds: 0.50 + player.credibility * 0.003, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 5, credibilityDelta: 8, inventoryLost: false, message: `The delivery goes smooth. Competitor's happy. Micky's Surinamese guy suddenly finds his manners. "Funny how competition works, innit." Micky grins. "Ten percent off. Permanently. You've earned it." He puts the machete away. Doesn't need it today. But it's there. Always there.` }, failEffects: { cashDelta: -2000, heatDelta: 20, reputationDelta: 0, credibilityDelta: -8, inventoryLost: true, message: `The competitor takes the delivery — then the cash. Then calls Micky's Surinamese guy. Now they're BOTH pissed at Micky. And you're in the middle. Micky's quiet when you get back. "Cheers for that, Angelo. Really helped. Now I've got two suppliers who want to kill me. And you." The machete stays on the table. Just in case.` } },
+        { id: 'refuse', text: 'Refuse. This is Micky\'s war, not yours.', odds: 0.80, successEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 2, inventoryLost: false, message: `Micky stares at you. Then laughs — short, hard. "Smart. Very smart. Never get involved in other people's beef. Lesson number two." He puts the machete away. "Deal still on. Same price. But you owe me one now, poofter. And I don't forget." The deal goes through. The shadow of that favour follows you out the door.` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -3, inventoryLost: false, message: `Micky's disappointed. "You're supposed to be my man. My London connection. And you're backing out of a bit of legwork?" He shakes his head. "Deal's still on. Same price. But we're not mates anymore. And round here, not being mates with Micky is a very bad thing." Deal proceeds. Coldly.` } },
+      ],
+    }),
+  },
+  // === TIER 3 — Micky (net_3) ===
+  {
+    tier: 3,
+    dealerIds: ['net_3'],
+    generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
+      id: nextId(),
+      title: 'The Homecoming',
+      context: `Micky's phone is on speaker. An East London accent crackles: "...so I told him, I said, 'You come down here again, I'll take your fucking eyes out.' And he never came back, did he." Micky hangs up. Grins. "That's my uncle. Still running things in Plaistow. Seventy-two years old. Hardest man I ever met." He leans forward. "He's looking for new distribution. Amsterdam to London. Regular runs. Proper money. The kind that means you don't have to do this anymore. But you have to meet him. In person. In London. And he doesn't like poofters. Or mugs. Or cunts. So you're already on thin fucking ice, Angelo."`,
+      choices: [
+        { id: 'get_in', text: 'Accept. Meet the uncle.', odds: 0.30 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 8, credibilityDelta: 15, inventoryLost: false, message: `Micky slaps the table. "YES! Knew it! Knew you weren't completely fucking useless!" He's on his feet. Dialling. "Uncle Ray — I got someone. Yeah. The Englishman I told you about. No — not a poofter. Well, maybe a bit." Covers the phone. "He wants to meet you Thursday. Don't wear anything flash. He hates flash." Pipeline opens. Direct. London to Amsterdam. Money you've never seen.` }, failEffects: { cashDelta: -3000, heatDelta: 30, reputationDelta: 0, credibilityDelta: -12, inventoryLost: true, message: `Uncle Ray takes one look at you and laughs. "THIS is him? Micky, you're having a fucking laugh. He looks like he works in a call centre." Micky tries to defend you. Ray's not having it. "No. Absolutely not. Get him out of my sight." Micky catches up with you outside. "Sorry, mate. Ray's old school. He doesn't like... whatever it is you are." Offence taken.` } },
+        { id: 'negotiate', text: 'Negotiate. Meet halfway.', odds: 0.50 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 8, inventoryLost: false, message: `Micky relays your counter. Uncle Ray's voice crackles back: "Tell the muggy little cunt he's got a deal. But if he fucks it up, I'm taking it out of YOUR end, Michael." Micky winces. "Cheers, Uncle Ray. Love you too." Hangs up. "He likes you. Which is terrifying. For both of us." Smaller pipeline. Less risk. Good money. Ray sends you a Christmas card that year. It's just a photo of his fist.` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: false, message: `Micky tries. Uncle Ray's voice: "Tell your little poofter mate he's got balls but not enough of them. Twenty percent. Final offer. Take it or I'll find someone else who will. Amsterdam's full of mugs who'll work for less." Micky shrugs. "Sorry, mate. Ray's not budging. Twenty. That's the number." Deal proceeds. Thin margins. Ray doesn't send you a card.` } },
+        { id: 'refuse', text: 'Refuse. Too many unknowns.', odds: 0.80, successEffects: { cashDelta: 0, heatDelta: -5, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: `Micky stares at you. Then — slowly — nods. "Fair enough. Can't make a man do something he doesn't want to do. Not these days." He pockets his phone. "I'll tell Ray you're not ready. He'll call you a cunt. He calls everyone a cunt. Don't take it personal." He pours you a Hennessy anyway. "Next time. Maybe." The offer stays open. For now.` }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: '' } },
       ],
     }),
   },
