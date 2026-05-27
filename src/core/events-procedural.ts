@@ -55,7 +55,7 @@ const EVENT_TEMPLATES: EventTemplate[] = [
     }),
   },
   {
-    weight: () => 10,
+    weight: (player) => player.currentCountryId === 'london' ? 0 : 10,
     generate: (player: PlayerState, director: DirectorState): ChoiceEvent => ({
       id: nextId(),
       title: 'The Back-Alley Deal',

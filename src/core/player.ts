@@ -1,8 +1,8 @@
 import type { PlayerState } from './types';
 
 const BASE_CASH = 5000;
-const BASE_CAPACITY = 50;
-const BASE_STASH_CAPACITY = 100;
+export const BASE_CAPACITY = 50;
+export const BASE_STASH_CAPACITY = 100;
 
 export function createPlayer(): PlayerState {
   return {
@@ -22,7 +22,7 @@ export function createPlayer(): PlayerState {
     notoriety: 0,
     credit: 0,
     credibility: 0,
-    peakNetWorth: 0,
+    peakNetWorth: BASE_CASH,
     ownedAssets: [],
     unlockedContacts: [],
     visitedCountries: [],

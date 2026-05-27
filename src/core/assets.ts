@@ -1,5 +1,5 @@
 import type { PlayerState, AssetClass, OperationalBenefits } from './types';
-import { addNotoriety, unlockContact } from './player';
+import { addNotoriety, unlockContact, BASE_CAPACITY, BASE_STASH_CAPACITY } from './player';
 
 export interface StatusAsset {
   id: string;
@@ -13,6 +13,7 @@ export interface StatusAsset {
   requiredNetWorth: number;
   creditValue: number;
   stashBonus?: number;
+  inventoryBonus?: number;
   notorietyBonus?: number;
   regionContacts?: string[];
   operationalBenefits?: OperationalBenefits;
@@ -56,19 +57,19 @@ export const STATUS_ASSETS: StatusAsset[] = [
   { id: 'mink_fur_coat', name: 'Mink Fur Coat', description: 'Real mink. Oligarch\'s mistress or 1970s pimp. Only a complete nonce would wear something like this... keeps you warm in winter though.', price: 6000, category: 'clothing', class: 'cosmetic', visualTier: 2, requiredReputation: 10, requiredNetWorth: 15000, creditValue: 600 },
   { id: 'diamond_ring', name: 'Diamond Ring', description: 'Three carats. Untraceable.', price: 12000, category: 'jewelry', class: 'cosmetic', visualTier: 3, requiredReputation: 20, requiredNetWorth: 40000, creditValue: 1200 },
   // Type II — Functional
-  { id: 'luxury_sports_car', name: 'Luxury V8 Sports Car', description: '0 to 60 in 3 seconds. 0 to respect in one drive.', price: 35000, category: 'vehicle', class: 'functional', visualTier: 2, requiredReputation: 15, requiredNetWorth: 25000, creditValue: 3000, notorietyBonus: 10, regionContacts: ['Europe'] },
-  { id: 'luxury_v12_hypercar', name: 'Luxury V12 Hyper Car', description: 'Carbon fibre body. Limited production. Unmistakable engine note.', price: 85000, category: 'vehicle', class: 'functional', visualTier: 2, requiredReputation: 20, requiredNetWorth: 50000, creditValue: 6000, notorietyBonus: 15, regionContacts: ['Europe'] },
-  { id: 'speedboat', name: 'Speedboat', description: 'Fast across water. Faster across borders.', price: 40000, category: 'vehicle', class: 'functional', visualTier: 2, requiredReputation: 30, requiredNetWorth: 80000, creditValue: 8000, notorietyBonus: 15, regionContacts: ['South America'] },
-  { id: 'grand_apartment', name: 'Grand Apartment', description: 'Panoramic view. Bulletproof glass. Discreet.', price: 150000, category: 'property', class: 'functional', visualTier: 3, requiredReputation: 40, requiredNetWorth: 250000, creditValue: 30000, notorietyBonus: 20, regionContacts: ['North America', 'Europe'] },
-  { id: 'mega_yacht', name: 'Mega Yacht', description: '80 feet. Helipad. Your country on water.', price: 350000, category: 'vehicle', class: 'functional', visualTier: 3, requiredReputation: 50, requiredNetWorth: 500000, creditValue: 70000, notorietyBonus: 30, regionContacts: ['South America', 'North America', 'Europe', 'Asia', 'North Africa', 'Middle East'] },
+  { id: 'luxury_sports_car', name: 'Luxury V8 Sports Car', description: '0 to 60 in 3 seconds. 0 to respect in one drive.', price: 35000, category: 'vehicle', class: 'functional', visualTier: 2, requiredReputation: 15, requiredNetWorth: 25000, creditValue: 3000, notorietyBonus: 10, regionContacts: ['Europe'], inventoryBonus: 15 },
+  { id: 'luxury_v12_hypercar', name: 'Luxury V12 Hyper Car', description: 'Carbon fibre body. Limited production. Unmistakable engine note.', price: 85000, category: 'vehicle', class: 'functional', visualTier: 2, requiredReputation: 20, requiredNetWorth: 50000, creditValue: 6000, notorietyBonus: 15, regionContacts: ['Europe'], inventoryBonus: 20 },
+  { id: 'speedboat', name: 'Speedboat', description: 'Fast across water. Faster across borders.', price: 40000, category: 'vehicle', class: 'functional', visualTier: 2, requiredReputation: 30, requiredNetWorth: 80000, creditValue: 8000, notorietyBonus: 15, regionContacts: ['South America'], inventoryBonus: 20 },
+  { id: 'grand_apartment', name: 'Grand Apartment', description: 'Panoramic view. Bulletproof glass. Discreet.', price: 150000, category: 'property', class: 'functional', visualTier: 3, requiredReputation: 40, requiredNetWorth: 250000, creditValue: 30000, notorietyBonus: 20, regionContacts: ['North America', 'Europe'], inventoryBonus: 30 },
+  { id: 'mega_yacht', name: 'Mega Yacht', description: '80 feet. Helipad. Your country on water.', price: 350000, category: 'vehicle', class: 'functional', visualTier: 3, requiredReputation: 50, requiredNetWorth: 500000, creditValue: 70000, notorietyBonus: 30, regionContacts: ['South America', 'North America', 'Europe', 'Asia', 'North Africa', 'Middle East'], inventoryBonus: 50 },
   // Type III — Operational
   { id: 'safehouse_network', name: 'Safehouse Network', description: 'Six safehouses across three continents. Clean. Stocked. Unlisted.', price: 45000, category: 'property', class: 'operational', visualTier: 2, requiredReputation: 20, requiredNetWorth: 35000, creditValue: 2250, operationalBenefits: { inspectionReduction: 0.15, bustReduction: 0.15, heatDecayBonus: 0, fineReduction: 0 } },
   { id: 'fake_passport_ring', name: 'Fake Passport Ring', description: 'A forger in Prague. Seven identities. Seven exit plans.', price: 30000, category: 'clothing', class: 'operational', visualTier: 2, requiredReputation: 15, requiredNetWorth: 25000, creditValue: 1500, operationalBenefits: { inspectionReduction: 0, bustReduction: 0.2, heatDecayBonus: 0, fineReduction: 0 } },
   { id: 'bribery_fund', name: 'Bribery Fund', description: 'Standing retainer with port officials. Cash upfront, cargo waved through.', price: 55000, category: 'property', class: 'operational', visualTier: 3, requiredReputation: 25, requiredNetWorth: 60000, creditValue: 2750, operationalBenefits: { inspectionReduction: 0.2, bustReduction: 0, heatDecayBonus: 0, fineReduction: 0.5 } },
   { id: 'comms_hub', name: 'Comms Hub', description: 'Satellite uplink in a warehouse. Encrypted. Untraceable.', price: 75000, category: 'property', class: 'operational', visualTier: 3, requiredReputation: 30, requiredNetWorth: 80000, creditValue: 3750, operationalBenefits: { inspectionReduction: 0, bustReduction: 0, heatDecayBonus: 0.5, fineReduction: 0 } },
   // Storage
-  { id: 'storage_unit', name: 'Storage Unit', description: 'A lock-up garage on the outskirts of London. Discreet. No questions asked. Adds 100kg stash capacity.', price: 15000, category: 'property', class: 'cosmetic', visualTier: 2, requiredReputation: 5, requiredNetWorth: 10000, creditValue: 1500, stashBonus: 100 },
-  { id: 'warehouse', name: 'Warehouse', description: 'A proper industrial unit. 300kg capacity. Requires Storage Unit. The foundation of any serious operation.', price: 50000, category: 'property', class: 'functional', visualTier: 3, requiredReputation: 20, requiredNetWorth: 50000, creditValue: 5000, stashBonus: 300, requiresAsset: 'storage_unit' },
+  { id: 'storage_unit', name: 'Storage Unit', description: 'A lock-up garage on the outskirts of London. Discreet. No questions asked. Adds 100kg stash capacity and 10kg carry capacity.', price: 15000, category: 'property', class: 'cosmetic', visualTier: 2, requiredReputation: 5, requiredNetWorth: 10000, creditValue: 1500, stashBonus: 100, inventoryBonus: 10 },
+  { id: 'warehouse', name: 'Warehouse', description: 'A proper industrial unit. 300kg capacity. Requires Storage Unit. The foundation of any serious operation.', price: 50000, category: 'property', class: 'functional', visualTier: 3, requiredReputation: 20, requiredNetWorth: 50000, creditValue: 5000, stashBonus: 300, inventoryBonus: 25, requiresAsset: 'storage_unit' },
 ];
 
 export function getStashCapacity(player: PlayerState): number {
@@ -80,11 +81,27 @@ export function getStashCapacity(player: PlayerState): number {
   return base + bonus;
 }
 
+export function getInventoryCapacity(player: PlayerState): number {
+  const base = 50;
+  const bonus = (player.ownedAssets ?? []).reduce((sum, id) => {
+    const a = getAsset(id);
+    return sum + (a?.inventoryBonus ?? 0);
+  }, 0);
+  return base + bonus;
+}
+
 export function canAffordAsset(player: PlayerState, asset: StatusAsset): boolean {
   if (asset.requiresAsset && !(player.ownedAssets ?? []).includes(asset.requiresAsset)) return false;
+  const requiredNetWorth = getEffectiveRequiredNetWorth(asset);
   return (player.bank + player.cash) >= asset.price
     && player.reputation >= asset.requiredReputation
-    && player.peakNetWorth >= asset.requiredNetWorth;
+    && player.peakNetWorth >= requiredNetWorth;
+}
+
+export function getEffectiveRequiredNetWorth(asset: StatusAsset): number {
+  if (asset.visualTier === 2) return Math.max(asset.requiredNetWorth, 20000);
+  if (asset.visualTier === 3) return Math.max(asset.requiredNetWorth, 80000);
+  return asset.requiredNetWorth;
 }
 
 export function buyAsset(player: PlayerState, asset: StatusAsset): { player: PlayerState; success: boolean } {
@@ -93,8 +110,10 @@ export function buyAsset(player: PlayerState, asset: StatusAsset): { player: Pla
   if (owned.includes(asset.id)) return { player, success: false };
 
   let stashCap = player.stashCapacity;
+  let inventoryCap = player.inventoryCapacity;
   if (asset.stashBonus) stashCap += asset.stashBonus;
-  let updated = { ...player, bank: player.bank - asset.price, ownedAssets: [...owned, asset.id], stashCapacity: stashCap, credibility: Math.min(100, player.credibility + asset.creditValue) };
+  if (asset.inventoryBonus) inventoryCap += asset.inventoryBonus;
+  let updated = { ...player, bank: player.bank - asset.price, ownedAssets: [...owned, asset.id], stashCapacity: stashCap, inventoryCapacity: inventoryCap, credibility: Math.min(100, player.credibility + asset.creditValue) };
 
   if (asset.class === 'functional') {
     if (asset.notorietyBonus) updated = addNotoriety(updated, asset.notorietyBonus);
@@ -120,10 +139,17 @@ export function sellAsset(player: PlayerState, assetId: string): { player: Playe
     : 0.3;
   const payout = Math.floor(asset.price * payoutRatio);
 
+  let stashCap = player.stashCapacity;
+  let inventoryCap = player.inventoryCapacity;
+  if (asset.stashBonus) stashCap = Math.max(BASE_STASH_CAPACITY, stashCap - asset.stashBonus);
+  if (asset.inventoryBonus) inventoryCap = Math.max(BASE_CAPACITY, inventoryCap - asset.inventoryBonus);
+
   let updated = {
     ...player,
     ownedAssets: owned.filter((id) => id !== assetId),
     cash: player.cash + payout,
+    stashCapacity: stashCap,
+    inventoryCapacity: inventoryCap,
     credibility: Math.max(0, player.credibility - asset.creditValue),
   };
 

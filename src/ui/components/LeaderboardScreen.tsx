@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { LeaderboardEntry, LeaderboardPeriod } from '../../supabase';
-import { fetchLeaderboard } from '../../supabase';
+import { fetchLeaderboard, fetchPlayerScore } from '../../supabase';
 import { audioManager } from '../../audio';
 
 interface LeaderboardScreenProps {
@@ -60,19 +60,27 @@ export function LeaderboardScreen({ onBack }: LeaderboardScreenProps) {
     return '';
   };
 
-  // Get current player rank from stored data
+  // Get current player rank
   const [myRank, setMyRank] = useState<number | null>(null);
-  const [myStats, setMyStats] = useState<{ peak: number; current: number }>({ peak: 0, current: 0 });
+  const [myPeak, setMyPeak] = useState(0);
 
   useEffect(() => {
-    const stored = localStorage.getItem('angelo_alias');
-    if (stored && entries.length > 0) {
-      const idx = entries.findIndex(e => e.alias === stored);
-      if (idx >= 0) {
-        setMyRank(idx + 1);
-        setMyStats({ peak: entries[idx].peak_net_worth, current: entries[idx].current_wealth ?? 0 });
-      }
+    const alias = localStorage.getItem('angelo_alias');
+    if (!alias) { setMyRank(null); setMyPeak(0); return; }
+
+    const entryIdx = entries.findIndex(e => e.alias === alias);
+    if (entryIdx >= 0) {
+      setMyRank(entryIdx + 1);
+      setMyPeak(entries[entryIdx].peak_net_worth);
+      return;
     }
+
+    fetchPlayerScore(alias).then((result: { entry: LeaderboardEntry | null; rank: number | null }) => {
+      if (result.entry) {
+        setMyRank(result.rank);
+        setMyPeak(result.entry.peak_net_worth);
+      }
+    });
   }, [entries]);
 
   return (
@@ -114,7 +122,6 @@ export function LeaderboardScreen({ onBack }: LeaderboardScreenProps) {
         <div className="w-10 shrink-0 text-center">#</div>
         <div className="flex-1">Player</div>
         <div className="w-28 shrink-0 text-right">Max Wealth</div>
-        <div className="w-24 shrink-0 text-right">Current</div>
       </div>
 
       {/* Entries */}
@@ -148,9 +155,6 @@ export function LeaderboardScreen({ onBack }: LeaderboardScreenProps) {
                 <div className="w-28 shrink-0 text-right text-retro-accent">
                   {formatCash(entry.peak_net_worth)}
                 </div>
-                <div className="w-24 shrink-0 text-right text-gray-400">
-                  {formatCash(entry.current_wealth ?? 0)}
-                </div>
               </div>
             );
           })
@@ -158,13 +162,12 @@ export function LeaderboardScreen({ onBack }: LeaderboardScreenProps) {
       </div>
 
       {/* Your Rank */}
-      {myRank && myRank > 10 && (
+      {myRank && myRank > 5 && (
         <div className="border-y-2 border-retro-accent/30 bg-[#111] px-4 py-2">
           <div className="flex text-xs items-center">
             <div className="w-10 shrink-0 text-center text-gray-500">#{myRank}</div>
             <div className="flex-1 text-retro-accent font-bold">{localStorage.getItem('angelo_alias')} (you)</div>
-            <div className="w-28 shrink-0 text-right text-retro-accent">{formatCash(myStats.peak)}</div>
-            <div className="w-24 shrink-0 text-right text-gray-400">{formatCash(myStats.current)}</div>
+            <div className="w-28 shrink-0 text-right text-retro-accent">{formatCash(myPeak)}</div>
           </div>
         </div>
       )}
@@ -173,7 +176,7 @@ export function LeaderboardScreen({ onBack }: LeaderboardScreenProps) {
       <div className="border-t-2 border-retro-border bg-retro-panel px-4 py-3 text-[10px] text-gray-600 text-center space-y-1">
         {myRank && (
           <div className="text-retro-accent">
-            You are ranked <span className="font-bold">#{myRank}</span> · Peak: {formatCash(myStats.peak)} · Current: {formatCash(myStats.current)}
+            You are ranked <span className="font-bold">#{myRank}</span> · Peak: {formatCash(myPeak)}
           </div>
         )}
         <div>

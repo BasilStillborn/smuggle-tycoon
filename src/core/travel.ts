@@ -2,6 +2,7 @@ import type { PlayerState, Country, TravelResult, ChoiceEvent, TravelClass } fro
 import { deductCash, setLocation, incrementTrips } from './player';
 import { reduceHeat, addHeat } from './heat';
 import { COUNTRIES } from './world';
+import { GOODS } from './goods';
 
 const TRAVEL_COST_BASE = 200;
 const TRAVEL_COST_PER_DISTANCE = 50;
@@ -21,36 +22,142 @@ export function getTicketCost(from: Country, to: Country, travelClass: TravelCla
   return Math.floor((TRAVEL_COST_BASE + TRAVEL_COST_PER_DISTANCE * dist) * classMultiplier);
 }
 
-// Narrative variant pools for travel encounters
-const STRAIGHT_THROUGH_MSGS: string[] = [
-  'Smooth crossing. No inspection. Heat -%d.',
-  'You walk through the terminal like you belong. Nobody bats an eye. Heat -%d.',
-  'The customs officer barely glances at your passport. Waves you through. Heat -%d.',
-  'You blend into the crowd. Standard exit. No drama. Heat -%d.',
-  'A bored official stamps your documents without looking up. Easy. Heat -%d.',
-  'The baggage scanner beeps but the operator waves you on. Too busy for a full check. Heat -%d.',
-  'You follow a family with crying kids through the gate. The guards are too distracted to notice you. Heat -%d.',
-  'Clean passport, clean record, clean exit. The system works in your favour today. Heat -%d.',
-  'You time your walk perfectly — right behind a diplomat. Courtesy lane opens up. Heat -%d.',
-  'The security dog is asleep by its handler\'s feet. You walk past without a sound. Heat -%d.',
-];
+type SuspicionTier = 'minimal' | 'medium' | 'high';
 
-const SNIFF_SETUPS: string[] = [
-  'A customs officer flags your documents and gestures you toward a secondary screening area. Your heart pounds.',
-  'The security dog suddenly perks up, sniffing the air near your bag. The handler\'s eyes narrow.',
-  'A random baggage scan flags your luggage. An attendant waves you over. "Step this way, sir."',
-  'Your heart drops as you see the passport control officer studying your visa too carefully.',
-  'The metal detector beeps. An officer pats you down. Too thorough. Too slow.',
-  'A plainclothes agent watches you from the mezzanine. He speaks into his radio. Two guards approach.',
-  'The drug sniffing scanner lights up as you walk through. "Please step aside for a moment."',
-  'An officer pulls you out of the queue at random. "Routine check. Empty your pockets."',
-  'Your bag gets caught in a secondary X-ray. The operator frowns at the screen and calls for a supervisor.',
-  'A sniffer dog circles your bag and sits. The handler tightens his grip on the leash.',
-];
+const CASH_STRAIGHT_MSGS: Record<SuspicionTier, string[]> = {
+  minimal: [
+    'Passport, nod, stamp. Nobody seems especially interested in your cash. Heat -%d.',
+    'Your bag gets a cursory glance and a bored wave-through. Heat -%d.',
+    'Customs process you like everyone else: briefly and without affection. Heat -%d.',
+  ],
+  medium: [
+    'One extra question, one longer stare, then clearance. Heat -%d.',
+    'An officer clocks the envelope, hesitates, then lets procedure win. Heat -%d.',
+    'You get a second look from the fuzz before the stamp lands. Heat -%d.',
+  ],
+  high: [
+    'With that much cash, every desk suddenly feels manned by a detective. You still get through. Heat -%d.',
+    'Two officers shadow your bag to the scanner, then release you on a technicality called luck. Heat -%d.',
+    'The law watch your hands like hawks, waiting for one wrong twitch. You give them none. Heat -%d.',
+  ],
+};
+
+const PRODUCT_STRAIGHT_MSGS: Record<SuspicionTier, string[]> = {
+  minimal: [
+    'Return customs scan your bag and move on without ceremony. Heat -%d.',
+    'Small load, clean pass, no one gets curious. Heat -%d.',
+    'Your luggage clears screening with minimal fuss. Heat -%d.',
+  ],
+  medium: [
+    'The scanner op pauses on your bag, then waves you through. Heat -%d.',
+    'A handler glances over, considers a check, and lets it go. Heat -%d.',
+    'You feel scrutiny at return customs, but nothing escalates. Heat -%d.',
+  ],
+  high: [
+    'Heavy load, heavy tension — and somehow no side room. Heat -%d.',
+    'The checkpoint circles you like a problem it can\'t quite prove. Heat -%d.',
+    'You look one bad minute from a search table, but walk out intact. Heat -%d.',
+  ],
+};
+
+const CASH_SNIFF_SETUPS: Record<SuspicionTier, string[]> = {
+  minimal: [
+    'Outbound officer asks destination, duration, and the same question twice.',
+    'A customs agent taps your passport and asks for your carry-on.',
+    'Routine outbound check: "Step aside for a moment, sir."',
+  ],
+  medium: [
+    'Two officers compare your declaration card, then direct you to secondary.',
+    'A plainclothes agent notices your cash envelope and calls over support.',
+    'Outbound scanner flags your bag for manual inspection.',
+  ],
+  high: [
+    'You hit outbound customs and are peeled out of the queue immediately.',
+    'A supervisor appears before introductions. "Secondary. Now."',
+    'Your carry-on goes straight to deep search while officers track your hands.',
+  ],
+};
+
+const PRODUCT_SNIFF_SETUPS: Record<SuspicionTier, string[]> = {
+  minimal: [
+    'Return customs run a quick swab and keep you waiting just long enough to sweat.',
+    'A handler gives the dog one lap around your bag, then signals you aside.',
+    'A border officer asks for a routine unzip and visual check.',
+  ],
+  medium: [
+    'The scanner operator frowns at your bag image and asks for a second look.',
+    'A sniffer dog circles twice, sits, and the handler raises a hand.',
+    'Return customs flag your bag for secondary and a full pocket check.',
+  ],
+  high: [
+    'Your bag enters X-ray and three staff suddenly become very interested in your evening.',
+    'A drug dog locks on and customs steer you toward the interview-room corridor.',
+    'Checkpoint escalation is immediate: supervisor, gloves, secondary table, no small talk.',
+  ],
+};
 
 function randomMsg(messages: string[], heatVal: number): string {
   const msg = messages[Math.floor(Math.random() * messages.length)];
   return msg.replace('%d', String(heatVal));
+}
+
+function randomLine(messages: string[]): string {
+  return messages[Math.floor(Math.random() * messages.length)];
+}
+
+function getCashSuspicionTier(cash: number): SuspicionTier {
+  if (cash > 25000) return 'high';
+  if (cash > 10000) return 'medium';
+  return 'minimal';
+}
+
+function getInventoryWeight(player: PlayerState): number {
+  return player.inventory.reduce((sum, item) => {
+    const good = GOODS.find((g) => g.id === item.goodId);
+    return sum + (good ? good.weight * item.quantity : 0);
+  }, 0);
+}
+
+function getProductSuspicionTier(player: PlayerState): SuspicionTier {
+  const weight = getInventoryWeight(player);
+  if (weight > 0.15) return 'high';
+  if (weight > 0.05) return 'medium';
+  return 'minimal';
+}
+
+function getTravelSuspicionTier(player: PlayerState, isReturnLeg: boolean): SuspicionTier {
+  return isReturnLeg ? getProductSuspicionTier(player) : getCashSuspicionTier(player.cash);
+}
+
+function getSniffProbability(player: PlayerState, isReturnLeg: boolean, travelClass: TravelClass): number {
+  const tier = getTravelSuspicionTier(player, isReturnLeg);
+  const BASE_PROB: Record<SuspicionTier, number> = {
+    minimal: 0.08,
+    medium: 0.20,
+    high: 0.35,
+  };
+  let prob = BASE_PROB[tier];
+  prob += (player.heat / 100) * 0.25;
+  if (travelClass === 'first_class') prob *= 0.75;
+  return Math.min(Math.max(prob, 0.05), 0.75);
+}
+
+function getCustomsBribeCost(player: PlayerState): number {
+  if (player.peakNetWorth >= 50000) return 1200;
+  if (player.peakNetWorth >= 10000) return 700;
+  return 300;
+}
+
+function getStraightThroughMsg(player: PlayerState, isReturnLeg: boolean, heatDecay: number): string {
+  const tier = getTravelSuspicionTier(player, isReturnLeg);
+  const pool = isReturnLeg ? PRODUCT_STRAIGHT_MSGS[tier] : CASH_STRAIGHT_MSGS[tier];
+  return randomMsg(pool, heatDecay);
+}
+
+function getSniffSetup(player: PlayerState, isReturnLeg: boolean): string {
+  const tier = getTravelSuspicionTier(player, isReturnLeg);
+  const pool = isReturnLeg ? PRODUCT_SNIFF_SETUPS[tier] : CASH_SNIFF_SETUPS[tier];
+  return randomLine(pool);
 }
 
 function getDistance(from: Country, to: Country): number {
@@ -93,7 +200,6 @@ export function travel(
   }
 
   const distance = getDistance(fromCountry, toCountry);
-  const countryMod = toCountry.policeIntensity / 30;
   const classMultiplier = travelClass === 'first_class' ? 2.5 : 1.0;
   const priceVariation = 0.9 + Math.random() * 0.2;
   const baseCost = (TRAVEL_COST_BASE + TRAVEL_COST_PER_DISTANCE * distance);
@@ -114,18 +220,7 @@ export function travel(
 
   const delay = 1 + Math.floor(Math.random() * 3);
 
-  // Sniff chance: 0% on outbound with under $20k cash (just a traveler)
-  // Return leg or carrying $20k+ cash triggers customs scrutiny
-  const returnMod = isReturnLeg ? 1.4 : 1.0;
-  const classSniffMod = travelClass === 'first_class' ? 0.55 : 1.0;
-  let sniffChance = 0;
-  if (isReturnLeg || player.cash >= 20000) {
-    sniffChance = Math.min(0.50, Math.max(0.08,
-      (0.25 * returnMod - player.credibility * 0.0015 + player.heat * 0.002 + countryMod * 0.1) * classSniffMod
-    ));
-  }
-
-  const sniff = Math.random() < sniffChance;
+  const sniff = Math.random() < getSniffProbability(player, isReturnLeg, travelClass);
 
   let updatedPlayer = deductCash(player, travelCost);
 
@@ -136,7 +231,7 @@ export function travel(
     updatedPlayer = setLocation(updatedPlayer, toCountryId);
     updatedPlayer = incrementTrips(updatedPlayer);
 
-    const smoothMsg = randomMsg(STRAIGHT_THROUGH_MSGS, heatDecay);
+    const smoothMsg = getStraightThroughMsg(updatedPlayer, isReturnLeg, heatDecay);
     return {
       player: updatedPlayer,
       result: {
@@ -150,7 +245,7 @@ export function travel(
   }
 
   // 25%: security sniff — player doesn't change location yet
-  const sniffSetup = SNIFF_SETUPS[Math.floor(Math.random() * SNIFF_SETUPS.length)];
+  const sniffSetup = getSniffSetup(updatedPlayer, isReturnLeg);
   return {
     player: updatedPlayer,
     result: {
@@ -163,19 +258,24 @@ export function travel(
   };
 }
 
-export function generateSniffChoices(): ChoiceEvent {
-  const sniffSetup = SNIFF_SETUPS[Math.floor(Math.random() * SNIFF_SETUPS.length)];
-  return {
+export function generateSniffChoices(player: PlayerState, isReturnLeg: boolean): ChoiceEvent {
+  const sniffSetup = getSniffSetup(player, isReturnLeg);
+  const bribeCost = getCustomsBribeCost(player);
+  const canAffordBribe = player.cash >= bribeCost;
+  const bribeText = canAffordBribe
+    ? `Slide $${bribeCost.toLocaleString()} into your passport and hand it over.`
+    : `Bribe — can't afford (need $${bribeCost.toLocaleString()}, have $${player.cash.toLocaleString()})`;
+  const event: ChoiceEvent = {
     id: 'travel_sniff',
     title: 'Security Checkpoint',
     context: sniffSetup + ' You need to decide — now.',
     choices: [
       {
         id: 'bribe',
-        text: 'Slide $500 into your passport and hand it over.',
-        odds: 0.60,
-        successEffects: { cashDelta: -500, heatDelta: 5, reputationDelta: 0, credibilityDelta: 10, inventoryLost: false, message: 'The officer glances at the cash, stamps your passport, and waves you through. You exhale.' },
-        failEffects: { cashDelta: -500, heatDelta: 25, reputationDelta: 0, credibilityDelta: -10, inventoryLost: true, message: 'He pockets the money, then radios for backup. They tear through your luggage. Everything is confiscated.' },
+        text: bribeText,
+        odds: canAffordBribe ? 0.60 : 0,
+        successEffects: { cashDelta: -bribeCost, heatDelta: 5, reputationDelta: 0, credibilityDelta: 10, inventoryLost: false, message: 'The officer glances at the cash, stamps your passport, and waves you through. You exhale.' },
+        failEffects: { cashDelta: -bribeCost, heatDelta: 25, reputationDelta: 0, credibilityDelta: -10, inventoryLost: true, message: 'He pockets the money, then radios for backup. They tear through your luggage. Everything is confiscated.' },
       },
       {
         id: 'bluff',
@@ -193,4 +293,6 @@ export function generateSniffChoices(): ChoiceEvent {
       },
     ],
   };
+  (event as any)._bribeCost = bribeCost;
+  return event;
 }

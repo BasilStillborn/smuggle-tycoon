@@ -18,7 +18,7 @@ function calcSellPrice(
   buyPrice: number,
   demand: number,
 ): number {
-  const multiplier = 1.0 + (demand / 100) * 2.0;
+  const multiplier = 1.0 + (demand / 100) * 1.6;
   return Math.max(1, Math.floor(buyPrice * multiplier));
 }
 

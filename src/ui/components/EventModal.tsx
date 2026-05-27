@@ -7,36 +7,7 @@ interface EventModalProps {
   dispatch: (action: GameAction) => void;
 }
 
-function TypewriterText({ text, speed = 20 }: { text: string; speed?: number }) {
-  const [displayed, setDisplayed] = useState('');
-  const [done, setDone] = useState(false);
-
-  useEffect(() => {
-    if (!text) return;
-    setDisplayed('');
-    setDone(false);
-    let i = 0;
-    const interval = setInterval(() => {
-      i++;
-      setDisplayed(text.slice(0, i));
-      if (i >= text.length) {
-        clearInterval(interval);
-        setDone(true);
-      }
-    }, speed);
-    return () => clearInterval(interval);
-  }, [text, speed]);
-
-  return (
-    <span>
-      {displayed}
-      {!done && <span className="animate-pulse text-retro-accent">▌</span>}
-    </span>
-  );
-}
-
 export function EventModal({ event, dispatch }: EventModalProps) {
-  const [revealed, setRevealed] = useState(false);
   const [customQty, setCustomQty] = useState(1);
   const [editing, setEditing] = useState(false);
   const [editVal, setEditVal] = useState('');
@@ -47,14 +18,11 @@ export function EventModal({ event, dispatch }: EventModalProps) {
   const playerCash = isCustomQty ? ((event as any)._cash as number) || 0 : 0;
 
   useEffect(() => {
-    setRevealed(false);
     setEditing(false);
     if (isCustomQty) {
       const defQty = Math.min(10, maxQty);
       setCustomQty(Math.max(1, defQty));
     }
-    const t = setTimeout(() => setRevealed(true), 600);
-    return () => clearTimeout(t);
   }, [event.title, event.id, isCustomQty]);
 
   const adjustQty = useCallback((delta: number) => {
@@ -89,7 +57,7 @@ export function EventModal({ event, dispatch }: EventModalProps) {
         }} />
       </div>
 
-      <div className="relative border-2 border-retro-border bg-retro-panel max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-[0_0_30px_rgba(0,255,0,0.1)]">
+      <div className="relative border-2 border-retro-border bg-retro-panel max-w-2xl w-full max-h-[90vh] overflow-y-auto ui-scrollbar shadow-[0_0_30px_rgba(0,255,0,0.1)]">
         {/* Header */}
         <div className="border-b-2 border-retro-border p-6">
           <div className="flex items-center gap-2 mb-2">
@@ -102,15 +70,9 @@ export function EventModal({ event, dispatch }: EventModalProps) {
           <div className="w-16 h-[1px] bg-retro-accent/30 mt-3" />
         </div>
 
-        {/* Context with typewriter */}
-        <div className="p-6 text-sm text-gray-300 leading-relaxed border-b-2 border-retro-border min-h-[80px] whitespace-pre-wrap">
-          {revealed ? (
-            <TypewriterText text={event.context} speed={15} />
-          ) : (
-            <div className="flex items-center gap-2 text-gray-600">
-              <span className="animate-pulse">⟐</span> Initializing transmission...
-            </div>
-          )}
+        {/* Context */}
+        <div className="p-6 text-sm text-gray-300 leading-relaxed border-b-2 border-retro-border h-56 overflow-y-auto ui-scrollbar whitespace-pre-wrap">
+          {event.context}
         </div>
 
         {/* Choices or Custom Input */}

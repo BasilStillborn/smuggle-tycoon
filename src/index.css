@@ -32,6 +32,12 @@ body {
   background: #3a3a3a;
 }
 
+/* Unified app scrollbar utility */
+.ui-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #2a2a2a #0a0a0a;
+}
+
 /* CRT scanline effect */
 .crt::after {
   content: ' ';
@@ -88,11 +94,6 @@ body {
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes typewriter {
-  from { width: 0; }
-  to { width: 100%; }
 }
 
 @keyframes pulse {

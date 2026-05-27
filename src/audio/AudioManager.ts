@@ -2,7 +2,7 @@ import type { MusicState, AudioSettings } from './types';
 import { DEFAULT_AUDIO_SETTINGS } from './types';
 import { loadAudioSettings, saveAudioSettings } from './settings';
 import { getSharedContext } from './oscillator';
-import { playMusic, stopMusic, setMusicVolume, getCurrentMusicState } from './music';
+import { stopMusic } from './music';
 import { playSfx, setSfxVolume, type SfxType } from './sfx';
 import { playAmbience, stopAmbience, setAmbienceVolume } from './ambience';
 
@@ -46,7 +46,8 @@ class AudioManager {
   }
 
   private applySettings(): void {
-    setMusicVolume(this.settings.musicVolume * this.settings.masterVolume);
+    // Music intentionally disabled; keep setting for backward compatibility only.
+    stopMusic();
     setSfxVolume(this.settings.sfxVolume * this.settings.masterVolume);
     setAmbienceVolume(this.settings.ambienceVolume * this.settings.masterVolume);
   }
@@ -76,8 +77,8 @@ class AudioManager {
 
   // Music control
   playMusic(state: MusicState): void {
-    if (this.settings.muted) return;
-    playMusic(state);
+    void state;
+    // Intentionally disabled.
   }
 
   stopMusic(): void {
@@ -114,24 +115,7 @@ class AudioManager {
     const heatLevel = gameState.heat >= 80 ? 'critical' : gameState.heat >= 50 ? 'high' : gameState.heat >= 25 ? 'medium' : 'low';
     const wealthTier = gameState.cash >= 50000 ? 5 : gameState.cash >= 20000 ? 4 : gameState.cash >= 10000 ? 3 : gameState.cash >= 5000 ? 2 : 1;
 
-    let targetMusic: MusicState;
-
-    if (!gameState.runActive) {
-      targetMusic = 'arrest';
-    } else if (gameState.pendingEvent) {
-      targetMusic = 'encounter';
-    } else if (heatLevel === 'critical' || heatLevel === 'high') {
-      targetMusic = 'high_heat';
-    } else if (wealthTier >= 4 && heatLevel === 'low') {
-      targetMusic = 'luxury';
-    } else {
-      targetMusic = 'normal';
-    }
-
-    const currentMusicState = getCurrentMusicState();
-    if (currentMusicState !== targetMusic) {
-      this.playMusic(targetMusic);
-    }
+    // Music intentionally disabled.
 
     // Ambience changes
     if (gameState.currentCountryId !== this._lastCountryId) {
@@ -152,7 +136,7 @@ class AudioManager {
   }
 
   playMenuMusic(): void {
-    this.playMusic('menu');
+    // Intentionally disabled.
   }
 
   stopAll(): void {

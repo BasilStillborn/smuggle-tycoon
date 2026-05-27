@@ -30,7 +30,7 @@ export { generateProceduralEvent, resolveEventChoice } from './events-procedural
 export { createDirector, updateDirector, getDirectorEventChance, getDirectorEventType, getWealthTier, getForcedEvent } from './director';
 export type { ForcedEventReason } from './director';
 export { createGameState, gameReducer, getStatusReport, getNetWorth } from './game-engine';
-export { STATUS_ASSETS, buyAsset, sellAsset, canAffordAsset, getAsset, getPlayerVisualTier, getOwnedAssets, hasHighTierAsset, hasTypeIII, getActiveOperationalBenefits, getTotalNotorietyBonus, getClassLabel, getClassShortLabel, getClassDescription, getStashCapacity } from './assets';
+export { STATUS_ASSETS, buyAsset, sellAsset, canAffordAsset, getAsset, getEffectiveRequiredNetWorth, getPlayerVisualTier, getOwnedAssets, hasHighTierAsset, hasTypeIII, getActiveOperationalBenefits, getTotalNotorietyBonus, getClassLabel, getClassShortLabel, getClassDescription, getStashCapacity } from './assets';
 export type { StatusAsset } from './assets';
 export { loadJournal, saveJournal, addJournalEntry, finalizeRun } from './journal';
 export type { PlayerJournal, JournalEntry } from './journal';

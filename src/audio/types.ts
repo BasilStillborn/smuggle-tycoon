@@ -10,7 +10,7 @@ export interface AudioSettings {
 
 export const DEFAULT_AUDIO_SETTINGS: AudioSettings = {
   masterVolume: 0.7,
-  musicVolume: 0.5,
+  musicVolume: 0,
   sfxVolume: 0.8,
   ambienceVolume: 0.3,
   muted: false,

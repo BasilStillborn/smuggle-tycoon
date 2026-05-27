@@ -27,7 +27,7 @@ export async function fetchLeaderboard(period: LeaderboardPeriod): Promise<Leade
     dateFilter = `&created_at=gte.$${dayAgo}`;
   }
 
-  const url = `$${SUPABASE_URL}/rest/v1/${TABLE}?select=*${dateFilter}&order=score.desc&limit=100`;
+  const url = `$${SUPABASE_URL}/rest/v1/${TABLE}?select=*${dateFilter}&order=score.desc&limit=5`;
 
   try {
     const res = await fetch(url, {
@@ -142,7 +142,6 @@ export async function submitScore(alias: string, gameState: {
         body: JSON.stringify({
           final_cash: payload.finalCash,
           peak_net_worth: payload.peakNetWorth,
-          current_wealth: payload.currentWealth,
           total_profit: payload.totalProfit,
           total_trips: payload.totalTrips,
           total_busts: payload.totalBusts,
@@ -170,7 +169,6 @@ export async function submitScore(alias: string, gameState: {
           character_name: payload.characterName,
           final_cash: payload.finalCash,
           peak_net_worth: payload.peakNetWorth,
-          current_wealth: payload.currentWealth,
           total_profit: payload.totalProfit,
           total_trips: payload.totalTrips,
           total_busts: payload.totalBusts,
@@ -210,6 +208,35 @@ async function getScoreRank(score: number, hash: string): Promise<number | null>
   } catch {
     return null;
   }
+}
+
+export async function fetchPlayerScore(alias: string): Promise<{ entry: LeaderboardEntry | null; rank: number | null }> {
+  if (!alias) return { entry: null, rank: null };
+  if (!clientAvailable()) return getFallbackPlayerScore(alias);
+  try {
+    const url = `$${SUPABASE_URL}/rest/v1/${TABLE}?alias=eq.${encodeURIComponent(alias)}&select=*&limit=1`;
+    const res = await fetch(url, {
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer $${SUPABASE_ANON_KEY}` },
+    });
+    if (!res.ok) return getFallbackPlayerScore(alias);
+    const data: LeaderboardEntry[] = await res.json();
+    if (data.length === 0) return { entry: null, rank: null };
+    const entry = data[0];
+    const rank = await getScoreRank(entry.score, '');
+    return { entry, rank };
+  } catch {
+    return getFallbackPlayerScore(alias);
+  }
+}
+
+function getFallbackPlayerScore(alias: string): { entry: LeaderboardEntry | null; rank: number | null } {
+  const scores = getFallbackScores();
+  const playerEntries = scores.filter(s => s.alias === alias);
+  if (playerEntries.length === 0) return { entry: null, rank: null };
+  const sorted = [...scores].sort((a, b) => b.score - a.score);
+  const bestEntry = playerEntries.sort((a, b) => b.score - a.score)[0];
+  const rank = sorted.findIndex(s => s.id === bestEntry.id) + 1;
+  return { entry: bestEntry, rank: rank > 0 ? rank : null };
 }
 
 // Fallback: store scores in localStorage when Supabase is unavailable
@@ -269,5 +296,5 @@ function getFallbackLeaderboard(period: LeaderboardPeriod): LeaderboardEntry[] {
     return true;
   });
 
-  return filtered.sort((a, b) => b.score - a.score).slice(0, 100);
+  return filtered.sort((a, b) => b.score - a.score).slice(0, 5);
 }

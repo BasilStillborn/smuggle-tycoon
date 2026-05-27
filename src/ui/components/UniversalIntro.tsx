@@ -6,8 +6,8 @@ interface UniversalIntroProps {
 }
 
 const EXPOSITION_TEXT = [
-  'After falling asleep in the office and then getting caught stealing,',
-  'Angelo is fired from his job.. he sees no other option but to turn to a life of crime',
+  "It's the early 1990s, after falling asleep in the office and then getting caught stealing,",
+  'Angelo is fired from his job as a security guard.. he sees no other option but to turn to a life of crime',
   'He cashes out his savings and heads into the street,',
   'the dark seedy underworld.',
   '',
@@ -70,7 +70,6 @@ export function UniversalIntro({ onStart }: UniversalIntroProps) {
             fontFamily: 'Georgia, "Times New Roman", serif',
             color: '#e8e0d0',
             letterSpacing: '0.15em',
-            textTransform: 'uppercase',
             textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
           }}
         >

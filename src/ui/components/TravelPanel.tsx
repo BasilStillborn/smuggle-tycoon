@@ -12,6 +12,8 @@ const ORIGIN_COUNTRY = 'london';
 
 export function TravelPanel({ state, dispatch }: TravelPanelProps) {
   const [selectedClass, setSelectedClass] = useState<TravelClass>('economy');
+  const [showNoFunds, setShowNoFunds] = useState(false);
+  const [showFirstWarning, setShowFirstWarning] = useState(false);
   const currentCountry = getCountry(state.player.currentCountryId)!;
   const headingToAirport = state.headingToAirport;
   const productSelected = state.selectedProductId !== null;
@@ -61,7 +63,7 @@ export function TravelPanel({ state, dispatch }: TravelPanelProps) {
           }`}
         >Economy</button>
         <button
-          onClick={() => { audioManager.playSfx('click'); setSelectedClass('first_class'); }}
+          onClick={() => { audioManager.playSfx('click'); if (!state.firstClassWarningShown) { setShowFirstWarning(true); } else { setSelectedClass('first_class'); } }}
           className={`touch-target flex-1 px-2 py-1 text-[10px] border transition-colors ${
             selectedClass === 'first_class'
               ? 'border-retro-accent text-retro-accent bg-[#1a1a1a]'
@@ -71,7 +73,7 @@ export function TravelPanel({ state, dispatch }: TravelPanelProps) {
       </div>
 
       {/* Destinations list — taller to show partial next option for scroll affordance */}
-      <div className="space-y-1.5 mb-4 overflow-y-auto max-h-[220px]" style={{ scrollbarWidth: 'thin' }}>
+      <div className="space-y-1.5 mb-4 overflow-y-auto max-h-[220px] ui-scrollbar">
         {state.world.filter(c => c.id !== ORIGIN_COUNTRY).map((country) => {
           const isCurrent = country.id === state.player.currentCountryId;
           const econPrice = getTicketCost(getCountry(state.player.currentCountryId)!, country, 'economy');
@@ -83,10 +85,14 @@ export function TravelPanel({ state, dispatch }: TravelPanelProps) {
             <button
               key={country.id}
               onClick={() => {
-                if (canGo) audioManager.playSfx('click');
-                dispatch({ type: 'CONFIRM_FLIGHT', toCountryId: country.id, travelClass: selectedClass });
+                if (isCurrent) return;
+                audioManager.playSfx('click');
+                if (canGo) {
+                  dispatch({ type: 'CONFIRM_FLIGHT', toCountryId: country.id, travelClass: selectedClass });
+                } else {
+                  setShowNoFunds(true);
+                }
               }}
-              disabled={!canGo || isCurrent}
               className={`touch-target w-full text-left border-2 px-4 py-3 text-xs transition-colors ${
                 isCurrent
                   ? 'border-retro-accent bg-[#1a1a1a] text-gray-500 cursor-default border-glow'
@@ -118,6 +124,58 @@ export function TravelPanel({ state, dispatch }: TravelPanelProps) {
           );
         })}
       </div>
+
+      {showNoFunds && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowNoFunds(false)}
+          style={{ background: 'radial-gradient(ellipse at center, #0a0a0a 0%, #000000 70%)' }}>
+          <div className="relative z-10 border-2 border-retro-border bg-retro-panel max-w-md w-full p-6"
+            onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4 border-b border-retro-border pb-2">
+              <div className="text-retro-accent text-xs uppercase tracking-widest glow-text">Flight Booking</div>
+              <button
+                onClick={() => { audioManager.playSfx('click'); setShowNoFunds(false); }}
+                className="text-gray-500 hover:text-gray-300 text-xs border border-retro-border px-2 py-0.5"
+              >✕</button>
+            </div>
+
+            <div className="text-xs text-gray-300 leading-relaxed mb-4">
+              How are you going to book a flight if you don't even know what country you're flying to or which product you're going to buy, a retard could work that out!
+            </div>
+
+            <button
+              onClick={() => { audioManager.playSfx('click'); setShowNoFunds(false); }}
+              className="touch-target w-full border-2 border-retro-accent bg-retro-accent/10 hover:bg-retro-accent/20 text-retro-accent px-4 py-3 text-xs font-bold uppercase transition-colors"
+            >OK</button>
+          </div>
+        </div>
+      )}
+
+      {showFirstWarning && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowFirstWarning(false)}
+          style={{ background: 'radial-gradient(ellipse at center, #0a0a0a 0%, #000000 70%)' }}>
+          <div className="relative z-10 border-2 border-retro-border bg-retro-panel max-w-md w-full p-6"
+            onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4 border-b border-retro-border pb-2">
+              <div className="text-retro-accent text-xs uppercase tracking-widest glow-text">Upgrade</div>
+              <button
+                onClick={() => { audioManager.playSfx('click'); setShowFirstWarning(false); }}
+                className="text-gray-500 hover:text-gray-300 text-xs border border-retro-border px-2 py-0.5"
+              >✕</button>
+            </div>
+
+            <div className="text-xs text-gray-300 leading-relaxed mb-4">
+              First class? You pretentious little prick. Fine, you've got less chance of being collared by customs as a VIP, but the ticket price is almost double. Ask yourself if it's worth it.
+            </div>
+
+            <button
+              onClick={() => { audioManager.playSfx('click'); setShowFirstWarning(false); setSelectedClass('first_class'); dispatch({ type: 'FIRST_CLASS_WARNING_SHOWN' }); }}
+              className="touch-target w-full border-2 border-retro-accent bg-retro-accent/10 hover:bg-retro-accent/20 text-retro-accent px-4 py-3 text-xs font-bold uppercase transition-colors"
+            >I'm sure</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

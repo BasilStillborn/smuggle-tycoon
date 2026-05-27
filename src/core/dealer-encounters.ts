@@ -39,19 +39,19 @@ export function getDealerOptions(countryId: string, rapport: Record<string, numb
 
 const DEALER_POOL: DealerProfile[] = [
   // Colombia (cocaine)
-  { countryId: 'colombia', dealerId: 'col_1', name: 'Alejandro', gender: 'male', description: 'Cartel connected. High prices, pure product.', location: 'a private finca in the hills outside Medellín', priceModifier: 1.15, riskBonus: -0.05, rapport: 0 },
+  { countryId: 'colombia', dealerId: 'col_1', name: 'Basil Stillborn', gender: 'male', description: 'washed-up failed British actor. Lives in a flat outside Villa Del Prado pretending he\'s "semi-retired", but really he fled London due to mounting debts, unpaid taxes, and several deeply embarrassing sexual abuse allegations involving minors. Survives by doing terrible radio adverts for cheap hotels, dodgy car hire firms and low-budget perfume commercials aimed at American tourists. Speaks with an absurdly over-pronounced theatrical English accent and insists on introducing himself as "Basil Stillborn of the West End". Don\'t let him near your kids', location: 'a flat outside Villa Del Prado', priceModifier: 1.15, riskBonus: -0.05, rapport: 0 },
   { countryId: 'colombia', dealerId: 'col_2', name: 'Pablo', gender: 'male', description: 'Started out selling fake lottery tickets, then discovered the white powder. Now the cartel owns half of Bogotá. Will shoot you in the face if you look at him wrong — police won\'t touch him. His henchmen will cut you from arsehole to breakfast time if you short change him by so much as a dime.', location: 'a back room behind a lottery ticket kiosk in the seediest part of Bogotá — a rusted fan, a crucifix, and a framed photo of a young Pablo in a fake gold chain', priceModifier: 1.25, riskBonus: 0.20, rapport: 0 },
-  { countryId: 'colombia', dealerId: 'col_3', name: 'Valentina', gender: 'female', description: 'Mid-level operator. Reliable, fair pricing.', location: 'a quiet café in the Zona Rosa', priceModifier: 1.0, riskBonus: 0.0, rapport: 0 },
+  { countryId: 'colombia', dealerId: 'col_3', name: 'Eli Weiss', gender: 'male', description: 'covetous Jew, sells Nazi memorabilia, stolen watches and non-prescription stimulants through obscure internet forums and "historical collector" meetups. permanently overdressed in loafers and tucked-in shirts like he\'s auditioning to be a junior stockbroker. Speaks with a strange half-American, half-forced European accent depending on who he\'s trying to impress. Claims his grandfather was a camp kapo at Auschwitz and talks about it with bizarre pride, insisting he was "a survivor who understood power." Obsessed with authoritarianism, "traditional values," and obscure World War II history to a deeply uncomfortable degree.', location: 'a cramped flat in the Zona Rosa, stuffed floor-to-ceiling with books on Nazi Germany, Karl Marx, and The Castaño brothers. an overpowering smell of old paper and coffee emanates from the hallways and living room', priceModifier: 1.0, riskBonus: 0.0, rapport: 0 },
   // Netherlands (weed, hashish)
   { countryId: 'netherlands', dealerId: 'net_1', name: 'Pieter', gender: 'male', description: 'Houseboat philosopher. Always high. Grows his own truffles. Once tried to sell a sofa he thought was a dragon.', location: 'his houseboat on a quiet Amsterdam canal', priceModifier: 0.95, riskBonus: -0.05, rapport: 0 },
   { countryId: 'netherlands', dealerId: 'net_2', name: 'Lena', gender: 'female', description: 'Russian import. Runs a couple of brothels in the red light district. Came to Amsterdam ten years ago with nothing — now she owns half the windows on her canal. Sexy as hell and knows it. Flirts with everyone. It works. You\'ll pay her prices and you\'ll enjoy it.', location: 'the back office of her flagship brothel on the Oudezijds Achterburgwal — red velvet curtains, a chaise longue, and a bottle of Stoli on the desk for special guests', priceModifier: 1.2, riskBonus: -0.15, rapport: 0 },
   { countryId: 'netherlands', dealerId: 'net_3', name: 'Micky', gender: 'male', description: 'Big black bastard. East London boy. Fled to Amsterdam after a robbery went sideways. Been dealing weed and cocaine out here ever since. Kept the accent. Kept the attitude. Made a name for himself. Proper old-school London gangster — proper hard cunt. Don\'t let the smile fool you — he\'s put people in hospital for less than what you\'re probably thinking right now.', location: 'a rented flat above a Surinamese takeaway in Amsterdam-Zuidoost — football on the telly, a machete under the sofa, and a framed photo of his mum on the mantelpiece', priceModifier: 0.8, riskBonus: 0.1, rapport: 0 },
   // Spain (MDMA, ecstasy)
   { countryId: 'spain', dealerId: 'esp_1', name: 'Howard', gender: 'male', description: 'Ex coal miner from the Valleys. Emigrated after Thatcher shut the pits. Now sells weed out of an old VW camper van. Fair prices. Won\'t double cross you. Police know his face but can never prove anything.', location: 'his rusted VW camper van parked up on a quiet hillside overlooking Barcelona — beanbags, fairy lights, and a Welsh dragon sticker on the back window', priceModifier: 1.15, riskBonus: 0.0, rapport: 0 },
-  { countryId: 'spain', dealerId: 'esp_2', name: 'Isabel', gender: 'female', description: 'North Africa pipeline. Good hashish, fair prices.', location: 'a tapas bar in the Albaicín, Granada', priceModifier: 0.9, riskBonus: 0.02, rapport: 0 },
-  { countryId: 'spain', dealerId: 'esp_3', name: 'Jorge', gender: 'male', description: 'New to the game. Eager, negotiable, unpredictable.', location: 'a beachfront promenade in Marbella', priceModifier: 0.75, riskBonus: 0.18, rapport: 0 },
+  { countryId: 'spain', dealerId: 'esp_2', name: 'Barry', gender: 'female', description: 'Six foot tall in cheap blonde wigs, skin-tight dresses and enough fake tan to stain furniture. Built like a nightclub bouncer with massive arms, a deep smoker\'s voice and permanently smudged makeup melting off in the Spanish heat. Looks less like a glamorous woman and more like an angry divorced scaffolder who got lost on the way to Benidorm Pride. Originally from Portsmouth. Moved to Spain after several "misunderstandings" involving pub fights, unpaid debts and allegedly threatening a vape shop owner with a bar stool. Spends most nights chain-smoking outside tacky karaoke bars arguing with tourists, delivery drivers and anyone who accidentally says "mate." Desperate to be seen as classy and intimidating at the same time despite living above a collapsing kebab shop with three stolen French bulldogs.', location: 'a tapas bar in the Albaicín, Granada', priceModifier: 0.9, riskBonus: 0.02, rapport: 0 },
+  { countryId: 'spain', dealerId: 'esp_3', name: 'Snake', gender: 'male', description: 'Always tanned, always loud. designer sunglasses and too much gold jewellery. Drives a Bentley and spends most nights in VIP sections shouting about "real men" and "weak society." Originally from Luton. Moved to Spain after making money through dodgy nightclub promotions, pyramid schemes and and attempts to avoid mounting allegations of human trafficking. Surrounded by little, mostly white henchmen he calls his "soldiers." Obsessed with status, money, women and looking powerful despite rarely doing his own dirty work.', location: 'a private booth at a beachfront club in Marbella — his soldiers watch the door', priceModifier: 0.85, riskBonus: 0.18, rapport: 0 },
   // Afghanistan (opioids, heroin)
-  { countryId: 'afghanistan', dealerId: 'afg_1', name: 'Mohamed', gender: 'male', description: 'He once had the most respectful job in his village, an abortionist. Follows the Koran to the letter, honoring family ties, practicing relentless honesty and beating his wife (lightly). head of the local mosque where he preaches sermons of hatred towards the west.', location: 'his mosque in Kabul — prayer mats on the floor, a Kalashnikov on the wall, and a ledger of every man who owes him money', priceModifier: 0.7, riskBonus: 0.15, rapport: 0 },
+  { countryId: 'afghanistan', dealerId: 'afg_1', name: 'Mohamed', gender: 'male', description: 'He once had the most respectful job in his village, an abortionist. Follows the Koran to the letter, honoring family ties, practicing relentless honesty and beating his wife (lightly). head of the local mosque where he preaches sermons of hatred towards the west.', location: 'his mosque in Kabul — prayer mats on the floor, a Kalashnikov on the wall, and a ledger of every man who owes him money', priceModifier: 0.8, riskBonus: 0.15, rapport: 0 },
   { countryId: 'afghanistan', dealerId: 'afg_2', name: 'Mohamed Durrani Allah', gender: 'male', description: 'Pakistani opium exporter. His family were Afghan aristocracy in the early 19th century — he still has high-level connections, or so he claims. Probably a rapist. Knows child sex traffickers. Deals a bit of opium on the side. Dangerous, angry, and increasingly irrelevant. Thinks he is high society but the connections are running dry.', location: 'a crumbling colonial-era villa in Kabul — faded silk curtains, empty liquor cabinets, and framed portraits of ancestors who once ruled provinces', priceModifier: 1.15, riskBonus: 0.20, rapport: 0 },
 ];
 
@@ -66,7 +66,7 @@ export const KINGPIN_POOL: KingpinProfile[] = [
     description: 'Hatton Garden diamond man. Three generations in the trade — his bubbe ran the numbers, his father ran the gold. Avi runs everything. Calls you "bubbeleh" when he likes you.',
     location: 'a private office above a diamond wholesaler in Hatton Garden',
     minStashValue: 5000,
-    sellPriceMod: 1.3,
+    sellPriceMod: 1.2,
     encounterWeights: { clean: 85, raid: 15 },
     buys: ['ecstasy', 'cocaine'],
   },
@@ -549,7 +549,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   },
   {
     tier: 1,
-    dealerIds: ['net_1','net_2','esp_2','esp_3'],
+    dealerIds: ['net_1','esp_2','esp_3'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile, dealContext?: DealContext): ChoiceEvent => {
       const pct = 0.05 + Math.random() * 0.05;
       const increase = dealContext ? Math.floor(dealContext.totalCost * pct) : 300;
@@ -588,7 +588,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   // === TIER 2: Medium credibility (25-60) ===
   {
     tier: 2,
-    dealerIds: ['net_1','net_2','esp_2','esp_3'],
+    dealerIds: ['net_1','esp_2','esp_3'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Private Bar Meeting',
@@ -616,7 +616,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   },
   {
     tier: 2,
-    dealerIds: ['afg_2','net_1','net_2'],
+    dealerIds: ['afg_2','net_1'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Bonus Offer',
@@ -630,7 +630,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   // === TIER 3: High credibility (60-100) ===
   {
     tier: 3,
-    dealerIds: ['net_1','net_2','esp_2','esp_3'],
+    dealerIds: ['net_1','esp_2','esp_3'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Five-Star Proposition',
@@ -658,7 +658,7 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
   },
   {
     tier: 3,
-    dealerIds: ['col_1','col_3','esp_2','esp_3','net_1','net_2'],
+    dealerIds: ['col_1','col_3','esp_2','esp_3','net_1'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Fed Warning',
@@ -680,7 +680,11 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
       return {
       id: nextId(),
       title: 'The Hillside Meeting',
-      context: `Howard waves you into the back of his VW camper van — beanbags, fairy lights, the faint smell of weed and old Welsh coal dust. "Sit down, butt. They've been watching the road all week — plainclothes. Supply's tight. Price went up ${Math.round(pct * 100)}%. Nothing I can do about it, mun."`,
+      context: [
+        `Howard waves you into his camper. "Police sniffing around all week, butt. Supply's tight. Price up ${Math.round(pct * 100)}%. Don't sulk at me, mun."`,
+        `Fairy lights, beanbags, and Howard rolling a joint. "Road's crawling with plainclothes. ${Math.round(pct * 100)}% increase. Blame the heat, not me, butt."`,
+        `Howard cracks the van door. "Bad week, Angelo. Tight stock, nosey coppers, same old shit. Price climbs ${Math.round(pct * 100)}%."`,
+      ][Math.floor(Math.random() * 3)],
       choices: [
         { id: 'accept_hike', text: `Accept the new price (+$${increase}). Howard's never lied to you.`, odds: 0.70 + player.credibility * 0.002, successEffects: { cashDelta: -increase, heatDelta: 5, reputationDelta: 0, credibilityDelta: 3, inventoryLost: false, message: `Howard nods slowly, passing you the joint. "Tidy. You're learning, Angelo. A good deal is one where both men walk away a bit unhappy — old pit saying." The deal is done. You overpaid — but Howard's product quality makes up for it.` }, failEffects: { cashDelta: -increase, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: true, message: `Howard takes your money, then his face drops. He's looking past you through the van window. "Police. Plainclothes — the same two from Tuesday. Lie flat, mun." They don't find you. But they find the product. By the time they've finished searching the van, the package is in an evidence bag and you're hiding behind a beanbag.` } },
         { id: 'negotiate', text: 'Push back. Howard\'s a reasonable man.', odds: 0.30 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 10, inventoryLost: false, message: `Howard studies you for a long moment — then that slow Welsh grin breaks through. "Fair play, Angelo. You've got a bit of the union rep in you. Nobody's haggled with me since 1987. Alright — original price. Respect." The smoke curls around the fairy lights.` }, failEffects: { cashDelta: 0, heatDelta: 15, reputationDelta: 0, credibilityDelta: -10, inventoryLost: false, message: `Howard shakes his head, not offended — just sad. "Can't do it, butt. Price is the price. I learned that from my father — and he learned it from the coal face." He fires up the van. "Come back when you're serious." The fairy lights flicker as he drives off.` } },
@@ -696,7 +700,11 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Union Meeting',
-      context: `Howard's parked the camper van somewhere different tonight — further up the mountain, away from the usual spot. He gestures at a crate in the back. "Had a call from an old mate from the Valleys. He's growing something special in the Rhondda — shipped it down. Wants me to move double the usual. What do you think, butt? Feeling brave or playing safe?"`,
+      context: [
+        `Howard parks higher up the hill tonight. "Old mate from the Valleys sent special Rhondda stock. Wants double moved. You brave or just chatty, butt?"`,
+        `Different lay-by, same camper. Howard taps a crate. "Rhondda grower came through. Double volume on offer. Big upside, big aggro."`,
+        `Howard grins from the driver's seat. "Got a Welsh batch that needs shifting fast. Double load, double noise. You in or playing safe, mun?"`,
+      ][Math.floor(Math.random() * 3)],
       choices: [
         { id: 'take_double', text: 'Take double volume. Big risk, big reward.', odds: 0.45 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 5, credibilityDelta: 12, inventoryLost: false, message: `Howard beams — proper Valleys smile. "There it is! That's the spirit, mun. My old crew chief would've loved you — never backed down from a challenge. Right, let's load you up." The batch is exceptional — Welsh-grown, Spanish-sun-dried. You flip it fast. Double profit. Double reputation. Howard gives you a thumbs up from the driver's seat.` }, failEffects: { cashDelta: -2000, heatDelta: 25, reputationDelta: 0, credibilityDelta: -10, inventoryLost: true, message: `You should've known better. Howard's mate from the Rhondda? The parcel's been flagged at the port. Spanish customs have been tracking it for weeks. Howard takes the heat — "I'll be fine, butt. I've been arrested more times than I've had hot dinners" — but you lose the cash and the product. You hear him shouting in Welsh as you leave. It doesn't sound complimentary.` } },
         { id: 'stick_standard', text: 'Stick to the original amount. Howard respects caution.', odds: 0.75 + player.credibility * 0.002, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 2, credibilityDelta: 5, inventoryLost: false, message: `Howard nods approvingly. "Wise. Very wise. You know what they say — 'the best miners are the ones who come home.'" He taps the side of his nose. The standard deal goes through without a hitch. He rolls you a joint for the road. "Come back when you're ready for the big stuff."` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -3, inventoryLost: true, message: `Howard shrugs — he's not angry, just disappointed. "The sample was lovely, Angelo. Lovely. But the main batch? Fucking Cardiff ditch weed, mun. I'm embarrassed — and I don't embarrass easy." He gives you a discount on your next visit as an apology. It doesn't make up for the loss.` } },
@@ -711,7 +719,11 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Old Smuggler\'s Wisdom',
-      context: `Howard's van is tidier than usual — the beanbags are brushed, the fairy lights are working, the Welsh dragon sticker has been replaced with a fresh one. He's sitting cross-legged on the floor, leaning forward like he's about to share state secrets. "Angelo, butt — I've been doing this a long time. Longer than most. And I've got a contact who wants fifty grand's worth moved through the port. Quietly. The way they did it in the seventies — false papers, false names, the works. Twenty percent is yours. But this isn't like our usual deals. This is the kind of job that makes you a legend or puts you in prison for seven years. You in?"`,
+      context: [
+        `Howard's van is suspiciously tidy. "Got a fifty-grand port move, old-school paperwork, fake names. Twenty percent for you. Legend money or prison food."`,
+        `Howard leans in. "Seventies smuggling playbook, butt. Fifty grand through the port, no noise. Twenty percent cut. Big boy decision."`,
+        `Fresh Welsh dragon sticker, serious tone. "One major run. False papers, quiet route, fifty grand value. You become a name or a cautionary tale."`,
+      ][Math.floor(Math.random() * 3)],
       choices: [
         { id: 'take_job', text: 'Accept. This is the big leagues.', odds: 0.40 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 8, credibilityDelta: 15, inventoryLost: false, message: `Howard's eyes light up. "Tidy, mun! Absolutely tidy!" He reaches under the driver's seat and pulls out a folder — names, dates, shipping manifests, the works. Old-school. Proper smuggler craftsmanship. "This is how they did it before computers, Angelo. Paper trails that lead nowhere." The operation runs like clockwork. You earn every dollar — and Howard earns your undying respect.` }, failEffects: { cashDelta: -3000, heatDelta: 30, reputationDelta: 0, credibilityDelta: -10, inventoryLost: true, message: `The paperwork was too old. The shipping manifest had a typo — a Welsh word that Spanish customs didn't recognise but still flagged. It was enough. Howard tries to warn you — "Scatter, butt! SCATTER!" — but it's too late. Two men grab you. The cash and product stay behind. Howard drives off in the van, shouting apologies in Welsh out the window.` } },
         { id: 'negotiate_cut', text: 'Counter at thirty percent. Your risk, your price.', odds: 0.50 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 8, inventoryLost: false, message: `Howard pauses. Then that slow Welsh grin. "Thirty percent. You know what, Angelo? That's fair. That's actually fair." He puts his calloused miner's hand out. "Deal. The union taught me one thing: never agree to the first offer. Good lad." The most profitable run you've ever done. Howard gives you a Welsh coal keyring as a souvenir. "Solid as the pits, mun."` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: false, message: `Howard chuckles, but it's sad. "I can't, butt. Twenty percent is what it is. The old ways were built on trust, not negotiation. The offer's off the table." He doesn't seem angry. Just... old. You leave with nothing. The camper van's engine rattles as you walk away.` } },
@@ -729,7 +741,11 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
       return {
       id: nextId(),
       title: 'The Mosque Meeting',
-      context: `Mohamed washes his hands in a copper bowl. Doesn't look up. "You're late, you Western cunt. I despise lateness. My people invented mathematics while yours were living in caves, and you can't even arrive on time." He dries his hands on a small towel. "Price went up ${Math.round(pct * 100)}%. Your governments' sanctions. Your fucking drone strikes. You pay the difference."`,
+      context: [
+        `Mohamed doesn't look up. "Late again, Western cunt. Price up ${Math.round(pct * 100)}%. Blame your sanctions and your bombs."`,
+        `Copper bowl, cold stare. "My people built empires while yours chased mud. ${Math.round(pct * 100)}% increase. Pay and shut up."`,
+        `Mohamed dries his hands slowly. "You arrive late and still want mercy? Price rose ${Math.round(pct * 100)}%. You pay the difference, infidel."`,
+      ][Math.floor(Math.random() * 3)],
       choices: [
         { id: 'accept_hike', text: `Accept the new price (+$${increase}). Don't argue with the abortionist.`, odds: 0.70 + player.credibility * 0.002, successEffects: { cashDelta: -increase, heatDelta: 5, reputationDelta: 0, credibilityDelta: 3, inventoryLost: false, message: `Mohamed counts the cash — twice. "Submission is wisdom. The Koran teaches this. Your people will learn it too, one day. At the end of a sword." He hands over the product. "The transaction is blessed. Now fuck off." You're out before the Kalashnikov gets involved.` }, failEffects: { cashDelta: -increase, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: true, message: `Mohamed takes your money. Then nods at his sons. "Search the Western cunt." Nothing — but they take their time. Take the product. Take your dignity. "Perhaps next week you'll come with more respect. And more cash. Now crawl back to your whore mother in London."` } },
         { id: 'negotiate', text: 'Push back. You came a long way for this.', odds: 0.30 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 10, inventoryLost: false, message: `Mohamed studies you like you're something he found on his shoe. "I removed foetuses for twenty years, cunt. Dead babies, every day. You think your English words will move ME?" He pauses — the faintest crack in the stone. "Alright. Original price. Because Allah respects persistence — even from infidels. But push me again and I'll show you what the inside of a woman looks like. On YOU."` }, failEffects: { cashDelta: 0, heatDelta: 15, reputationDelta: 0, credibilityDelta: -10, inventoryLost: false, message: `Mohamed doesn't flinch. "You insult my mosque. You insult my family. You insult Islam itself — standing there in your Western clothes with your Western arrogance." He gestures at the Kalashnikov. "Leave. Now. Or I swear on the Prophet's name, I will make an example of you that will be taught in this mosque for a hundred years."` } },
@@ -745,7 +761,11 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Village Collection',
-      context: `Four armed men. Mohamed's sons. He's speaking Pashto — rapid, sharp. When he sees you, he switches. "Ah. The English infidel. These are my sons. They don't speak your language. They don't need to — they understand blood." One cracks his knuckles. Gun in his waistband. "The price has changed, cunt. Allah provides. But tonight, Allah provides to ME."`,
+      context: [
+        `Four armed sons, one bad mood. Mohamed smiles thinly. "Price changed. Allah provides to me first tonight, cunt."`,
+        `Mohamed switches from Pashto to English just for you. "My sons don't need your language. They speak blood. Pay the new number."`,
+        `Guns on belts, dust in the yard. "English infidel," Mohamed says, "the deal price moved. Complain and you leave lighter."`,
+      ][Math.floor(Math.random() * 3)],
       choices: [
         { id: 'pay_up', text: 'Pay what he asks. Four guns, one you.', odds: 0.55 + player.credibility * 0.002, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 0, credibilityDelta: 2, inventoryLost: false, message: `Mohamed counts the cash, then spits in the dust. "Fair price. Fair deal. The Prophet watched this transaction." He gestures — a son throws you the package. Says something in Pashto. They laugh. Mohamed translates: "He says you smell like a pig. I agree." You take the product and leave. Quickly.` }, failEffects: { cashDelta: -500, heatDelta: 20, reputationDelta: 0, credibilityDelta: -10, inventoryLost: true, message: `Mohamed takes the money, nods at his sons. You're on the ground, boot on your throat. "The product stays. The money stays. Consider it reparations for twenty years of Western bombs, fucker." You're dragged to the main road. Left in the dust. "Tell London. Tell them Mohamed el Mohamed sends his regards. And his boot."` } },
         { id: 'stand_ground', text: 'Refuse. A deal\'s a deal.', odds: 0.25 + player.notoriety * 0.004, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 5, credibilityDelta: 10, inventoryLost: false, message: `Mohamed pauses. Studies you. Then — a bark of laughter. "The Englishman has stones! I did not expect this from a people who drink warm beer and apologise to furniture." He waves his sons back. "The agreed price. Respect." Hands you the package himself. "Brave or stupid. Allah has not told me which. Yet."` }, failEffects: { cashDelta: 0, heatDelta: 30, reputationDelta: 0, credibilityDelta: -20, inventoryLost: true, message: `Mohamed sighs. Almost disappointed. "The West. Always stubborn. Always wrong." He says something in Pashto. Before you can move, a son has your arms. Another empties your pockets. "I am a man of God. But my sons are young. They need practice on Western flesh." They leave you in the road. Product gone. Cash gone. One of them spits on your shoe.` } },
@@ -760,7 +780,11 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Ledger of Debts',
-      context: `Mohamed sits cross-legged with a leather-bound book. Doesn't look up. "This is my ledger. Every infidel who owes me. Every Western cunt who crossed me. Every man I put in the ground. All of them. In this book." He turns a page. "I'm adding a new entry today, fucker. Yours. The question is — what colour ink? Black for money. Red for blood."`,
+      context: [
+        `Mohamed taps a leather ledger. "Names, debts, graves. Today I write yours. Black ink for money. Red ink for blood."`,
+        `Cross-legged and smiling like a snake, Mohamed opens the book. "Every infidel I buried is in here. Decide what color your page gets."`,
+        `He turns a page with priest-like calm. "You owe me now, cunt. Only question is whether I collect cash or collect you."`,
+      ][Math.floor(Math.random() * 3)],
       choices: [
         { id: 'take_bonus', text: 'Take the extra product. Mohamed\'s ink can wait.', odds: 0.55 + player.credibility * 0.003, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 3, credibilityDelta: 8, inventoryLost: false, message: `Mohamed writes in black. Slowly. Deliberately. "You now have a credit line. Dangerous — but valuable. Like a snake you keep in your pocket." The product is pure. Triple profit. His name opens doors in places Westerners don't go. But every deal you do now — he knows. He's watching. The ledger grows.` }, failEffects: { cashDelta: -2000, heatDelta: 20, reputationDelta: 0, credibilityDelta: -8, inventoryLost: true, message: `The bonus product is real. But so is the entry in red. "A favour owed. I collect favours, cunt. Like your empire collected colonies — with patience. And violence. And time." For weeks you feel eyes on you. Pashto voices in your sleep. One day the favour comes due. You pray it's money he wants.` } },
         { id: 'refuse_bonus', text: 'Stick to the deal. Generosity from this man terrifies you.', odds: 0.85, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 0, credibilityDelta: 3, inventoryLost: false, message: `Mohamed closes the ledger — but not before writing. "Cautious. I respect caution. Like a rat respects the shadow of a hawk." The deal goes clean. "I'll check on you. From time to time. To see if the West has made you soft. Softer." He gestures at the door. The Kalashnikov rattles its goodbye.` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: `Mohamed shrugs. "Your loss." He writes anyway. You glimpse it — a number. Not your name. "Go. But know this: the mosque has a long memory. Longer than your country's. Longer than your Queen. And Allah does not forget. Neither do I."` } },
@@ -774,7 +798,11 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Sermon of Hatred',
-      context: `Evening prayer. Mohamed's voice through the wall: "...the Western whores! The crusader filth! The Zionist puppets who bomb our children and call it freedom! Their time is ending — the Prophet promised us this! Islam will rise from the ashes of their empire and every mosque will fly the black flag from London to New York!" He stops. You've been seen. He gestures you into the back room. The Kalashnikov is no longer on the wall. It's in his hand.`,
+      context: [
+        `Sermon ends the second he spots you. Mohamed gestures you inside, Kalashnikov in hand. "Tonight we discuss loyalty, not prices."`,
+        `Prayer hall goes quiet. Mohamed appears with the rifle. "You're either inside my network or in its way. Decide."`,
+        `His voice is fire through the wall, then silence. "Back room, now," he says, weapon visible and patience gone.`,
+      ][Math.floor(Math.random() * 3)],
       choices: [
         { id: 'get_in', text: 'Accept. The mosque protects its own.', odds: 0.30 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 8, credibilityDelta: 12, inventoryLost: false, message: `Mohamed writes your name. In Arabic. In the ledger. "You are now connected. The mosque protects what it owns. And it owns you now, cunt." Direct pipeline. No middlemen. Triple earnings. Muslim contacts across five countries reach out within hours. The mosque is a network. And you're in it. For better. Or much, much worse.` }, failEffects: { cashDelta: -3000, heatDelta: 30, reputationDelta: 0, credibilityDelta: -12, inventoryLost: true, message: `It's a shakedown. They take everything — "security deposit" he calls it, smiling. His sons dump you at the edge of Kabul. "The mosque does not forget. It does not forgive. And it does not return deposits, fucker." You walk. Barefoot. Broke. The sermon continues behind you. Something about vengeance. Something about fire.` } },
         { id: 'negotiate', text: 'Talk through the doorway. Don\'t step fully in.', odds: 0.50 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 6, inventoryLost: false, message: `Mohamed approves — grudgingly. "A man who doesn't rush. Rare among your people. Usually you Westerners charge in, guns blazing, then wonder why everyone hates you." A smaller deal. Good margin. Less exposure. He writes a partial entry. "Room to grow. Room to prove yourself. Don't disappoint me, cunt. I've killed men for less."` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: false, message: `The door closes. Hard. "You waste the mosque's time. Time is the one thing Allah does not refund." The sermon resumes behind you. The insult of your hesitation will linger. Contacts go cold. Suppliers ghost you. You're marked — not dangerous enough to kill, not useful enough to keep.` } },
@@ -792,7 +820,11 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
       return {
       id: nextId(),
       title: 'The Surinamese Connection',
-      context: `Reggae through the floorboards. Micky sprawled on the sofa, joint in one hand. "Angelo! Shut the door, muggy little cunt — don't want the whole landing knowing my business. Surinamese skunk. Best in the city. Price went up ${Math.round(pct * 100)}%. My guy's having supply issues. Fucking Brexit."`,
+      context: [
+        `Reggae thumps upstairs. Micky grins. "Door shut, muggy little cunt. Supply's tight, price up ${Math.round(pct * 100)}%. Don't cry about Brexit again."`,
+        `Micky flicks ash into a mug. "Surinamese skunk, top shelf. ${Math.round(pct * 100)}% increase 'cause supply's being a prick."`,
+        `"Angelo, sit down and stop gawping," Micky says. "Stock's squeezed, so it's ${Math.round(pct * 100)}% more. Pay or jog on."`,
+      ][Math.floor(Math.random() * 3)],
       choices: [
         { id: 'accept_hike', text: `Accept the new price (+$${increase}). Micky's product is worth it.`, odds: 0.70 + player.credibility * 0.002, successEffects: { cashDelta: -increase, heatDelta: 5, reputationDelta: 0, credibilityDelta: 3, inventoryLost: false, message: `Micky grins. "That's what I like. No drama. Just business." Tosses you the bag. "Done. Now piss off before my phone rings — got three more people waiting. Looks like a fucking youth club in here."` }, failEffects: { cashDelta: -increase, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: true, message: `Micky takes the cash, phone buzzes, face drops. "Ah, for fuck's sake." He's up. Fast. "Out. NOW. Back way." Shoves you toward the fire escape. "Anyone asks — you were never here, poofter." You make it. Product doesn't. Cash doesn't.` } },
         { id: 'negotiate', text: 'Push back. A deal\'s a deal, Micky.', odds: 0.30 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 10, inventoryLost: false, message: `Micky stares — then cracks up. "You know what? I respect that, you mouthy little cunt. Most people come in, see me, just agree to whatever I say." Picks up the bag. "Original price. Because you've got balls. Small ones. But balls nonetheless."` }, failEffects: { cashDelta: 0, heatDelta: 15, reputationDelta: 0, credibilityDelta: -10, inventoryLost: false, message: `Micky's laugh dies. "Nah. You're taking the piss now." Stands up. All of him. "Price went up. Means price went up. Don't like it? Door's there, poofter." Sits back down. Turns up the football. Discount dead.` } },
@@ -808,7 +840,11 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The East London Welcome',
-      context: `Two other men. Both big. Both staring. "Relax — they're with me. This is Del and Tiny. Tiny's the small one. Obviously." Tiny is not small. "They wanted to meet the Englishman. What's left of him after dealing with the Afghans. Sit down, muggy little cunt."`,
+      context: [
+        `Two giants flank Micky. "Del and Tiny," he says. "Tiny's the small one, obviously. Sit down and don't act like a nonce."`,
+        `Micky nods toward two heavy lads. "They wanted to size up the Englishman. Behave, and we all leave smiling."`,
+        `"Relax," Micky says, as Del and Tiny stare holes through you. "This is just introductions, not your funeral. Yet."`,
+      ][Math.floor(Math.random() * 3)],
       choices: [
         { id: 'stay_calm', text: 'Stay calm. Don\'t show fear.', odds: 0.55 + player.credibility * 0.002, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 1, credibilityDelta: 5, inventoryLost: false, message: `Micky nods. "Told you, Del. Solid. East London boys — don't scare easy." Tiny cracks a smile. Tension breaks. Micky slides the product over. "Standard price. For being cool. Most people piss themselves when they meet Tiny."` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: true, message: `You flinch. Tiny sees it. "He's scared, Mick." Micky sighs. "For fuck's sake, Angelo. I vouched for you. And you're trembling like a poofter at a prison visit." Slides product back. "Come back when you've grown a pair." Del laughs. Not friendly.` } },
         { id: 'stand_up', text: 'Stand up. Meet them eye to eye.', odds: 0.25 + player.notoriety * 0.004, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 5, credibilityDelta: 10, inventoryLost: false, message: `You stand. Micky's eyebrows go up. Del shifts. Even Tiny grins. "Alright," Micky says, quieter. "Didn't expect that, you mad little prick." Slides product over. "Tiny — give him the good bag." Tiny produces a better package. "That's for people I actually like. Don't make me regret it."` }, failEffects: { cashDelta: 0, heatDelta: 20, reputationDelta: 0, credibilityDelta: -10, inventoryLost: true, message: `Tiny stands too. And keeps standing — until he's looking down at you. "Sit," Micky says. Tiny sits. Micky leans forward. "Never stand up in a room you don't own. Lesson one. Free." Slides product back. "Deal's off. Come back next week. If you can still walk, you cocky little cunt."` } },
@@ -823,7 +859,11 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The London Calling',
-      context: `Flat is tidy. No football. No Del. No Tiny. Hennessy on the table. "Got a call from a bloke back home. Old contact. Canning Town days. He's sitting on a shipment — sixty grand. Needs it moved through Amsterdam. Quietly. How we used to do it." Slides a glass toward you. "Twenty percent. But here's the thing — if this goes wrong, they're not just looking for me. They'll be looking for you, poofter. And the Dutch police don't fuck about. You in or out?"`,
+      context: [
+        `No football tonight, just Hennessy and business. "Sixty-grand shipment from my Canning Town contact. Quiet Amsterdam move. Twenty percent. You in?"`,
+        `Micky slides you a glass. "Big London stock needs Dutch routing. Serious money, serious heat. If it burns, we both burn."`,
+        `The flat is too tidy, which means trouble. "One old contact, one huge shipment, one risky run. Twenty percent and no mistakes."`,
+      ][Math.floor(Math.random() * 3)],
       choices: [
         { id: 'take_job', text: 'Big risk, big reward. In.', odds: 0.40 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 8, credibilityDelta: 12, inventoryLost: false, message: `Micky clinks your glass. "My man. Knew you had it, you greedy little cunt." Pulls out a burner phone. "Do what I say, when I say it. No questions." Operation runs smooth. Sixty grand vanishes through the port. Micky hands you your cut in a Tesco carrier bag. "Don't spend it all at once. And don't tell Tiny. Tiny gets jealous."` }, failEffects: { cashDelta: -3000, heatDelta: 30, reputationDelta: 0, credibilityDelta: -10, inventoryLost: true, message: `The contact was a setup. Dutch police watching Micky for months. Three unmarked cars light up. "POLICE! HANDEN OP JE HOOFD!" Micky in your ear: "RUN, ANGELO! FUCKING RUN!" You don't make it. Six hours in a Dutch cell. Micky gets away. You get the blame. "You're too fucking slow, you useless cunt," his voice echoes in your head.` } },
         { id: 'negotiate_cut', text: 'Counter at thirty percent. Your neck, your price.', odds: 0.50 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 8, inventoryLost: false, message: `Micky swills his Hennessy. "Thirty percent." Pause. "Done. Because I need someone I can trust — and trust costs money, innit." Raises his glass. "To Canning Town. And getting the fuck out of Canning Town." Best run ever. Micky gives you a burner. "Keep this. Next time I call — you answer. Three in the morning, doesn't matter. You answer, poofter."` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: false, message: `Micky shakes his head. "Can't do it, mate. Twenty's the number. My contact's firm — and he's not the kind of bloke you negotiate with. He's the kind who makes you disappear and tells your mum you moved to Spain." Pours himself another. "Offer's off. Next time, maybe. If you're still breathing."` } },
@@ -838,7 +878,11 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Dutch Muscle',
-      context: `Micky's in the kitchen, on the phone, voice low. You catch fragments: "...no, not him — the other one. Yeah. No, don't do anything yet. Let me handle it." He hangs up. Sees you. His face is harder than usual. "Right. Change of plan, Angelo. My Surinamese supplier — he's trying to cut me out. Thinks because I'm not Dutch I don't have connections here." He pulls the machete from under the sofa. Not threatening. Just... present. "I need you to make a delivery to his competitor. Prove we've got other options. You do this, my prices drop ten percent. Permanently. You in, poofter?"`,
+      context: [
+        `Micky ends a tense call and lays a machete on the table. "Supplier's trying to cut me out. Deliver to his rival and I drop your prices ten percent. Permanent."`,
+        `"Dutch supplier thinks I'm bluffing," Micky says, blade in hand. "Run one package to his competitor and we reset the market."`,
+        `Kitchen meeting, hard face. "Need leverage tonight. You make one hostile delivery, I make your life cheaper forever."`,
+      ][Math.floor(Math.random() * 3)],
       choices: [
         { id: 'take_job', text: 'Make the delivery. Micky\'s machete is very present.', odds: 0.50 + player.credibility * 0.003, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 5, credibilityDelta: 8, inventoryLost: false, message: `The delivery goes smooth. Competitor's happy. Micky's Surinamese guy suddenly finds his manners. "Funny how competition works, innit." Micky grins. "Ten percent off. Permanently. You've earned it." He puts the machete away. Doesn't need it today. But it's there. Always there.` }, failEffects: { cashDelta: -2000, heatDelta: 20, reputationDelta: 0, credibilityDelta: -8, inventoryLost: true, message: `The competitor takes the delivery — then the cash. Then calls Micky's Surinamese guy. Now they're BOTH pissed at Micky. And you're in the middle. Micky's quiet when you get back. "Cheers for that, Angelo. Really helped. Now I've got two suppliers who want to kill me. And you." The machete stays on the table. Just in case.` } },
         { id: 'refuse', text: 'Refuse. This is Micky\'s war, not yours.', odds: 0.80, successEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 2, inventoryLost: false, message: `Micky stares at you. Then laughs — short, hard. "Smart. Very smart. Never get involved in other people's beef. Lesson number two." He puts the machete away. "Deal still on. Same price. But you owe me one now, poofter. And I don't forget." The deal goes through. The shadow of that favour follows you out the door.` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -3, inventoryLost: false, message: `Micky's disappointed. "You're supposed to be my man. My London connection. And you're backing out of a bit of legwork?" He shakes his head. "Deal's still on. Same price. But we're not mates anymore. And round here, not being mates with Micky is a very bad thing." Deal proceeds. Coldly.` } },
@@ -855,7 +899,11 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
       return {
       id: nextId(),
       title: 'The Lottery King',
-      context: `Pablo is sitting behind a wooden desk covered in scratch cards and a crucifix. The framed photo shows a younger Pablo — flashy gold chain, cocky grin. He points at it. "Eleven years ago. Selling fake lottery tickets in this very street. Now look at me." He leans back. "Price went up ${Math.round(pct * 100)}%. Best cocaine in Bogotá — you want discount, go buy baking soda from the street cunts. You want pure, you pay Pablo."`,
+      context: [
+        `Pablo taps a framed photo of younger him. "From fake tickets to real empire. Price up ${Math.round(pct * 100)}%. You want pure, you pay Pablo."`,
+        `Scratch cards, crucifix, and Pablo grinning. "Best coke in Bogotá costs more tonight: ${Math.round(pct * 100)}%. Buy street chalk if you're broke."`,
+        `Pablo leans back behind the desk. "My product got pricier, not weaker. ${Math.round(pct * 100)}% increase. Decide quickly, amigo."`,
+      ][Math.floor(Math.random() * 3)],
       choices: [
         { id: 'accept_hike', text: `Accept the new price (+$${increase}). Don't argue with a man who has a framed photo of himself.`, odds: 0.70 + player.credibility * 0.002, successEffects: { cashDelta: -increase, heatDelta: 5, reputationDelta: 0, credibilityDelta: 3, inventoryLost: false, message: `Pablo counts the cash twice — once with his eyes, once with his fingers. "Smart man, Angelo. Men who pay and don't complain — they live long." He pushes the product across the desk. "The next one will be cheaper. If you survive that long, you cheeky little cunt."` }, failEffects: { cashDelta: -increase, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: true, message: `You hand over the cash. Pablo smiles — and nods at the door. Two men enter. "Search him," Pablo says, not looking up. "I don't trust Englishmen who pay too easily." They find your backup cash, your phone, your dignity. They leave with everything. Pablo tosses a scratch card at you. "You lose sometimes. That's the game, you nonce."` } },
         { id: 'negotiate', text: 'Push back. You came a long way. So did the cash.', odds: 0.30 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 10, inventoryLost: false, message: `Pablo stares. The fan spins. The crucifix glints. Then — a laugh. Low. Genuine. "I like you, Angelo. You've got balls." He scratches a lottery ticket. Wins nothing. "Original price. Because I respect men who push back. But next time — I'll double it if you try again, you British cunt."` }, failEffects: { cashDelta: 0, heatDelta: 15, reputationDelta: 0, credibilityDelta: -10, inventoryLost: false, message: `Pablo's smile vanishes. "You think this is a negotiation? This is Colombia, you stupid fucker. Not your little island with your little rules." He stands. "Get out. The price just tripled for next time — if there is a next time."` } },
@@ -871,7 +919,11 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Arsehole Tax',
-      context: `Pablo's office has a new addition — a machete on the wall. "Present from my cousin. He used it to collect debts." Pablo picks it up, weighs it in his hand. "He's in prison now. But the machete — the machete stays." He drops it on the desk. "I have a problem, Angelo. Too much product, not enough buyers. I need you to take double the usual. For sixty percent more profit. But there's a catch — if you short change me, even by a dollar..." He picks up the machete. "My men will find you. They will hold you down. And they will cut you from arsehole to breakfast time. And I will watch. And I will enjoy it. You understand, you Coon?"`,
+      context: [
+        `Pablo sets a machete on the desk. "Double load, sixty percent upside. Short me one dollar and we discuss anatomy the hard way."`,
+        `"Too much stock, not enough buyers," Pablo says, twirling the blade. "Take double and profit big, or stay small and boring."`,
+        `The machete never leaves his hand. "I need volume moved now. Double package, better margin, zero forgiveness if you fuck me."`,
+      ][Math.floor(Math.random() * 3)],
       choices: [
         { id: 'take_double', text: 'Take double. The machete is just for decoration. Probably.', odds: 0.45 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 5, credibilityDelta: 12, inventoryLost: false, message: `Pablo smiles. The machete stays on the desk. "Good choice, Angelo. You're going far — if you don't get greedy." The product is pure. The profit is massive. Pablo wraps the machete back on the wall. "For next time. When you're ready for triple." He doesn't look at you when he says it. You're not sure if that's threatening or not. It's definitely threatening.` }, failEffects: { cashDelta: -2000, heatDelta: 25, reputationDelta: 0, credibilityDelta: -10, inventoryLost: true, message: `The deal is a setup. Two Colombian police in plainclothes burst in — but they're not police. They're Pablo's men wearing fake badges. "Testing you, Angelo." Pablo shakes his head. "You failed. My men say you flinched. I don't do business with men who flinch." The product goes back in the safe. Your cash goes in his pocket. "Come back when you've grown a pair. The machete will be waiting, you spastic."` } },
         { id: 'stick_standard', text: 'Stick to the original amount. The machete is very convincing.', odds: 0.75 + player.credibility * 0.002, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 2, credibilityDelta: 5, inventoryLost: false, message: `Pablo shrugs. "Smart. The machete works better than words, eh?" He puts it back on the wall. "Standard deal. Same price. You survive. Maybe next time you try the machete deal." He scratches a lottery ticket. Wins five dollars. Smiles. "Today is a good day, Angelo. Don't ruin it."` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -3, inventoryLost: true, message: `Pablo hands you the product — but it's light. Half the usual. "Supply chain problems," he says, smiling. You can't argue. The machete is watching. "You'll survive on half, Angelo. It'll make you appreciate the full amount next time." Lesson learned: Pablo is not a man you argue with when there's a machete in the room.` } },
@@ -885,7 +937,11 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Medellín Pipeline',
-      context: `Pablo's office has been renovated. The rusted fan is gone. Air conditioning hums. The framed photo of young Pablo is replaced with a much larger one — Pablo shaking hands with a man you recognise from international news. "The organisation has been watching you, Angelo." He leans forward. "You're not a street dealer anymore. You're a businessman. And I have an offer: direct supply from Medellín. No middlemen. No markup. Fifty thousand dollars worth of pure cocaine, moved through the port, distributed in London. Your cut: twenty percent. But this isn't a game, Angelo. If you steal from the organisation, they will find you. They will find your family. They will make you watch. And then they will cut you from arsehole to breakfast time — but slowly. Very slowly."`,
+      context: [
+        `Air-con hums where the old fan used to rattle. "Medellín direct line. Fifty grand movement, no middlemen, twenty percent for you. Betray us and you vanish."`,
+        `Pablo points at a photo with men you don't ask about. "You've been noticed. One pipeline from Medellín to London. Big money, permanent consequences."`,
+        `"Street days are done," Pablo says. "This is organisation business now: direct supply, hard deadlines, zero mercy for mistakes."`,
+      ][Math.floor(Math.random() * 3)],
       choices: [
         { id: 'get_in', text: 'Accept. This is what you came to Colombia for.', odds: 0.30 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 8, credibilityDelta: 12, inventoryLost: false, message: `Pablo opens a drawer. Inside: a burner phone, a shipping manifest, and a wad of cash. "Welcome to the organisation, Angelo. You work for me now. But in six months — you work for yourself. That's how it works." The pipeline is smooth. The product is pristine. Your earnings triple overnight. Pablo sends you a new photo — this time of both of you, arms around each other. "Remember where you started, you lucky little cunt."` }, failEffects: { cashDelta: -3000, heatDelta: 30, reputationDelta: 0, credibilityDelta: -12, inventoryLost: true, message: `The shipment is intercepted at the port. Pablo's phone rings — he listens, face darkening. "The police. Someone talked." He looks at you. "Was it you, Angelo?" His hand drifts to the drawer — the one with the gun. "It doesn't matter. The organisation needs a lesson. And you — you're going to be the lesson." His men grab you. They take the cash. The product. Your dignity. You wake up in an alley. Alive. That's the warning. Next time, you won't wake up, you Coon.` } },
         { id: 'negotiate', text: 'Twenty percent is good. But thirty percent is better.', odds: 0.50 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 8, inventoryLost: false, message: `Pablo stares at you. The air conditioning hums. Then — a slow, wide smile. "You know who the last man was who negotiated with the organisation?" He waits. "He's dead, Angelo. BUT..." He holds up a finger. "He's dead because he stole. Not because he asked. I like your stones. Twenty-five percent. Final. Don't push again, you cheeky British cunt."` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: false, message: `Pablo's smile disappears. The temperature in the room drops. "You're lucky I like you, Angelo. The organisation does not negotiate." He closes the drawer. "The offer is withdrawn. You had your chance. Next time — maybe. If you survive that long." The deal evaporates. The pipeline closes. You walk out with nothing but the memory of the air conditioning.` } },
@@ -898,12 +954,16 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
     dealerIds: ['net_3'],
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
-      title: 'The Homecoming',
-      context: `Micky's phone is on speaker. An East London accent crackles: "...so I told him, I said, 'You come down here again, I'll take your fucking eyes out.' And he never came back, did he." Micky hangs up. Grins. "That's my uncle. Still running things in Plaistow. Seventy-two years old. Hardest man I ever met." He leans forward. "He's looking for new distribution. Amsterdam to London. Regular runs. Proper money. The kind that means you don't have to do this anymore. But you have to meet him. In person. In London. And he doesn't like poofters. Or mugs. Or cunts. So you're already on thin fucking ice, Angelo."`,
+      title: 'The Big Shipment',
+      context: [
+        `Micky cracks his knuckles. "Large shipment coming in from Morocco next week. Biggest I've ever done. I need a runner on the London end who won't bottle it. That's you — if you're not a cunt about it."`,
+        `Micky puts his feet up. "I could move this gear through ten other mugs. But they're all useless. You? You've got bottle. Question is — have you got enough? One wrong move and I'll be visiting you in hospital."`,
+        `Micky opens a duffel bag — sample product. "This is what serious money looks like, Angelo. I'm offering you first dibs on the London distribution. But if you fuck me over, I'll find you. And I'll enjoy finding you."`,
+      ][Math.floor(Math.random() * 3)],
       choices: [
-        { id: 'get_in', text: 'Accept. Meet the uncle.', odds: 0.30 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 8, credibilityDelta: 15, inventoryLost: false, message: `Micky slaps the table. "YES! Knew it! Knew you weren't completely fucking useless!" He's on his feet. Dialling. "Uncle Ray — I got someone. Yeah. The Englishman I told you about. No — not a poofter. Well, maybe a bit." Covers the phone. "He wants to meet you Thursday. Don't wear anything flash. He hates flash." Pipeline opens. Direct. London to Amsterdam. Money you've never seen.` }, failEffects: { cashDelta: -3000, heatDelta: 30, reputationDelta: 0, credibilityDelta: -12, inventoryLost: true, message: `Uncle Ray takes one look at you and laughs. "THIS is him? Micky, you're having a fucking laugh. He looks like he works in a call centre." Micky tries to defend you. Ray's not having it. "No. Absolutely not. Get him out of my sight." Micky catches up with you outside. "Sorry, mate. Ray's old school. He doesn't like... whatever it is you are." Offence taken.` } },
-        { id: 'negotiate', text: 'Negotiate. Meet halfway.', odds: 0.50 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 8, inventoryLost: false, message: `Micky relays your counter. Uncle Ray's voice crackles back: "Tell the muggy little cunt he's got a deal. But if he fucks it up, I'm taking it out of YOUR end, Michael." Micky winces. "Cheers, Uncle Ray. Love you too." Hangs up. "He likes you. Which is terrifying. For both of us." Smaller pipeline. Less risk. Good money. Ray sends you a Christmas card that year. It's just a photo of his fist.` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: false, message: `Micky tries. Uncle Ray's voice: "Tell your little poofter mate he's got balls but not enough of them. Twenty percent. Final offer. Take it or I'll find someone else who will. Amsterdam's full of mugs who'll work for less." Micky shrugs. "Sorry, mate. Ray's not budging. Twenty. That's the number." Deal proceeds. Thin margins. Ray doesn't send you a card.` } },
-        { id: 'refuse', text: 'Refuse. Too many unknowns.', odds: 0.80, successEffects: { cashDelta: 0, heatDelta: -5, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: `Micky stares at you. Then — slowly — nods. "Fair enough. Can't make a man do something he doesn't want to do. Not these days." He pockets his phone. "I'll tell Ray you're not ready. He'll call you a cunt. He calls everyone a cunt. Don't take it personal." He pours you a Hennessy anyway. "Next time. Maybe." The offer stays open. For now.` }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: '' } },
+        { id: 'get_in', text: 'Accept. In for the big score.', odds: 0.30 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 8, credibilityDelta: 15, inventoryLost: false, message: `Micky slaps the table. "YES! Knew it! Knew you weren't completely fucking useless!" He leans in, voice dropping. "Right. Here's how it works — my people move the product, you move the cash. Simple. Clean. You try anything clever and I'll personally put you in the ground next to my last runner. He tried to stiff me. He's now a canal feature." He pours two glasses. "Welcome aboard, you mad cunt."` }, failEffects: { cashDelta: -3000, heatDelta: 30, reputationDelta: 0, credibilityDelta: -12, inventoryLost: true, message: `Micky's face hardens. He makes a phone call, listens, hangs up. "They don't trust you, Angelo. And neither do I." He stands — quicker than you expected. "I vouched for you. Made you sound like a proper villain. And you showed up looking like a lost tourist." He shoves a finger in your chest. "Get out of my sight before I forget we're mates. And don't bother coming back till you've got something to prove. If you ever do."` } },
+        { id: 'negotiate', text: 'Negotiate. Better terms.', odds: 0.50 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 8, inventoryLost: false, message: `Micky listens to your counter, then laughs. "Fuck me, you've got balls. Alright. Ten percent more your way. But if you're even a minute late on the first drop, I'm sending the boys round to break your knees. Both of them. Then I'll break them again for good measure." He grins. "We clear, you cheeky cunt?"` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: false, message: `Micky shakes his head slowly. "Nah. Not happening. You don't negotiate your way into my operation — you earn it. That's how it works. Try again next month and maybe — MAYBE — we talk terms. Push it again and I'll have my boys rearrange your face." He turns back to the football. Conversation over.` } },
+        { id: 'refuse', text: 'Refuse. Too many unknowns.', odds: 0.80, successEffects: { cashDelta: 0, heatDelta: -5, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: `Micky stares at you. Long and hard. Then he shrugs. "Your funeral. Opportunity like this doesn't come round twice, Angelo. But I'm not a mug — I won't beg." He pours himself a drink. "When you change your mind — and you will — you know where I am. Door's still open. But my patience? That's got a fuckin' limit."` }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: '' } },
       ],
     }),
   },
@@ -917,7 +977,11 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
       return {
       id: nextId(),
       title: 'The Fallen Durrani',
-      context: `The villa has seen better centuries. Faded silk curtains, a cracked silver tea service on an otherwise empty table, and portraits of men in uniforms from empires that no longer exist. Mohamed Durrani Allah gestures at a chair — the stuffing is coming out. "Sit, Angelo. My grandfather negotiated treaties with the British in this very room. Now I negotiate opium deals with an Englishman who smells of fried food and poor decisions. The world has fallen far." He pours tea — lukewarm. "Price went up ${Math.round(pct * 100)}%. My Pakistani contacts — they are not reasonable men. They are the kind of men who sell children through the Khyber. I do not argue with them. Neither should you."`,
+      context: [
+        `Dusty portraits watch as Durrani pours weak tea. "Price rose ${Math.round(pct * 100)}%. My Pakistani contacts are beasts, not negotiators. Pay and live."`,
+        `Cracked silver set, faded silk, aristocrat's sneer. "${Math.round(pct * 100)}% increase. The men behind my supply chain are not patient men."`,
+        `Durrani gestures at the ruined villa. "Empires fall, prices rise. Tonight it's ${Math.round(pct * 100)}% more. Do not test me, Angelo."`,
+      ][Math.floor(Math.random() * 3)],
       choices: [
         { id: 'accept_hike', text: `Accept the new price (+$${increase}). The portraits are watching.`, odds: 0.70 + player.credibility * 0.002, successEffects: { cashDelta: -increase, heatDelta: 5, reputationDelta: 0, credibilityDelta: 3, inventoryLost: false, message: `Mohamed Durrani Allah bows his head — the barest incline. "Wise. My father always said: 'Pay the opium exporter, argue with the viceroy.' You have the instincts of a Durrani, Angelo. High praise." He pushes the product across the cracked table. "One day you will sit in a room like this, surrounded by portraits of yourself. And you will remember who gave you your start. A man who outlasted empires."` }, failEffects: { cashDelta: -increase, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: true, message: `You hand over the cash. Mohamed Durrani Allah counts it, sniffs, counts it again. "Short by forty dollars." You know it's not. He knows it's not. But the two men in the corner — they don't know it's not. "Leave the difference — and your dignity — on the table." They take your product as collateral. You leave lighter and stupider. "Come back when you can count, you British nonce."` } },
         { id: 'negotiate', text: 'Push back. Your money spends the same as a Durrani\'s.', odds: 0.30 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 10, inventoryLost: false, message: `A long silence. One of the portraits seems to shift. Then — a laugh, rusty from disuse. "You cheeky cunt. I like it." He scratches his signet ring. "Original price. Because you remind me of my younger brother — before the Taliban shot him. He talked back too. Right up until the end." He slides the product over. "Don't end like my brother, Angelo."` }, failEffects: { cashDelta: 0, heatDelta: 15, reputationDelta: 0, credibilityDelta: -10, inventoryLost: false, message: `Mohamed Durrani Allah stands slowly. The chair scrapes. "You come into my home — the home of a man whose ancestors ruled while yours foraged for roots — and you insult me?" His voice drops. "My contacts in Peshawar run girls through the border. They owe me. One phone call and you are a product, Angelo. Not a customer. Leave. Now. Before I make that call, you insolent cunt."` } },
@@ -933,7 +997,11 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Silk Road Remnants',
-      context: `Mohamed Durrani Allah is in better spirits today — which means he's drunk. The empty liquor cabinet is open. Inside: a single bottle of something that was once whiskey. "My Pakistani contact came through. Double the usual volume, Angelo. Half the work." He pours two glasses — his is full, yours is a thimble. "He's not a pleasant man. But then — neither am I. He runs product through the Khyber. Girls. Boys. Whatever pays. I don't ask." He downs his drink. "You want the double or not, you cheeky Blacky?"`,
+      context: [
+        `Durrani is drunk and honest. "Pakistani route came through. Double volume available. Ugly partners, pretty profits. You taking it?"`,
+        `One full glass for him, a thimble for you. "Khyber line delivered extra stock. Double load tonight if you've got spine."`,
+        `Liquor cabinet empty, opportunity full. "My contact can feed us double this round. You want money or safety, Angelo?"`,
+      ][Math.floor(Math.random() * 3)],
       choices: [
         { id: 'take_double', text: "Take double. You're not here to judge his friends.", odds: 0.45 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 5, credibilityDelta: 12, inventoryLost: false, message: `Mohamed Durrani Allah refills his glass. "Excellent. The Durrani bloodline extends another day." He produces a second bottle — this one sealed. "Real Scotch. Gift from a diplomat who owed me. We can be civilized, Angelo. When the situation calls for it." The product is pure. The profit is enormous. He raises his glass: "To the aristocracy. Dead, but not forgotten."` }, failEffects: { cashDelta: -2000, heatDelta: 25, reputationDelta: 0, credibilityDelta: -10, inventoryLost: true, message: `The Pakistani contact was compromised. Taliban checkpoints on the road. The shipment is seized. Mohamed Durrani Allah's phone rings — he listens, face pale. "They took everything. My product. My money. My dignity." He looks at you — and for a moment, the aristocrat is gone. Just a frightened old man. "You should leave, Angelo. Before they come for me. And whoever is with me." You leave. Fast. You hear shouts behind you in Pashto.` } },
         { id: 'stick_standard', text: 'Stick to the original amount. Traffickers make you nervous.', odds: 0.75 + player.credibility * 0.002, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 2, credibilityDelta: 5, inventoryLost: false, message: `Mohamed Durrani Allah shrugs. "Prudent. My father always said: 'Better one province ruled well than three provinces ruled badly.'" He pauses. "He said that before the communists shot him, of course. But the principle stands." The standard deal goes through. He doesn't offer you the second bottle.` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -3, inventoryLost: true, message: `The product is cut. Badly. Baking soda mixed with talcum powder — street-level garbage. Mohamed Durrani Allah inspects it himself. "That Pakistani bastard." He's furious — but it's aimed at himself. "I trusted him. Like I trusted the British. Like I trusted the Soviets. Like I trusted the Americans." He pours the last of the whiskey. "Everyone fucks the Durranis eventually, Angelo. Today it was your turn."` } },
@@ -947,7 +1015,11 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
     generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => ({
       id: nextId(),
       title: 'The Last Favour',
-      context: `The villa is emptier than before. One of the portraits is missing — a dark rectangle on the wallpaper where it used to hang. "Sold it," Mohamed Durrani Allah says without looking at you. "A Durrani does not sell his ancestors. A desperate man does." He pours tea — no whiskey today. "I have a proposition, Angelo. A large shipment — fifty thousand worth of pure opium — needs to move through Taliban territory to the border. My name used to open those roads. Now..." He gestures at the missing portrait. "Now I need a man who is not a Durrani. A man who can be disavowed. Thirty percent is yours. But if you are caught, I will deny knowing you. And the Taliban will cut your head off. Slowly. They have cameras for that now. It is a different world, Angelo."`,
+      context: [
+        `One portrait is gone from the wall. "Sold it," Durrani says. "Now I need a fifty-grand opium run through Taliban roads. Thirty percent, total deniability."`,
+        `Tea instead of whiskey, empty space where ancestry hung. "Big border move, dangerous route, thirty percent cut. If captured, I never knew you."`,
+        `Durrani speaks quietly. "My name no longer opens checkpoints. Yours might pass unnoticed. Move this shipment and get paid like nobility."`,
+      ][Math.floor(Math.random() * 3)],
       choices: [
         { id: 'get_in', text: 'Accept. The missing portrait haunts you less than poverty.', odds: 0.30 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 8, credibilityDelta: 15, inventoryLost: false, message: `Mohamed Durrani Allah closes his eyes — relief or prayer, you can't tell. "The Durrani name still means something. I knew it would." He hands you a map, a phone number, and a wad of cash for bribes. "The Taliban commander on this route — he owes my family. From before the war. Before everything." The shipment moves clean. Thirty percent is ten times what you've ever made. When you return, the portrait is back on the wall. "My son shipped it from Dubai. The Durranis endure, Angelo. We always endure."` }, failEffects: { cashDelta: -3000, heatDelta: 30, reputationDelta: 0, credibilityDelta: -12, inventoryLost: true, message: `The Taliban commander does not remember the favour. Or chooses not to. The checkpoint is a death trap. You escape with your life — barely — but the product stays in the back of a truck that drives away toward a compound you will never find. Mohamed Durrani Allah's phone is dead when you call. The villa is locked. The portrait is still missing. You have been disavowed. Exactly as promised.` } },
         { id: 'negotiate', text: 'Thirty is good. Forty is what desperate men pay.', odds: 0.50 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 8, inventoryLost: false, message: `He stares at you. The empty wall where the portrait hung seems to grow larger. Then — a slow, bitter laugh. "You see weakness and you press. I would have done the same at your age." He shrugs. "Thirty-five. Because I am not desperate enough to give you forty. But I am desperate enough to negotiate with a man who just watched me sell my ancestor's portrait, you cheeky cunt."` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: false, message: `He closes his eyes. "A Durrani does not negotiate from desperation. A Durrani finds another way." He opens them. "The offer is withdrawn. I will find someone else. Someone who does not smell the blood in the water." The missing portrait seems to mock you on the way out. "Come back when you have learned respect, Angelo. If there is still a door to come back through."` } },
@@ -955,7 +1027,99 @@ const DEALER_TEMPLATES: EncounterTemplate[] = [
       ],
     }),
   },
+  // === TIER 1 — Lena (net_2) ===
+  {
+    tier: 1,
+    dealerIds: ['net_2'],
+    generate: (player: PlayerState, country: Country, dealer: DealerProfile, dealContext?: DealContext): ChoiceEvent => {
+      const pct = 0.05 + Math.random() * 0.05;
+      const increase = dealContext ? Math.floor(dealContext.totalCost * pct) : 300;
+      const lVars = [
+        `Red velvet walls, two bodyguards, and Lena swirling Stoli like she's in a film. "Price up ${Math.round(pct * 100)}%, darling. Pay or stop wasting my oxygen, you cheeky cunt."`,
+        `Lena taps ash into a crystal tray. "Supply is tighter than your wallet tonight, Angelo. ${Math.round(pct * 100)}% extra. Smile nicely and maybe I don't make it worse."`,
+        `"Moscow sneezed, Amsterdam pays." Lena smirks. "${Math.round(pct * 100)}% increase. You want product or you want a lecture, you little nonce?"`,
+      ];
+      return {
+        id: nextId(),
+        title: 'The Back Room Appointment',
+        context: lVars[Math.floor(Math.random() * lVars.length)],
+        choices: [
+          { id: 'accept_hike', text: `Accept the new price (+$${increase}). Lena's product is worth it.`, odds: 0.70 + player.credibility * 0.002, successEffects: { cashDelta: -increase, heatDelta: 5, reputationDelta: 0, credibilityDelta: 3, inventoryLost: false, message: `Lena smiles. "Good boy. Most men whine first." She slides the package across velvet and pats your cheek like you're a trained dog. Deal done.` }, failEffects: { cashDelta: -increase, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: true, message: `She takes your cash, then nods once. Two heavies empty your pockets and your backup stash. "Too easy," Lena says. "That was your first mistake."` } },
+          { id: 'negotiate', text: 'Push back. The legs are nice but the price is not.', odds: 0.30 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 10, inventoryLost: false, message: `Lena laughs, genuinely amused. "You said no to me? That's new." She honors the original price and leans in close. "Do not make me regret finding you interesting."` }, failEffects: { cashDelta: 0, heatDelta: 15, reputationDelta: 0, credibilityDelta: -10, inventoryLost: false, message: `Her smile dies. "You confuse pretty with weak." She points at the door. "Get out before I let the boys practice on you, you spastic."` } },
+          { id: 'walk', text: 'Something about this room feels wrong. Leave.', odds: 0.95, successEffects: { cashDelta: 0, heatDelta: -3, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: `Lena blows a kiss as you leave. "Smart men live longer, darling." In the hallway you hear rapid Russian on a burner phone. Not brothel business.` }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: '' } },
+        ],
+      };
+    },
+  },
+  // === TIER 2 — Lena (net_2) ===
+  {
+    tier: 2,
+    dealerIds: ['net_2'],
+    generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => {
+      const lVars = [
+        `Lena pours two shots. "Competitor undercut me in De Wallen. Deliver this to his best clients and remind them who runs this city. Twenty percent bonus."`,
+        `"A Georgian idiot thinks he can take my corners." Lena nudges a bag toward you. "One delivery. Public message. Twenty percent on top if you don't screw it up."`,
+        `Her office door locks behind you. "Do this run for me and I pay twenty percent extra," Lena says. "Fail, and I remember forever."`,
+      ];
+      return {
+        id: nextId(),
+        title: 'The Brothel Proposal',
+        context: lVars[Math.floor(Math.random() * lVars.length)],
+        choices: [
+          { id: 'take_job', text: 'Make the delivery. Twenty percent bonus is real money.', odds: 0.50 + player.credibility * 0.003, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 5, credibilityDelta: 8, inventoryLost: false, message: `The clients switch on the spot. Lena calls an hour later, purring down the phone. "Very good, Angelo. You might be useful after all."` }, failEffects: { cashDelta: -2000, heatDelta: 20, reputationDelta: 0, credibilityDelta: -8, inventoryLost: true, message: `The brothers rob you and laugh in your face. Lena hears the report in silence, then says, "I do not keep men who fail twice." Bonus gone. So is her warmth.` } },
+          { id: 'refuse', text: 'Refuse. This is Lena\'s war, not yours.', odds: 0.80, successEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 2, inventoryLost: false, message: `Lena narrows her eyes, then nods. "Cautious. Annoying, but smart." Deal stands at normal terms. A favor debt quietly appears anyway.` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -3, inventoryLost: false, message: `"Disappointing," Lena says, already looking past you. "We still do business. But not as friends." The room gets colder by ten degrees.` } },
+        ],
+      };
+    },
+  },
+  // === TIER 3 — Lena (net_2) ===
+  {
+    tier: 3,
+    dealerIds: ['net_2'],
+    generate: (player: PlayerState, country: Country, dealer: DealerProfile): ChoiceEvent => {
+      const lVars = [
+        `No vodka tonight. Just tea and a dossier. "Moscow wants an Amsterdam-London pipeline. Fifty grand flow, twenty percent for you. If this leaks, you disappear."`,
+        `Lena slides over a burner phone. "This rings, you answer. Russian money, Dutch routes, London demand. Big rewards, bigger graves. In or out?"`,
+        `"My people in Moscow need a Western face," Lena says flatly. "Take the route and make us rich. Or walk away and stay boring."`,
+      ];
+      return {
+        id: nextId(),
+        title: 'The Russian Connection',
+        context: lVars[Math.floor(Math.random() * lVars.length)],
+        choices: [
+          { id: 'get_in', text: 'Accept. This is major-league money.', odds: 0.30 + player.credibility * 0.005, successEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 8, credibilityDelta: 15, inventoryLost: false, message: `Pipeline opens clean. Your margins explode. Lena texts at 3am: "Welcome to family. Do not embarrass me." That's both a promise and a threat.` }, failEffects: { cashDelta: -3000, heatDelta: 30, reputationDelta: 0, credibilityDelta: -12, inventoryLost: true, message: `The meet gets burned by intelligence. You escape through a service stairwell with nothing but your passport and panic. Lena vanishes from every number you had.` } },
+          { id: 'negotiate', text: 'Ask for a bigger cut.', odds: 0.50 + player.credibility * 0.004, successEffects: { cashDelta: 0, heatDelta: 5, reputationDelta: 3, credibilityDelta: 8, inventoryLost: false, message: `Lena drums her nails, then nods once. "Twenty-two. Because I like your nerve." Smaller route, safer pace, still serious money.` }, failEffects: { cashDelta: 0, heatDelta: 10, reputationDelta: 0, credibilityDelta: -5, inventoryLost: false, message: `Her expression hardens. "You push too far." Offer stays at twenty, and she makes sure you feel the demotion instantly.` } },
+          { id: 'refuse', text: 'Refuse. FSB attention is not worth it.', odds: 0.80, successEffects: { cashDelta: 0, heatDelta: -5, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: `Lena raises her glass. "Wise men choose their wars." Folder disappears into a locked drawer. Offer remains open, barely.` }, failEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 0, credibilityDelta: 0, inventoryLost: false, message: '' } },
+        ],
+      };
+    },
+  },
 ];
+
+// ── Encounter context pools keyed by dealerId (buy-phase scene-setting) ──
+
+const ENCOUNTER_CONTEXTS: Record<string, string[]> = {
+  col_1: [
+    `Basil greets you at the door in a stained silk dressing gown. "So sorry about the mess — the housekeeper's been detained. Restraining order. A misunderstanding." He gestures to a coffee table dusted with white powder.`,
+    `You find Basil in a candlelit living room, rehearsing a cheap aftershave commercial into a mirror. "Basil Stillborn of the West End!" He spins. "Ah! Didn't hear you. Come in. Do not look at those polaroids."`,
+    `A poorly produced radio jingle blares from a speaker. "Ruedas Rodríguezzz — zzzensational!" Basil grins. "Voiceover work. Pays for the good cocaine. I assume you're here to relieve me of some inventory?"`,
+  ],
+  col_3: [
+    `Eli leads you through the cramped, overwhelming depths of his flat—past towering stacks of Mein Kampf and Lenin volumes. 'The atmosphere here,' he says, gesturing with a theatrical flourish, 'is saturated with Order. You must learn to breathe it in.'`,
+    `He points toward a specific grouping of books on state control and history. 'You need to understand the difference between mere existence and purpose, Angelo. I deal in things that have a profound ideological foundation—things like these.'`,
+    `The focus is always back towards the dusty central desk, covered with documents and memorabilia. He leans over it, forcing you into his bubble of toxic knowledge: 'This isn't just money; this is the exchange of principles. You must see the structure here.'`,
+  ],
+  esp_3: [
+    `Snake waves you into a private booth at a beachfront club. "The help will bring drinks. Don't touch anything — the upholstery costs more than your life savings." Two men in sunglasses stand by the door. He doesn't introduce them.`,
+    `You find Snake on a sun lounger by a private pool, phone in one hand, cigar in the other. "Sit. Not there — that's where my girl sits. There. On the floor. I'm kidding. Relax, you tense little peasant." He doesn't look up from his phone.`,
+    `The Bentley idles in a marina parking lot. Snake's in the driver's seat, music thumping. "Get in. Keep your shoes off the leather. This car has standards even if you don't. Product's in the glovebox. Don't get fingerprints on anything."`,
+  ],
+  esp_2: [
+    `Barry leads you into a private booth upholstered in silk and diamonds. "The help will bring drinks. And don't touch anything — it cost more than your entire damn zip code." Two massive bouncers stand by the door like they own the place.`,
+    `She waits for you by the pool, draped over a custom chaise lounge, looking completely bored while sipping champagne. "Come closer, sweet thing. You need to understand that this whole vibe — this level of money — is not for people who look like they missed their bus."`,
+    `The mega yacht idles in the marina. Barry is leaning against the railing, flashing a massive ring, surveying the city with an air of absolute ownership. "Get closer. I need to make sure your pathetic little presence adds some kind of contrast... because right now, you look like cheap background filler."`,
+  ],
+};
 
 // ============================================================
 // ORIGINAL: Dealer Encounter Generator (purchase phase)
@@ -982,7 +1146,12 @@ export function generateDealerEncounter(
     : [DEALER_TEMPLATES[Math.floor(Math.random() * DEALER_TEMPLATES.length)]];
 
   const template = final[Math.floor(Math.random() * final.length)];
-  return template.generate(player, country, dealer, dealContext);
+  const event = template.generate(player, country, dealer, dealContext);
+  const contextPool = dealer ? ENCOUNTER_CONTEXTS[dealer.dealerId] : undefined;
+  if (contextPool && contextPool.length > 0) {
+    event.context = contextPool[Math.floor(Math.random() * contextPool.length)];
+  }
+  return event;
 }
 
 // ============================================================

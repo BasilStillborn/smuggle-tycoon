@@ -49,7 +49,7 @@ export function StatsPanel({ state, dispatch }: StatsPanelProps) {
         {ownedAssets.length === 0 ? (
           <div className="text-[10px] text-gray-600 italic">None — buy at the Asset Shop</div>
         ) : (
-          <div className="space-y-1 max-h-32 overflow-y-auto">
+          <div className="space-y-1 max-h-32 overflow-y-auto ui-scrollbar">
             {ownedAssets.map((asset) => (
               <div key={asset.id} className="flex justify-between text-[10px]">
                 <span className="text-gray-300 truncate mr-2">{asset.name}</span>
@@ -61,13 +61,17 @@ export function StatsPanel({ state, dispatch }: StatsPanelProps) {
       </div>
 
       {/* Heat Meter */}
-      <div className="mb-3 p-2 border border-retro-border bg-[#0a0a0a]">
+      <button
+        type="button"
+        onClick={() => { if (!state.heatTutorialShown) dispatch({ type: 'HEAT_TUTORIAL' }); }}
+        className="mb-3 p-2 border border-retro-border bg-[#0a0a0a] w-full text-left hover:bg-[#101010] transition-colors"
+      >
         <div className="flex justify-between text-[10px] text-gray-500 mb-1">
           <span>HEAT</span>
           <span className={state.player.heat >= 50 ? 'text-orange-400' : ''}>{heatLevel.toUpperCase()}</span>
         </div>
         <HeatMeter heat={state.player.heat} maxHeat={MAX_HEAT} />
-      </div>
+      </button>
 
       {/* Holdings — click to expand, shows inventory + stash */}
       <div className="mb-3 p-2 border border-retro-border bg-[#0a0a0a]">
@@ -76,7 +80,7 @@ export function StatsPanel({ state, dispatch }: StatsPanelProps) {
           className="touch-target w-full flex justify-between text-[10px] text-gray-500 hover:text-gray-300 transition-colors text-left"
         >
           <span>HOLDINGS {showInventory ? '▼' : '▶'}</span>
-          <span>{totalWeight.toFixed(3)}/{state.player.inventoryCapacity}kg</span>
+          <span>{used.toFixed(3)}/{state.player.inventoryCapacity}kg</span>
         </button>
         {showInventory && (
         <>
@@ -88,7 +92,7 @@ export function StatsPanel({ state, dispatch }: StatsPanelProps) {
         {state.player.inventory.length === 0 && state.player.stash.length === 0 ? (
           <div className="text-[9px] text-gray-600 italic">You're carrying nothing, Angelo. Nothing at all.</div>
         ) : (
-          <div className="space-y-0.5 max-h-20 overflow-y-auto">
+          <div className="space-y-0.5 max-h-20 overflow-y-auto ui-scrollbar">
             {state.player.inventory.map((item) => {
               const g = state.goods.find((x) => x.id === item.goodId);
               return (
@@ -99,7 +103,7 @@ export function StatsPanel({ state, dispatch }: StatsPanelProps) {
               );
             })}
             {state.player.stash.length > 0 && (
-              <div className="text-[8px] text-gray-600 border-t border-retro-border pt-0.5 mt-0.5">STASHED</div>
+              <div className="text-[8px] text-gray-600 border-t border-retro-border pt-0.5 mt-0.5">STASHED — {stashWeight.toFixed(1)}/{state.player.stashCapacity}kg</div>
             )}
             {state.player.stash.map((item) => {
               const g = state.goods.find((x) => x.id === item.goodId);

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { GameState, GameAction } from '../../core';
-import { STATUS_ASSETS, canAffordAsset, getAsset, getClassShortLabel, getClassDescription } from '../../core';
+import { STATUS_ASSETS, canAffordAsset, getAsset, getClassShortLabel, getClassDescription, getEffectiveRequiredNetWorth } from '../../core';
 import { audioManager } from '../../audio';
 
 interface AssetShopProps {
@@ -46,7 +46,13 @@ export function AssetShop({ state, dispatch }: AssetShopProps) {
             Luxury items: watches, jewelry, clothes, cars, property. Boost credibility and unlock contacts.
           </div>
           <button
-            onClick={() => { audioManager.playSfx('click'); setExpanded(true); }}
+            onClick={() => {
+              audioManager.playSfx('click');
+              if (!state.assetTutorialShown) {
+                dispatch({ type: 'ASSET_TUTORIAL' });
+              }
+              setExpanded(true);
+            }}
             className="touch-target w-full border-2 border-retro-accent/30 bg-[#0a0a0a] hover:bg-[#111] hover:border-retro-accent/60 px-3 py-2 transition-colors"
           >
             <span className="text-retro-accent text-[10px] font-bold">▼ Browse Assets</span>
@@ -80,7 +86,7 @@ export function AssetShop({ state, dispatch }: AssetShopProps) {
       </div>
 
       {/* Asset grid */}
-      <div className="space-y-1.5 max-h-64 overflow-y-auto">
+      <div className="space-y-1.5 max-h-64 overflow-y-auto ui-scrollbar">
         {filtered.length === 0 && (
           <div className="text-gray-600 text-[10px] italic">No assets in this category.</div>
         )}
@@ -93,7 +99,7 @@ export function AssetShop({ state, dispatch }: AssetShopProps) {
           const classColor = asset.class === 'cosmetic' ? 'text-gray-500' : asset.class === 'functional' ? 'text-purple-400' : 'text-orange-400';
           const classDescr = getClassDescription(asset.class);
           const reqRep = `Reputation: ${asset.requiredReputation > 0 ? `${asset.requiredReputation}+` : '—'}`;
-          const reqNw = `Net Worth: $${asset.requiredNetWorth.toLocaleString()}+`;
+          const reqNw = `Net Worth: $${getEffectiveRequiredNetWorth(asset).toLocaleString()}+`;
 
           return (
             <div

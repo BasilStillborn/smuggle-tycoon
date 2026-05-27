@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useReducer, useRef, useMemo, useState } from 'react';
 import type { GameState, GameAction } from '../../core';
-import { createGameState, gameReducer as coreReducer, getInventoryValue, getNetWorth, finalizeRun, loadJournal, getOwnedAssets, KINGPIN_POOL, getOverdraftLimit } from '../../core';
-import { fetchLeaderboard } from '../../supabase';
+import { createGameState, gameReducer as coreReducer, getInventoryValue, finalizeRun, loadJournal, getOwnedAssets, KINGPIN_POOL, getOverdraftLimit } from '../../core';
+import { fetchPlayerScore } from '../../supabase';
 import { audioManager } from '../../audio';
 import { StatsPanel } from './StatsPanel';
 import { MarketPanel } from './MarketPanel';
@@ -14,6 +14,9 @@ import { AliasModal } from './AliasModal';
 import { AssetShop } from './AssetShop';
 import { GameBriefingModal } from './GameBriefingModal';
 import { BankModal } from './BankModal';
+import { CashModal } from './CashModal';
+import { PeakWealthModal } from './PeakWealthModal';
+import { GuideGatekeeper } from './GuideGatekeeper';
 import { InventoryPanel } from './InventoryPanel';
 import { JournalScreen } from './JournalScreen';
 import { VisualState, getCombinedVisuals } from '../visual/VisualState';
@@ -25,10 +28,7 @@ interface GameScreenProps {
 }
 
 function getCountriesVisited(state: GameState): number {
-  const visited = new Set<string>();
-  visited.add(state.player.currentCountryId);
-  Object.keys(state.marketMemory).forEach((cid) => visited.add(cid));
-  return visited.size;
+  return state.player.visitedCountries.length;
 }
 
 export function GameScreen({ onNewGame, onLeaderboard, initialState }: GameScreenProps) {
@@ -44,6 +44,9 @@ export function GameScreen({ onNewGame, onLeaderboard, initialState }: GameScree
   const [showGameMenu, setShowGameMenu] = useState(false);
   const [showEndConfirm, setShowEndConfirm] = useState(false);
   const [showBank, setShowBank] = useState(false);
+  const [showCash, setShowCash] = useState(false);
+  const [showPeak, setShowPeak] = useState(false);
+  const [showGuideGatekeeper, setShowGuideGatekeeper] = useState(false);
   const [showBriefing, setShowBriefing] = useState(false);
   const [showAlias, setShowAlias] = useState(false);
   const [globalRank, setGlobalRank] = useState<number | null>(null);
@@ -59,9 +62,8 @@ export function GameScreen({ onNewGame, onLeaderboard, initialState }: GameScree
       const alias = localStorage.getItem('angelo_alias');
       if (!alias) return;
       try {
-        const entries = await fetchLeaderboard('all_time');
-        const idx = entries.findIndex(e => e.alias === alias);
-        setGlobalRank(idx >= 0 ? idx + 1 : null);
+        const result = await fetchPlayerScore(alias);
+        setGlobalRank(result.rank);
       } catch { setGlobalRank(null); }
     };
     fetchRank();
@@ -82,9 +84,9 @@ export function GameScreen({ onNewGame, onLeaderboard, initialState }: GameScree
 
   // Detect safehouse tier changes
   useEffect(() => {
-    const nw = getNetWorth(state.player, state.currentMarketPrices);
+    const nw = state.player.bank + state.player.cash;
     const newTier = getSafehouseTier(nw, state.safehouseTier);
-    if (newTier !== state.safehouseTier && !state.pendingEvent) {
+    if (newTier !== state.safehouseTier && !state.pendingEvent && state.player.currentCountryId === 'london') {
       dispatch({ type: 'SAFEHOUSE_TIER_CHANGE' });
     }
   }, [state.player.bank, state.player.cash, state.safehouseTier, state.pendingEvent]);
@@ -129,12 +131,21 @@ export function GameScreen({ onNewGame, onLeaderboard, initialState }: GameScree
         const newEntries = currLog.slice(prevLog.length);
 
         for (const entry of newEntries) {
-          if (entry.includes('Bought')) audioManager.playSfx('buy');
-          else if (entry.includes('Sold')) audioManager.playSfx('sell');
+          if (entry.includes('Bought')) {
+            audioManager.playSfx('buy');
+            setTimeout(() => audioManager.playSfx('cash_register'), 80);
+          }
+          else if (entry.includes('Sold')) {
+            audioManager.playSfx('sell');
+            setTimeout(() => audioManager.playSfx('cash_register'), 80);
+          }
           else if (entry.includes('Traveled') && !entry.includes('BUSTED')) {
             audioManager.playSfx('travel_depart');
             setTimeout(() => audioManager.playSfx('travel_arrive'), 400);
-          } else if (entry.includes('[SUCCESS]')) audioManager.playSfx('success');
+          } else if (entry.includes('[SUCCESS]')) {
+            const isCustomsSuccess = entry.includes('waves you through') || entry.includes('Close call') || entry.includes('passport');
+            audioManager.playSfx(isCustomsSuccess ? 'customs_clear' : 'success');
+          }
           else if (entry.includes('[FAILURE]')) audioManager.playSfx('failure');
           else if (entry.includes('BUSTED')) audioManager.playSfx('bust');
           else if (entry.includes('Waited')) audioManager.playSfx('click');
@@ -226,6 +237,7 @@ export function GameScreen({ onNewGame, onLeaderboard, initialState }: GameScree
 
   const cashColor = state.player.cash < 0 ? 'text-retro-danger' : 'text-retro-success';
   const cashPulse = state.player.cash < -500 ? 'animate-pulse' : '';
+  const bankColor = state.player.bank <= 0 ? 'text-retro-danger' : 'text-retro-success';
 
   if (gameOver) {
     return (
@@ -287,29 +299,45 @@ export function GameScreen({ onNewGame, onLeaderboard, initialState }: GameScree
                 </span>
               )}
               <button
-                onClick={() => { audioManager.playSfx('click'); setShowBriefing(true); }}
+                onClick={() => { audioManager.playSfx('click'); setShowGuideGatekeeper(true); }}
                 className="text-[10px] text-gray-500 hover:text-retro-accent border border-retro-border px-1.5 py-0.5 transition-colors"
                 title="Game brief / controls reference"
               >[GUIDE]</button>
               <div className="text-retro-accent text-sm tracking-widest uppercase glow-text">ANGELO</div>
             </div>
 
-            {/* Cash — prominent center display */}
-            <div className={`flex items-center gap-1 border-2 ${state.player.cash < 0 ? 'border-retro-danger' : 'border-retro-accent/50'} bg-[#0a0a0a] px-3 py-1 ${cashPulse}`}>
-              <span className="text-[9px] text-gray-500 uppercase tracking-wider">Cash</span>
-              <span className={`${cashColor} font-bold text-sm tabular-nums ${state.player.cash >= 0 ? 'glow-text-success' : 'glow-text-danger'}`}>${state.player.cash.toLocaleString()}</span>
-              {state.player.cash < 0 && (
-                <span className="text-[9px] text-retro-danger">/ ${getOverdraftLimit(state.player).toLocaleString()}</span>
+            {/* Center group: Cash + Bank + Peak boxes */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => { audioManager.playSfx('click'); setShowCash(true); }}
+                className={`flex items-center gap-1 border-2 ${state.player.cash < 0 ? 'border-retro-danger' : 'border-retro-accent/50'} bg-[#0a0a0a] px-3 py-1 ${cashPulse} cursor-pointer hover:border-retro-accent transition-colors`}
+              >
+                <span className="text-[9px] text-gray-500 uppercase tracking-wider">Cash</span>
+                <span className={`${cashColor} font-bold text-sm tabular-nums ${state.player.cash >= 0 ? 'glow-text-success' : 'glow-text-danger'}`}>${state.player.cash.toLocaleString()}</span>
+                {state.player.cash < 0 && (
+                  <span className="text-[9px] text-retro-danger">/ ${getOverdraftLimit(state.player).toLocaleString()}</span>
+                )}
+              </button>
+              <button
+                onClick={() => { audioManager.playSfx('click'); setShowBank(true); }}
+                className={`flex items-center gap-1 border-2 ${bankColor.includes('danger') ? 'border-retro-danger' : 'border-retro-accent/50'} bg-[#0a0a0a] px-3 py-1 cursor-pointer hover:border-retro-accent transition-colors`}
+              >
+                <span className="text-[9px] text-gray-500 uppercase tracking-wider">Bank</span>
+                <span className={`${bankColor} font-bold text-sm tabular-nums ${state.player.bank <= 0 ? 'glow-text-danger' : 'glow-text-success'}`}>${state.player.bank.toLocaleString()}</span>
+              </button>
+              {state.sellDealsCompleted > 0 && (
+                <div
+                  onClick={() => { audioManager.playSfx('click'); setShowPeak(true); }}
+                  className="flex items-center gap-1 border-2 border-retro-accent/50 bg-[#0a0a0a] px-3 py-1 cursor-default"
+                >
+                  <span className="text-[9px] text-gray-500 uppercase tracking-wider">Peak</span>
+                  <span className="text-retro-accent font-bold text-sm tabular-nums glow-text">${state.player.peakNetWorth.toLocaleString()}</span>
+                </div>
               )}
             </div>
 
             <div className="flex gap-2 text-xs text-gray-500 items-center">
               <span className="text-gray-400">Turn {state.turn}</span>
-              <button
-                onClick={() => { audioManager.playSfx('click'); setShowBank(true); }}
-                className="border-2 border-retro-accent/50 bg-retro-accent/10 hover:bg-retro-accent/20 text-retro-accent px-3 py-1 text-xs font-bold transition-colors"
-                title="Open banking"
-              >[BANK]</button>
               <span className="text-gray-600 text-[10px]">|</span>
               <span className={state.player.heat >= 50 ? 'text-orange-400' : ''}>H{state.player.heat}</span>
               <span className={state.player.credibility >= 50 ? 'text-purple-400' : ''}>C{state.player.credibility}</span>
@@ -490,7 +518,15 @@ export function GameScreen({ onNewGame, onLeaderboard, initialState }: GameScree
       </div>
     )}
     {showAlias && <AliasModal onDone={() => setShowAlias(false)} onLoadSave={() => { dispatch({ type: 'LOAD' }); setShowAlias(false); }} />}
+    {showGuideGatekeeper && (
+      <GuideGatekeeper
+        onProceed={() => { setShowGuideGatekeeper(false); setShowBriefing(true); }}
+        onClose={() => setShowGuideGatekeeper(false)}
+      />
+    )}
     {showBriefing && <GameBriefingModal onClose={() => setShowBriefing(false)} />}
+    {showCash && <CashModal onClose={() => setShowCash(false)} />}
+    {showPeak && <PeakWealthModal onClose={() => setShowPeak(false)} />}
     {showBank && <BankModal state={state} dispatch={dispatch} onClose={() => setShowBank(false)} />}
     </>
   );
