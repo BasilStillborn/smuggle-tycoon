@@ -6,6 +6,7 @@ import { startTrip, endTrip, checkOverdraft } from './bank-actions';
 import { createPlayer, BASE_CAPACITY, BASE_STASH_CAPACITY } from './player';
 import { buyAsset, sellAsset, getAsset, getInventoryCapacity } from './assets';
 import { getUsedCapacity } from './inventory';
+import { KINGPIN_POOL } from './dealer-encounters';
 
 // Polyfill localStorage for test environment
 beforeAll(() => {
@@ -36,6 +37,12 @@ describe('ANGELO Core Engine', () => {
     expect(state.world.length).toBe(5);
     expect(state.goods.length).toBe(6);
     expect(state.currentMarketPrices.length).toBe(6);
+    for (const kingpin of KINGPIN_POOL) {
+      expect(state.kingpinStingTargets[kingpin.id]).toBeGreaterThanOrEqual(3);
+      expect(state.kingpinStingTargets[kingpin.id]).toBeLessThanOrEqual(10);
+      expect(state.kingpinMeetingCounts[kingpin.id] ?? 0).toBe(0);
+    }
+    expect(state.kingpinStingsTriggered).toEqual([]);
   });
 
   it('should show market prices', () => {
@@ -51,6 +58,10 @@ describe('ANGELO Core Engine', () => {
     state = gameReducer(state, { type: 'START_TRIP', amount: 2500 });
     expect(state.player.cash).toBe(2500);
     expect(state.player.bank).toBe(2500);
+
+    if (state.pendingEvent) {
+      state = gameReducer(state, { type: 'RESPOND_EVENT', choiceId: state.pendingEvent.choices[0].id });
+    }
 
     state = gameReducer(state, { type: 'END_TRIP' });
     expect(state.player.cash).toBe(0);
@@ -83,7 +94,7 @@ describe('ANGELO Core Engine', () => {
     state = gameReducer(state, { type: 'START_TRIP', amount: 5000 });
     state = {
       ...state,
-      player: { ...state.player, inventory: [{ goodId: 'hashish', quantity: 5 }] },
+      player: { ...state.player, inventory: [{ goodId: 'hashish', quantity: 5, costPerUnit: 100 }] },
     };
     const targetId = state.world.find((c) => c.id !== state.player.currentCountryId)!.id;
     state = gameReducer(state, { type: 'TRAVEL', toCountryId: targetId, travelClass: 'economy' });
@@ -197,6 +208,38 @@ describe('ANGELO Core Engine', () => {
     expect(event.title).toBeTruthy();
     expect(event.context).toBeTruthy();
     expect(event.choices.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('should trigger one scheduled sting per named kingpin meeting target', () => {
+    const sergio = KINGPIN_POOL.find(k => k.id === 'sergio')!;
+    let state = createGameState();
+    state = {
+      ...state,
+      gamePhase: 'selling' as const,
+      selectedKingpin: sergio,
+      pendingEvent: { id: 'kingpin_approach_test', title: 'Approach', context: '', choices: [] },
+      player: { ...state.player, inventory: [{ goodId: 'heroin', quantity: 100, costPerUnit: 1 }], credibility: 100 },
+      kingpinMeetingCounts: { ...state.kingpinMeetingCounts, sergio: 2 },
+      kingpinStingTargets: { ...state.kingpinStingTargets, sergio: 3 },
+      kingpinStingsTriggered: [],
+    } as any;
+
+    const triggered = gameReducer(state, { type: 'RESPOND_EVENT', choiceId: 'lowkey' });
+    expect(triggered.kingpinMeetingCounts[sergio.id]).toBe(3);
+    expect(triggered.kingpinStingsTriggered).toEqual([sergio.id]);
+    expect(triggered.pendingEvent?.title).toBe('THE RAID');
+
+    const nextMeeting = gameReducer({
+      ...triggered,
+      selectedKingpin: sergio,
+      kingpinApproach: null,
+      pendingSell: null,
+      pendingEvent: { id: 'kingpin_approach_test_2', title: 'Approach', context: '', choices: [] },
+    } as any, { type: 'RESPOND_EVENT', choiceId: 'lowkey' });
+
+    expect(nextMeeting.kingpinMeetingCounts[sergio.id]).toBe(4);
+    expect(nextMeeting.kingpinStingsTriggered).toEqual([sergio.id]);
+    expect(nextMeeting.pendingEvent?.title).toBe(`Meeting ${sergio.name}`);
   });
 
   it('should not generate back-alley dealer event while at home', () => {
@@ -318,7 +361,7 @@ it('should allow retrieving goods from stash to inventory when capacity allows',
     // Give the player some weed in stash (100 units = 50kg, which fits in base capacity of 50kg)
     const weedGood = state.goods.find(g => g.id === 'weed');
     expect(weedGood).toBeDefined();
-    const stashItem = { goodId: 'weed', quantity: 100 };
+    const stashItem = { goodId: 'weed', quantity: 100, costPerUnit: 5 };
     state = { ...state, player: { ...state.player, stash: [stashItem], inventory: [] } };
     // Verify initial state
     expect(state.player.stash).toHaveLength(1);
@@ -342,7 +385,7 @@ it('should allow retrieving goods from stash to inventory when capacity allows',
     // Give the player some weed in stash (200 units = 100kg, which exceeds base capacity of 50kg)
     const weedGood = state.goods.find(g => g.id === 'weed');
     expect(weedGood).toBeDefined();
-    const stashItem = { goodId: 'weed', quantity: 200 };
+    const stashItem = { goodId: 'weed', quantity: 200, costPerUnit: 5 };
     state = { ...state, player: { ...state.player, stash: [stashItem], inventory: [] } };
     // Verify initial state
     expect(state.player.stash).toHaveLength(1);
@@ -415,7 +458,7 @@ it('should allow retrieving goods from stash to inventory when capacity allows',
     state = { ...state, gamePhase: 'home' as const };
     // storage_unit gives +10 inventory (60 total), fill with 110 weed (55kg) — fits in 60kg
     const playerWithStorage = { ...state.player, ownedAssets: ['storage_unit'], inventoryCapacity: BASE_CAPACITY + 10, cash: 100000 };
-    const playerWithGoods = { ...playerWithStorage, inventory: [{ goodId: 'weed', quantity: 110 }] };
+    const playerWithGoods = { ...playerWithStorage, inventory: [{ goodId: 'weed', quantity: 110, costPerUnit: 5 }] };
     state = { ...state, player: playerWithGoods };
     expect(getUsedCapacity(state.player)).toBeCloseTo(55, 1);
     // Sell storage_unit — capacity drops to 50, used = 55 > 50
@@ -438,7 +481,7 @@ it('should allow retrieving goods from stash to inventory when capacity allows',
     state = { ...state, gamePhase: 'home' as const };
     // Player has a watch (no inventoryBonus), fill inventory to 55kg
     const playerWithWatch = { ...state.player, ownedAssets: ['simple_watch', 'storage_unit'], inventoryCapacity: BASE_CAPACITY + 10, cash: 100000 };
-    const playerWithGoods = { ...playerWithWatch, inventory: [{ goodId: 'weed', quantity: 110 }] };
+    const playerWithGoods = { ...playerWithWatch, inventory: [{ goodId: 'weed', quantity: 110, costPerUnit: 5 }] };
     state = { ...state, player: playerWithGoods };
     // Sell simple_watch — no capacity change, no overflow
     const result = gameReducer(state, { type: 'SELL_ASSET', assetId: 'simple_watch' });

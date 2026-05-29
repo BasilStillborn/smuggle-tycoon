@@ -1,3 +1,5 @@
+export type ConcealmentMethod = 'body' | 'luggage' | 'asset_decoy';
+
 export interface PlayerState {
   cash: number;
   bank: number;
@@ -19,6 +21,7 @@ export interface PlayerState {
   ownedAssets: string[];
   unlockedContacts: string[];
   visitedCountries: string[];
+  concealmentMethod: ConcealmentMethod | null;
 }
 
 export type AssetClass = 'cosmetic' | 'functional' | 'operational';
@@ -33,6 +36,7 @@ export interface OperationalBenefits {
 export interface InventoryItem {
   goodId: string;
   quantity: number;
+  costPerUnit: number;
 }
 
 export interface Country {
@@ -107,6 +111,7 @@ export interface EventEffects {
   heatDelta: number;
   reputationDelta: number;
   credibilityDelta?: number;
+  cashPct?: number; // if set alongside negative cashDelta, loss = max(abs(cashDelta), floor(cash * cashPct))
   inventoryLost?: boolean;
   message: string;
 }
@@ -134,6 +139,7 @@ export interface PendingSellContext {
   goodId: string;
   quantity: number;
   baseSellPrice: number;
+  costPerUnit: number;
   countryId: string;
 }
 
@@ -189,6 +195,8 @@ export interface PronounSet {
   His: string;
 }
 
+export type KingpinApproach = 'lowkey' | 'flash' | 'watch';
+
 export interface GameState {
   player: PlayerState;
   world: Country[];
@@ -209,6 +217,8 @@ export interface GameState {
   selectedDealer: DealerProfile | null;
   selectedKingpin: KingpinProfile | null;
   dealerRapport: Record<string, number>; // dealerId → rapport count
+  kingpinRapport: Record<string, number>; // kingpinId → rapport (0-100)
+  kingpinApproach: KingpinApproach | null; // pending approach choice for current kingpin meet
   marketMemory: Record<string, MarketMemory>;
   journalEntries: JournalRunEntry[];
   securitySniffsPassed: number;
@@ -224,6 +234,21 @@ export interface GameState {
   assetSellTutorialShown: boolean;
   assetTutorialShown: boolean;
   firstClassWarningShown: boolean;
+  safehouseTutorialShown: boolean;
+  marketCasedThisTurn: boolean; // once-per-turn market refresh
+  kingpinCooldown: number; // turn-locked — can't contact kingpins until this turn
+  kingpinFightRound: number; // 0=idle, 1-3=fight round in progress
+  kingpinFightScore: number; // successful rounds count in current fight
+  kingpinFightsDone: string[]; // kingpin IDs that player has fight-initiated
+  kingpinFightOutcomes: Record<string, 'win' | 'comp_loss' | 'loss'>; // fight outcome per kingpin
+  kingpinMeetingCounts: Record<string, number>; // actual named kingpin meetings started this run
+  kingpinStingTargets: Record<string, number>; // one-shot sting/raid meeting number per kingpin
+  kingpinStingsTriggered: string[]; // kingpin IDs whose one-shot sting/raid has fired this run
+  realtimeEpoch: number; // Date.now() when this run started
+  realtimeDay: number; // 0=Monday..6=Sunday
+  realtimeDayProgress: number; // 0-1 progress through current day
+  realtimeDaysSinceRecase: number; // ticks since last market case reset
+  desperationTimer: number; // 0 = inactive, 7..1 = days remaining before game over
 }
 
 export interface JournalRunEntry {
@@ -255,6 +280,7 @@ export type GameAction =
   | { type: 'LIE_LOW_TUTORIAL' }
   | { type: 'HOLDINGS_TUTORIAL' }
   | { type: 'HEAT_TUTORIAL' }
+  | { type: 'SAFEHOUSE_TUTORIAL' }
   | { type: 'ASSET_SELL_TUTORIAL' }
   | { type: 'ASSET_TUTORIAL' }
   | { type: 'FIRST_CLASS_WARNING_SHOWN' }
@@ -274,4 +300,5 @@ export type GameAction =
   | { type: 'RETRIEVE_GOODS'; goodId: string; quantity: number }
   | { type: 'FLY_HOME' }
   | { type: 'CONFIRM_FLIGHT'; toCountryId: string; travelClass: TravelClass }
-  | { type: 'SELECT_PRODUCT'; goodId: string | null };
+  | { type: 'SELECT_PRODUCT'; goodId: string | null }
+  | { type: 'REALTIME_TICK' };

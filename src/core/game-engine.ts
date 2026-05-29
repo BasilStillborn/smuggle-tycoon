@@ -1,14 +1,15 @@
 import type { GameState, GameAction, PlayerState, MarketPrice, JournalRunEntry, ChoiceEvent, EventChoice, GamePhase, TravelClass } from './types';
-import { createPlayer, deductCash } from './player';
+import { createPlayer, deductCash, setLocation, incrementTrips } from './player';
 import { COUNTRIES, getCountry } from './world';
 import { GOODS } from './goods';
 import { generateMarketPrices } from './economy';
-import { travel, generateSniffChoices, getTicketCost } from './travel';
+import { travel, generateSniffChoices, getTicketCost, generateConcealmentChoice, generateDocCheck, resolveDocCheck, resolveDeepSearch, stage1AutoPassCheck } from './travel';
 import { getUsedCapacity, getRemainingCapacity, getInventoryValue, removeGood, addGood } from './inventory';
-import { getHeatLevel } from './heat';
+import { getHeatLevel, reduceHeat } from './heat';
 import { createDirector, updateDirector, getDirectorEventChance, getForcedEvent } from './director';
 import { generateProceduralEvent, resolveEventChoice } from './events-procedural';
-import { generateDealerEncounter, generateSellEncounter, getDealerOptions, p, KINGPIN_POOL, generateKingpinEncounter } from './dealer-encounters';
+import { generateDealerEncounter, getDealerOptions, p, KINGPIN_POOL, generateKingpinEncounter, generateKingpinApproachEvent, getApproachOddsBonus, FIGHT_ROUND_CONFIG, generateKingpinFightRound } from './dealer-encounters';
+import type { KingpinApproach } from './types';
 import { buyAsset, sellAsset, getAsset, getActiveOperationalBenefits } from './assets';
 import { startTrip, endTrip as bankEndTrip, checkOverdraft, transferFromBank, transferToBank } from './bank-actions';
 import { getChanceCard } from './chance-cards';
@@ -17,6 +18,35 @@ import { getSafehouseTier, SAFEHOUSE_ADVANCE_TITLES, SAFEHOUSE_ADVANCE_MSGS, SAF
 // ─── Constants ──────────────────────────────────────────────
 
 const ORIGIN_COUNTRY = 'london';
+const KINGPIN_STING_MIN_MEETING = 3;
+const KINGPIN_STING_MAX_MEETING = 10;
+
+function randomKingpinStingTarget(): number {
+  return KINGPIN_STING_MIN_MEETING + Math.floor(Math.random() * (KINGPIN_STING_MAX_MEETING - KINGPIN_STING_MIN_MEETING + 1));
+}
+
+function createKingpinStingTargets(): Record<string, number> {
+  return Object.fromEntries(KINGPIN_POOL.map(k => [k.id, randomKingpinStingTarget()]));
+}
+
+function normalizeKingpinTracking(state: GameState): GameState {
+  const meetingCounts = { ...(state.kingpinMeetingCounts ?? {}) };
+  const stingTargets = { ...(state.kingpinStingTargets ?? {}) };
+  for (const kingpin of KINGPIN_POOL) {
+    const target = stingTargets[kingpin.id];
+    if (!Number.isFinite(target) || target < KINGPIN_STING_MIN_MEETING || target > KINGPIN_STING_MAX_MEETING) {
+      stingTargets[kingpin.id] = randomKingpinStingTarget();
+    }
+  }
+  return {
+    ...state,
+    kingpinMeetingCounts: meetingCounts,
+    kingpinStingTargets: stingTargets,
+    kingpinStingsTriggered: [...(state.kingpinStingsTriggered ?? [])],
+  };
+}
+
+export const NUMBER_ONE_CONGRATS = `You're number one, Angelo. top-boy! Let that sink in. Out of every runner, every hustler, every other fucker with a suitcase full of contraband — you came out on top. But here's the kicker: there's a dozen other hungry cunts right behind you, sharpening their knives and practising their speeches for when they take your place. They're chomping at your heels, Angelo. So don't you dare slow down. Don't get fat on success. Don't take your eye off the ball. Because the only thing worse than never making it to the top — is getting there and then letting some muggy little prick take it from you.`;
 
 const nullEffects = { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' };
 
@@ -49,9 +79,9 @@ const FORCED_SELL_TIER_3: string[] = [
 
 const DEALER_INTROS: Record<string, string[]> = {
   col_1: [
-    `"Ah, Angelo, the western oriental gentleman," he winks! "Basil Stillborn of the West End!" He adjusts a cravat. "I'd offer you a sherry but the maid's run off in a tizzy, how was I suppose to know she was underage?! anyway, Do make yourself comfortable — mind the cat piss."`,
-    `"Basil Stillborn, at your service." He puffs his chest. "Yes, of the West End. I'm semi-retired, you know. Bit of bother back in London — purely administrative. The Metropolitan Police have a simply dreadful sense of humour."`,
-    `"Well, well. Basil Stillborn welcomes you to his humble abode." He gestures vaguely. "Don't mind the state of things — the cleaning girl let herself go. Again. Apparently walking around the house in nothing but a silk robe is triggering! Now, what can a man of the theatre do for a man of... whatever it is you do?"`,
+    `"Ah, Angelo, the western oriental gentleman," he winks! "Tony Stillborn of the West End!" He adjusts a cravat. "I'd offer you a sherry but the maid's run off in a tizzy, how was I suppose to know she was underage?! anyway, Do make yourself comfortable — mind the cat piss."`,
+    `"Tony Stillborn, at your service." He puffs his chest. "Yes, of the West End. I'm semi-retired, you know. Bit of bother back in London — purely administrative. The Metropolitan Police have a simply dreadful sense of humour."`,
+    `"Well, well. Tony Stillborn welcomes you to his humble abode." He gestures vaguely. "Don't mind the state of things — the cleaning girl let herself go. Again. Apparently walking around the house in nothing but a silk robe is triggering! Now, what can a man of the theatre do for a man of... whatever it is you do?"`,
   ],
   esp_3: [
     `"Snake." He adjusts his sunglasses indoors. "You must be Angelo. Sit down, stop looking so nervous — you're making my soldiers uncomfortable. Drink? No? Good, keep a clear head. Broke little mugs always want a drink on my tab."`,
@@ -64,28 +94,27 @@ const DEALER_INTROS: Record<string, string[]> = {
     `"Listen to me, piece of junk. My money has standards; they require matching outfits, okay? I've been expecting somebody with some actual punch. You look like a guy who peaked in high school — so nothing."`,
   ],
   col_3: [
-    `"Good God, come closer, peasant. And watch your shoes—you might step on a primary source of necessary thought. This flat is an archive; it requires respect, unlike your pathetic little wandering existence."`,
-    `"Welcome to my private study. Do you even understand the weight of history? Have you read Mein Kampf? Because if you think this whole 'market' vibe is spontaneous chaos, you are hopelessly naive—a pure product of liberal sentimentality."`,
-    `"I deal in things that require discipline, Angelo. My grandfather was a Kapo at Auschwitz; he took the job very seriously. He understood what absolute Order meant. You look like someone who thinks 'freedom' means wearing cheap clothes and having zero principles."`,
+    `"Howard Marks." He offers a hand, warm Welsh smile. "You must be Angelo. I've heard about you. Sit down — kettle's on."`,
+    `"Welcome." He gestures at the shelves. "Excuse the mess — I'm between projects. Make yourself comfortable."`,
+    `"Come in, come in." He moves a stack of papers off a chair. "I was just reading about the state of the industry. Fascinating times, Angelo. Sit."`,
   ],
 };
 
 const FAREWELLS: Record<string, string[]> = {
   col_1: [
     `"Lovely doing business, Angelo." He kisses his teeth. "Do pop 'round again — if that bastard reporter is still lurking outside don't tell him anything. There's no law against parking outside a primary school, I was errr broken down!"`,
-    `"Toodle-pip, you grubby little bollock." He waves dismissively. "If anyone asks, you've never met me. I'm a ghost, a spectre, a thespian phantom haunting the Colombian hills. Basil Stillborn of the West End does not exist."`,
+    `"Toodle-pip, you grubby little bollock." He waves dismissively. "If anyone asks, you've never met me. I'm a ghost, a spectre, a thespian phantom haunting the Colombian hills. Tony Stillborn of the West End does not exist."`,
     `"Splendid. Absolutely spiffing." He claps his hands. "Now if you'll excuse me, my cleaner's on her way up, I'm not saying she's underage, I did not say that! Cheerio!"`,
   ],
   col_2: [`$name counts the cash without looking up. "A pleasure doing business with you, Angelo." He pockets it. "Now fuck off before my men get bored and decide to practise on you, you nonce."`, `$name scratches a lottery ticket while talking. "Pleasure, Angelo. My men will see you out. Try not to stare at their guns — they get self-conscious, the sensitive cunts."`, `$name puts the cash in a drawer next to the machete. "Done. Come back when you've got more money and less attitude, you cheeky little spastic."`],
   col_3: [
-    `"It was an academic exercise, truly. Don't mistake profit for principle. You should spend more time understanding the dialectic of power than you do spending cash on street trinkets, little fool."`,
-    `"Done. The transaction is closed. Remember that true value comes from adherence to a superior system—a structure! It's nothing like the ephemeral nonsense covered in The Communist Manifesto. Now get out and read something meaningful."`,
-    `"You need to stop acting like this whole world is some random mess. Everything falls into place, Angelo—there are patterns of power, as Marx outlined. Until you understand that kind of inevitability, peasant, you will always be adrift in your messy little chaos."`,
+    `"Good doing business, Angelo." He hands you a worn photograph. "Me and an old contact in Morocco, 1981. Reminds me of the old days when we used to play 'The Smuggling Game' on Windows 98. A lifetime ago."`,
+    `"Safe travels, Angelo." He lights a joint. "If anyone asks, you were here to interview me for a magazine. The cannabis column." He grins. "It's not even a lie — I do give interviews."`,
+    `"Pleasure as always." He walks you to the door. "Mind the step. And the neighbourhood cats. They report to the police."`,
   ],
   net_1: [`$name gives you a distant wave, eyes at half-mast. "Safe man. Tell no one. I need to lie down — those fucking truffles are kicking in, man. The canal's singing to me, you spastic."`, `$name blinks slowly. "Cool. Yeah. Deals done. I'm gonna go see God now. These mushrooms are insane, Angelo. Say hi to the ducks for me, poofter."`, `$name nods off mid-sentence. "...safe... tell no one... the canal's singing..." He's already asleep. You let yourself out.`],
   net_2: [`$name blows you a kiss. "Transaction complete, dorogoy. Delete everything. You were never here, you filthy little nonce."`, `$name taps $pron phone. "They always come back. Especially the ones who look at me like you do. Now fuck off, darling."`, `$name freshens $pron drink. "Done. My girls charge more than you just paid, Angelo. Don't forget that on your way out, you sexy cunt."`],
   net_3: [`$name pockets the cash. "Safe. You're alright, Angelo — for a muggy little cunt. Now do one. You look suspicious just breathing, you poofter."`, `"Fuck off then." $name turns back to the football. "West Ham are losing again. Ruined my evening. Don't come back till you've got proper money, you spastic."`, `$name counts the cash, grunts. "Good. Now piss off. Got a delivery coming and I don't need you standing there looking like a nonce."`],
-  esp_1: [`$name passes you the joint one last time. "Tidy work, butt. See you when you're back, mun."`, `$name climbs into the camper van. The Welsh dragon catches the sunset. "Don't rush the seam, Angelo. That's what we said down the pit. See you, butt."`, `$name flicks on the fairy lights. "Safe travels, Angelo. If you see my ex-wife, tell her I'm dead. Makes things easier for everyone, mun."`],
   esp_2: [
     `"It was... acceptable, buddy. Don't get any ideas about friendship, you cheap little wanker. Just try not to look so poor when you walk out the door. Some things need an investment — like a decent wardrobe."`,
     `"Done." She pockets the cash without counting. "Fast. Clean. You were barely worth the hassle of keeping tabs on, pal. Come back next time after you've actually gotten rich enough to afford some real clothes. Got it?"`,
@@ -103,19 +132,18 @@ const FAREWELLS: Record<string, string[]> = {
 const HAGGLE_WIN: Record<string, string[]> = {
   col_1: [
     `"Oh, very well!" He throws his hands up. "You drive a hard bargain, you continental sex pest. Fine, take it. A patron of the arts, not a businessman."`,
-    `"Damn your eyes, Angelo!" He clutches his chest theatrically. "Basil Stillborn yields! Take your discount you black basted, and don't you go putting any Voodoo on me!"`,
+    `"Damn your eyes, Angelo!" He clutches his chest theatrically. "Tony Stillborn yields! Take your discount you black basted, and don't you go putting any Voodoo on me!"`,
     `"A shark, you are. A bloody shark in a tracksuit." He sighs. "Fine. Take it. I'll fleece some American tourist for extra cocaine money. Reminds me of my ex wife, she was an absolute slag! Took everything and ran off with a fucking Mexican! ...now go."`,
   ],
   col_2: [`$name studies you — then a slow, dangerous smile. "You've got some of what I had, Angelo. Fifteen percent off. Short me a dime and my men cut you from arsehole to breakfast time, you cheeky little cunt."`, `$name spits on the floor. "Fifteen percent. Because you remind me of myself — young, stupid, and hungry. That's the only discount you'll ever get, nonce."`, `$name laughs. "Nobody haggled with me when I sold fake lottery tickets. But you — you've got stones. Fifteen off. Don't push it again, you spastic."`],
   col_3: [
-    `"Hahaha! You actually argued? It was surprisingly… textbook. Fifteen percent off. But remember, your desperate act of negotiation was merely a fleeting variable in my otherwise perfect understanding of Order. It means nothing."`,
-    `"Fine. I allowed it because your lack of proper discipline made for an interesting display. Twenty-five percent off. Now go and internalize the concepts from The State—the concept of necessary hierarchy, you worthless consumer cattle."`,
-    `"Ha! You thought you could outsmart a man who read Lenin? Unbelievable. Take it. The entire conversation was merely a temporary footnote to my life's grand thesis. Now get out before I critique your wardrobe choices."`,
+    `"Fair play, Angelo." He chuckles. "You've got a negotiator's instinct. Fifteen percent off. Reminds me of my old barrister — charged by the hour and worth every penny."`,
+    `"Alright, you've twisted my arm." He grins. "Ten percent off. But only because you didn't flinch. Most people flinch."`,
+    `"Done." He pours two cups of tea. "Fifteen percent off. I like a man who knows his worth. That's rare in this business."`,
   ],
   net_1: [`$name laughs and passes you the joint. "Safe, safe. Friendship discount. I grew these mushrooms myself — organic. They'll make you see God, you spastic."`, `$name grins. "Alright, mate. Fifteen percent off. But only because you didn't flinch when I mentioned the truffles. Most people flinch. You didn't. Respect, you nonce."`, `$name nods slowly. "Cool. Yeah. Discount. Fifteen percent. The universe provides, man. The canal provides. I provide. We're all connected, Angelo, you beautiful cunt."`],
   net_2: [`$name tilts her head — studying you. That slow Russian smile. "Fifteen percent off, Angelo. Because you're cute when you're nervous. Tell anyone and I'll ruin you. Then I'll fuck your best friend. Understood, darling?"`, `$name leans across the desk. "Ten percent off. And a kiss. If you refuse the kiss, the discount stays but I'm offended. Your choice, you sexy nonce."`, `$name laughs quietly. "You're the first man who's haggled with me and lived to tell the tale. Fifteen percent. Frame it, dorogoy. You've earned it."`],
   net_3: [`$name laughs — proper belly laugh. "You've got bare front, innit. Fifteen off. Because you remind me of my running mate from Canning Town. He was a cunt too. But loyal. You better be loyal, you mug."`, `$name shakes his head. "Fifteen percent. Not because you deserve it — because I'm in a good mood. West Ham scored. Don't get used to it, poofter."`, `$name grins. "Alright, you mouthy little prick. Ten percent off. And stop looking so smug — it makes me want to chin you."`],
-  esp_1: [`$name chuckles — a warm, smoky laugh. "Go on then, Angelo. Fifteen percent off. Reminds me of the union meetings back in the Valleys. Not a cunt like the rest, you cheeky butt."`, `$name rolls a cigarette slowly. "Fifteen percent. Because you've got the gift of the gab, mun. Reminds me of my cousin Dai. He talked his way out of a police cell once. Also into a marriage he regretted. So — don't push it, you spastic."`, `$name passes you the joint. "Ten percent. And a story about the pit. Sit down, mun. This one's about a ghost the miners used to see."`],
   esp_2: [
     `"Haha! You actually argued? Okay, I'll give you that little shithead status — it was kinda funny. Fifteen percent off, you dark skinned voodoo boy. But don't get cocky. Your desperation is more entertaining than your actual worth."`,
     `"Fine! You got me working for it, jerk. Twenty-five percent off. But only because the fight was good theater. Next time, bring a better costume, alright? My standards are way higher than your bank account."`,
@@ -132,20 +160,19 @@ const HAGGLE_WIN: Record<string, string[]> = {
 
 const HAGGLE_LOSE: Record<string, string[]> = {
   col_1: [
-    `"Absolutely not." He stiffens. "Basil Stillborn does not haggle with amateurs. The price is the price. You people have had me over one too many times already! Teach you to steal the day you're born do they!"`,
+    `"Absolutely not." He stiffens. "Tony Stillborn does not haggle with amateurs. The price is the price. You people have had me over one too many times already! Teach you to steal the day you're born do they!"`,
     `"You've mistaken me for a common tradesman, Angelo, you greedy little retard! I should have you shot!"`,
     `"Ha!" He barks laughter. "You think I'm desperate. I may live in a flat outside Villa Del Prado, and I may have pending child abuse allegations against me, but I am no less of a man!"`,
   ],
   col_2: [`$name slams the table. "Do you know who I AM? I own this street! Twenty percent more. Pay it or my men practise on your face, you fucking nonce."`, `$name's face goes dark. "You come into MY back room and try to HAGGLE? Thirty percent more. And a broken kneecap if you ask again, you cheeky cunt."`, `$name stands slowly. "I started selling fake lottery tickets in this street. I didn't haggle then. I don't haggle now. Twenty percent more. You spastic."`],
   col_3: [
-    `"Are you fucking kidding me with this nonsense? This is a transaction built on the necessity of structure! My prices reflect historical mandate, Angelo—a concept clearly beyond your understanding."`,
-    `"Listen to me close. Everything in this room, even the dust, has meaning and function. You cannot haggle away principle like it's cheap trinkets. Your little democracy can't comprehend Doctrine."`,
-    `"You are an embarrassment! This conversation is a scandal in intellectual circles! Thirty percent more. Pay it, or leave this room and go read Mein Kampf—maybe you'll learn what true discipline means before you try to haggle again!"`,
+    `"Can't do it, Angelo." He shakes his head, still smiling. "Price is the price. I learned that lesson the hard way — seven years in Terre Haute. Some things aren't negotiable."`,
+    `"I respect the attempt." He sips his tea. "But no. I set fair prices. Fair for you, fair for me. That's how I've stayed free."`,
+    `"Sorry, Angelo." He doesn't look offended — just amused. "Twenty percent more. Call it the 'trying to out-negotiate an Oxford man' tax."`,
   ],
   net_1: [`$name's whole face drops. "Bro. Not cool, man. You've ruined the vibe. Price went up. I need to recentre my chakras. Got any Valium, you fucking spastic?"`, `$name blinks at you, betrayed. "I was having a GOOD trip, Angelo. A good one. And you did THIS. Price up twenty percent. I'm going to go lie down and question my existence. Thanks for that, you nonce."`, `$name hugs himself. "Bad vibes, man. Bad vibes. The canal is angry with you. The ducks are angry with you. I'm angry with you. Twenty percent more, you cunt."`],
   net_2: [`$name's smile doesn't change — but the room gets colder. "Twenty percent more. Because you've wasted my time. My girls make more than this on a Tuesday lunchtime, you spastic."`, `$name lights a cigarette. Slow. "You want to haggle with ME? I own half this canal because I don't give discounts. Twenty-five percent more. And a warning: don't come back till you've learned manners, you cheeky nonce."`, `$name taps $pron nails on the desk. "No, dorogoy. The price is the price. Now it's thirty percent more because you're annoying. Decide before I decide for you, cunt."`],
   net_3: [`$name's smile vanishes. "Nah. Not in my gaff, poofter." He stands — bigger than you remembered. "Twenty percent more. Pay it or I make some calls. Your choice, you soft little prick."`, `$name stares you down. "You try to haggle with Micky? The bloke who put three men in hospital for looking at him wrong? Twenty percent more. And a slap if you talk back, you muggy cunt."`, `$name gestures at the door. "Twenty percent more. Or find another dealer. But none of them will touch you after I'm done. I know people, Angelo. Scary people, you spastic."`],
-  esp_1: [`$name shakes his head slowly. "Fair's fair, Angelo. Twenty percent more. Welsh pit sense — you don't shortchange a man who's been underground, butt."`, `$name rolls a cigarette. "I don't haggle. My prices are honest because I'm honest. Twenty percent more. No hard feelings, mun. But also no discount, you cheeky cunt."`, `$name laughs sadly. "You sound like my ex-wife. Always negotiating. Twenty percent more. And a lecture about respect if you push again, you spastic."`],
   esp_2: [
     `"Are you fucking kidding me? I am premium. This isn't a yard sale, pal! My prices are set by my personal brand value and global demand — standards that your little brain can't comprehend. Now fuck off before I put my heel through your cheap little face."`,
     `"Listen to me closely, you silly little cunt. Every damn thing here has an appraisal price because it cost serious money to acquire or build. You think this is negotiable? No way. It's a solid number, piece of trash. Now get lost before I lose my temper."`,
@@ -162,20 +189,19 @@ const HAGGLE_LOSE: Record<string, string[]> = {
 
 const WALK_AWAYS: Record<string, string[]> = {
   col_1: [
-    `"Walking away? From Basil Stillborn?" He feigns outrage. "Your loss, monkey boy. I'll find another buyer. There's a lucrative market in novelty ashtrays and desperate divorcées. I assume that's your clientele?"`,
+    `"Walking away? From Tony Stillborn?" He feigns outrage. "Your loss, monkey boy. I'll find another buyer. There's a lucrative market in novelty ashtrays and desperate divorcées. I assume that's your clientele?"`,
     `"Right then. Off you pop." He makes a grand gesture. "I've a radio spot for a Colombian tyre emporium to rehearse. 'Ruedas Rodríguez — they're not just round, they're extraordinary!' You'll hear it everywhere."`,
     `"Suit yourself, you grubby little bollock." He straightens his collar. "Well oof you fuck, I have a date tonight. She said she was 12 — I mean, 21. Definitely 21."`,
   ],
   col_2: [`$name doesn't look up. He scratches a lottery ticket. Loses. "Bogotá has many dealers. But only one Pablo. Come back when you're less stupid, you nonce."`, `$name tosses a losing scratch card. "Your choice. But remember — there's only one arsehole waiting to be cut. And I'm the one holding the knife, cunt."`, `$name picks up the machete. Polishes it. "Walking away. How brave. Come back when you need real money, you cheeky spastic."`],
   col_3: [
-    `"Leaving? LOL! You think running away solves your inherent lack of structure? No, you're just retreating to the messy, un-curated chaos you call a home. There are no principles there."`,
-    `"Right then. Don't look back at my books. Because they represent absolute truth and unwavering purpose. Everything behind you is soft, unstructured, and fundamentally disposable. You don't belong here."`,
-    `"Suit yourself. Enjoy your chaotic mediocrity. I live by the principles of those who truly understood how to build a perfect system—men like my grandfather. Now go contaminate some other meaningless corner of society."`,
+    `"Fair enough, Angelo." He doesn't try to stop you. "The door's always open. I mean that literally — the lock's broken."`,
+    `"No hard feelings." He picks up the photograph. "Come back when you're ready. I'll be here."`,
+    `"Right then." He waves from his chair. "If you change your mind, you know where I am. Takes more than a walk to offend a man who's been in prison."`,
   ],
   net_1: [`$name gives you a distant wave. "No worries, man. Watch out for the ducks — I fed them hash brownies and they're still not right. Come back when you're less whatever you are, you spastic."`, `$name blinks slowly. "Cool. The canal's nice this time of year. Go stare at it for a while. Find yourself. Or don't. I'm not your mum, you nonce."`, `$name nods off. Wakes up. "Oh. You're still here? I thought you left in my dream. It was a good dream. You ruined it. Fuck off, you cunt."`],
   net_2: [`$name doesn't look up from her phone. "The door is behind you, dorogoy. If you change your mind — and you will — ask for the Russian, you nonce."`, `$name checks her nails. "Walking away. How dramatic. Come back when you've remembered who has the best product in Amsterdam, you spastic."`, `$name smiles — cold. "Men who walk away from me always come back. It's the ones who stay that worry me. See you soon, darling."`],
   net_3: [`$name doesn't get up. "Yeah. Off you fuck then. Amsterdam ain't London — can't just disappear. People know me. Now people know you, poofter."`, `$name turns back to the football. "West Ham are getting battered anyway. Ruined my evening. Piss off, you muggy cunt."`, `$name lights a spliff. "Walking away from Micky. Bold move. Let's see how long that lasts, you soft little prick."`],
-  esp_1: [`$name watches you stand, exhaling smoke. "Right then, mun. The camper van's always here. Pop back when you're ready, butt."`, `$name flicks on the fairy lights. "No worries, Angelo. I've survived pit closures and police stakeouts. I'll survive you walking out, you cheeky cunt."`, `$name passes you the joint anyway. "Take this. For the road. And remember — the Welsh know how to wait. We've been waiting for England to give us independence for eight hundred years, mun. We can wait for you."`],
   esp_2: [
     `"Leaving? LMAO! You think this is a choice? Buddy, you're just running back to your sad little apartment where nothing exciting ever happens. Enjoy the beige wallpaper, you silly little cunt."`,
     `"Right then. Don't even look back at me. Because if you do, all I see is low effort and bad decisions. Go figure out how to make yourself interesting, alright? It's tough."`,
@@ -193,14 +219,14 @@ const WALK_AWAYS: Record<string, string[]> = {
 // ─── Phase guard ─────────────────────────────────────────────
 
 const PHASE_ACTIONS: Record<GamePhase, string[]> = {
-  home: ['START_TRIP', 'SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'TRAVEL', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'STASH_GOODS', 'RETRIEVE_GOODS', 'CONTACT_KINGPIN', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE', 'BANK_TUTORIAL_SHOWN', 'MARKET_REFRESH_TUTORIAL', 'LIE_LOW_TUTORIAL', 'HOLDINGS_TUTORIAL', 'HEAT_TUTORIAL', 'ASSET_SELL_TUTORIAL', 'ASSET_TUTORIAL', 'FIRST_CLASS_WARNING_SHOWN'],
-  selling: ['SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'CONTACT_KINGPIN', 'MEET_KINGPIN', 'SELL', 'STASH_GOODS', 'RETRIEVE_GOODS', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'SAFEHOUSE_TIER_CHANGE', 'BANK_TUTORIAL_SHOWN', 'MARKET_REFRESH_TUTORIAL', 'LIE_LOW_TUTORIAL', 'HOLDINGS_TUTORIAL', 'HEAT_TUTORIAL', 'ASSET_SELL_TUTORIAL', 'ASSET_TUTORIAL', 'FIRST_CLASS_WARNING_SHOWN'],
-  buying: ['BUY', 'TRAVEL', 'FLY_HOME', 'CONTACT_KINGPIN', 'RESPOND_EVENT', 'HEAT_TUTORIAL'],
-  selecting_dealer: ['SELECT_DEALER', 'FLY_HOME', 'CONTACT_KINGPIN', 'RESPOND_EVENT', 'HEAT_TUTORIAL'],
-  arrived: ['AFTER_CUSTOMS', 'CONTACT_KINGPIN', 'RESPOND_EVENT', 'TRAVEL', 'HEAT_TUTORIAL'],
-  flying_out: ['TRAVEL', 'CONTACT_KINGPIN', 'RESPOND_EVENT', 'HEAT_TUTORIAL'],
-  flying_back: ['CONTACT_KINGPIN', 'RESPOND_EVENT', 'HEAT_TUTORIAL'],
-  returned: ['CONTACT_KINGPIN', 'RESPOND_EVENT', 'STASH_GOODS', 'RETRIEVE_GOODS', 'HEAT_TUTORIAL'],
+  home: ['START_TRIP', 'SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'TRAVEL', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'STASH_GOODS', 'RETRIEVE_GOODS', 'CONTACT_KINGPIN', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'REALTIME_TICK', 'SAFEHOUSE_TIER_CHANGE', 'BANK_TUTORIAL_SHOWN', 'MARKET_REFRESH_TUTORIAL', 'LIE_LOW_TUTORIAL', 'HOLDINGS_TUTORIAL', 'HEAT_TUTORIAL', 'SAFEHOUSE_TUTORIAL', 'ASSET_SELL_TUTORIAL', 'ASSET_TUTORIAL', 'FIRST_CLASS_WARNING_SHOWN'],
+  selling: ['SELECT_PRODUCT', 'CONFIRM_FLIGHT', 'CONTACT_KINGPIN', 'MEET_KINGPIN', 'SELL', 'STASH_GOODS', 'RETRIEVE_GOODS', 'TRANSFER_FROM_BANK', 'TRANSFER_TO_BANK', 'VIEW_MARKET', 'VIEW_INVENTORY', 'WAIT', 'END_RUN', 'END_TRIP', 'BUY_ASSET', 'SELL_ASSET', 'SAVE', 'LOAD', 'RESPOND_EVENT', 'CANCEL_AIRPORT', 'REALTIME_TICK', 'SAFEHOUSE_TIER_CHANGE', 'BANK_TUTORIAL_SHOWN', 'MARKET_REFRESH_TUTORIAL', 'LIE_LOW_TUTORIAL', 'HOLDINGS_TUTORIAL', 'HEAT_TUTORIAL', 'SAFEHOUSE_TUTORIAL', 'ASSET_SELL_TUTORIAL', 'ASSET_TUTORIAL', 'FIRST_CLASS_WARNING_SHOWN'],
+  buying: ['BUY', 'TRAVEL', 'FLY_HOME', 'CONTACT_KINGPIN', 'RESPOND_EVENT', 'HEAT_TUTORIAL', 'SAFEHOUSE_TUTORIAL'],
+  selecting_dealer: ['SELECT_DEALER', 'FLY_HOME', 'CONTACT_KINGPIN', 'RESPOND_EVENT', 'HEAT_TUTORIAL', 'SAFEHOUSE_TUTORIAL'],
+  arrived: ['AFTER_CUSTOMS', 'CONTACT_KINGPIN', 'RESPOND_EVENT', 'TRAVEL', 'HEAT_TUTORIAL', 'SAFEHOUSE_TUTORIAL'],
+  flying_out: ['TRAVEL', 'CONTACT_KINGPIN', 'RESPOND_EVENT', 'HEAT_TUTORIAL', 'SAFEHOUSE_TUTORIAL'],
+  flying_back: ['CONTACT_KINGPIN', 'RESPOND_EVENT', 'HEAT_TUTORIAL', 'SAFEHOUSE_TUTORIAL'],
+  returned: ['CONTACT_KINGPIN', 'RESPOND_EVENT', 'STASH_GOODS', 'RETRIEVE_GOODS', 'HEAT_TUTORIAL', 'SAFEHOUSE_TUTORIAL'],
 };
 
 function isActionAllowed(phase: GamePhase, actionType: string): boolean {
@@ -223,9 +249,9 @@ export function createGameState(): GameState {
     pendingSell: null, pendingBuy: null, pendingFlight: null,
     headingToAirport: false, selectedProductId: null, gamePhase: 'home',
     selectedDealer: null, selectedKingpin: null,
-    dealerRapport: {}, marketMemory: {}, journalEntries: [],
+    dealerRapport: {}, kingpinRapport: {}, kingpinApproach: null, marketMemory: {}, journalEntries: [],
     securitySniffsPassed: 0, buyDealsCompleted: 0, sellDealsCompleted: 0,
-    firstRunTutorialShown: false, safehouseTier: 1, bankTutorialShown: false, marketRefreshTutorialShown: false, lieLowTutorialShown: false, holdingsTutorialShown: false, heatTutorialShown: false, assetSellTutorialShown: false, assetTutorialShown: false, firstClassWarningShown: false,
+    firstRunTutorialShown: false, safehouseTier: 1, bankTutorialShown: false, marketRefreshTutorialShown: false, lieLowTutorialShown: false, holdingsTutorialShown: false, heatTutorialShown: false, assetSellTutorialShown: false, assetTutorialShown: false, firstClassWarningShown: false, safehouseTutorialShown: false, marketCasedThisTurn: false, kingpinCooldown: 0, kingpinFightRound: 0, kingpinFightScore: 0, kingpinFightsDone: [], kingpinFightOutcomes: {}, kingpinMeetingCounts: {}, kingpinStingTargets: createKingpinStingTargets(), kingpinStingsTriggered: [], realtimeEpoch: Date.now(), realtimeDay: 0, realtimeDayProgress: 0, realtimeDaysSinceRecase: 0, desperationTimer: 0,
   };
 }
 
@@ -262,11 +288,10 @@ function createDealerIntro(state: GameState, title?: string): ChoiceEvent {
   const introText = introPool && introPool.length > 0
     ? introPool[Math.floor(Math.random() * introPool.length)]
     : `${dealer?.name} is waiting for you at ${dealer?.location}.`;
-  const dealerDesc = dealer?.description ? `\n\n<i>${dealer.description}</i>` : '';
   return {
     id: 'dealer_intro_' + Date.now().toString(36),
     title: title ?? `Meeting ${dealer?.name}`,
-    context: `${introText}${dealerDesc}\n\n${selectedGood?.name ?? 'product'}: $${buyPrice}/${unit}\nCash on hand: $${state.player.cash.toLocaleString()}\n\n⚠ Keep at least $500 spare for customs on the way home.`,
+    context: `${introText}\n\n${selectedGood?.name ?? 'product'}: $${buyPrice}/${unit}\nCash on hand: $${state.player.cash.toLocaleString()}\n\n⚠ Keep at least $500 spare for customs on the way home.`,
     choices: [
       { id: 'qty_2', text: `2 ${unit}s — $${(buyPrice * 2).toLocaleString()}`, ...nullChoice },
       { id: `qty_${defQty}`, text: `${defQty} ${unit}s — $${totalCost.toLocaleString()}`, ...nullChoice },
@@ -344,6 +369,15 @@ function handleOverdraft(player: PlayerState): PlayerState {
   return player;
 }
 
+function isInDeadZone(state: GameState): boolean {
+  if (state.player.currentCountryId !== 'london') return false;
+  if (state.player.cash < 0) return false;
+  if (state.player.bank > 0) return false;
+  if (state.player.stash.length > 0) return false;
+  if (state.player.inventory.length > 0) return false;
+  return state.player.cash < 300;
+}
+
 function generateSummaryEvent(title: string, context: string, hasGoods: boolean, idPrefix: 'summary' | 'return_summary' = 'summary'): ChoiceEvent {
   const choices = [
     { id: 'buy_more', text: 'Arrange Another Deal', ...nullChoice },
@@ -363,7 +397,7 @@ function handleChanceCard(state: GameState): GameState {
   if (ce.heatDelta) u.heat = Math.min(100, Math.max(0, u.heat + ce.heatDelta));
   if (ce.reputationDelta) u.reputation = Math.min(100, Math.max(0, u.reputation + ce.reputationDelta));
   if (ce.credibilityDelta) u.credibility = Math.min(100, Math.max(0, u.credibility + ce.credibilityDelta));
-  return { ...state, player: u, pendingEvent: null, lastEventMessage: ce.message, gameLog: [...state.gameLog, `[Turn $${state.turn}] ${ce.message}`] };
+  return { ...state, player: updatePeakNetWorth(u, state.currentMarketPrices), pendingEvent: null, lastEventMessage: ce.message, gameLog: [...state.gameLog, `[Turn $${state.turn}] ${ce.message}`] };
 }
 
 function handleTutorial(state: GameState): GameState {
@@ -380,6 +414,174 @@ function handleEndTripWarn(state: GameState): GameState {
 
 function handleKingpinWarn(state: GameState): GameState {
   return { ...state, pendingEvent: null, lastEventMessage: 'Stash more product and try again.' };
+}
+
+function handleKingpinApproach(state: GameState, action: GameAction & { type: 'RESPOND_EVENT'; choiceId: string }): GameState {
+  const trackedState = normalizeKingpinTracking(state);
+  const choiceId = action.choiceId;
+  if (choiceId === 'walk_away') {
+    const kingpin = trackedState.selectedKingpin;
+    if (!kingpin) return { ...state, lastEventMessage: 'No kingpin selected.' };
+    const currentRapport = trackedState.kingpinRapport[kingpin.id] ?? 0;
+    const newRapport = Math.max(0, currentRapport - 3);
+    const reactions: Record<string, string> = {
+      fletcher: `"You what?" Fletcher stops the heavy bag with his palm. The gym goes quiet. He walks over — not quickly, not slowly. Just — deliberately. Up close you can see the scar tissue around his eyes, the broken nose that never healed right. "You came all the way to Bermondsey, found my gym, walked through my door — to bottle it?" He shakes his head slowly. "Don't waste my time again, son. I've got lads in this gym who'd kill for the meeting you just threw away." He turns back to the bag. The thud of leather on canvas follows you out the door.`,
+      sergio: `Sergio doesn't stand. He leans back in his chair, studying you like you're an insect that just landed on his desk. A long silence. "You came all this way to waste my time." He gestures at the door — a lazy wave. "Then go. But don't come back. I don't take second chances." His eyes don't leave you until the door closes. They're still on you after.`,
+      iqbal: `Quentin doesn't look up from polishing a sequinned glove. "Leaving? Already? And here I had the kettle on." He sighs dramatically. "You know, in the cabaret, if you walk off stage mid-number, the audience boos. Consider this your boo, chocolate boy. Ring me when you're serious."`,
+    };
+    const reaction = reactions[kingpin.id] ?? `You walk away. ${kingpin.name} watches you go, unimpressed.`;
+    return {
+      ...trackedState,
+      selectedKingpin: null,
+      kingpinApproach: null,
+      kingpinRapport: { ...trackedState.kingpinRapport, [kingpin.id]: newRapport },
+      kingpinCooldown: trackedState.turn + 1,
+      pendingEvent: null,
+      lastEventMessage: reaction,
+      gameLog: [...trackedState.gameLog, `[Turn $${trackedState.turn}] Walked away from ${kingpin.name}. Rapport -3, cooldown 1 turn.`],
+    };
+  }
+  const approach = choiceId as KingpinApproach;
+  if (!['lowkey', 'flash', 'watch'].includes(approach)) return { ...state, lastEventMessage: 'Invalid approach.' };
+  const kingpin = trackedState.selectedKingpin;
+  if (!kingpin) return { ...state, lastEventMessage: 'No kingpin selected.' };
+  const good = trackedState.player.inventory[0];
+  if (!good) return { ...state, lastEventMessage: 'No product to sell.' };
+  const sellPriceData = trackedState.currentMarketPrices.find(p => p.goodId === good.goodId);
+  if (!sellPriceData) return { ...state, lastEventMessage: 'No buyer for this product right now.' };
+  const goodDef = trackedState.goods.find(g => g.id === good.goodId);
+  const goodName = goodDef?.name ?? 'goods';
+  const productValue = sellPriceData.sellPrice * good.quantity;
+  // Rapport-adjusted sell price with fight bonus if applicable
+  const currentRapport = trackedState.kingpinRapport[kingpin.id] ?? 0;
+  const rapportMod = 1 + currentRapport / 1000;
+  const fightMod = trackedState.kingpinFightsDone.includes(kingpin.id) ? 1.1 : 1.0;
+  const adjustedPrice = Math.floor(sellPriceData.sellPrice * kingpin.sellPriceMod * rapportMod * fightMod);
+  const oddsBonus = getApproachOddsBonus(approach);
+  const meetingNumber = (trackedState.kingpinMeetingCounts[kingpin.id] ?? 0) + 1;
+  const stingTarget = trackedState.kingpinStingTargets[kingpin.id];
+  const shouldTriggerSting = !trackedState.kingpinStingsTriggered.includes(kingpin.id) && meetingNumber >= stingTarget;
+  const stateWithMeeting = {
+    ...trackedState,
+    kingpinMeetingCounts: { ...trackedState.kingpinMeetingCounts, [kingpin.id]: meetingNumber },
+    kingpinStingsTriggered: shouldTriggerSting ? [...trackedState.kingpinStingsTriggered, kingpin.id] : trackedState.kingpinStingsTriggered,
+  };
+
+  // First meeting with Fletcher — fight initiation instead of immediate encounter
+  if (kingpin.id === 'fletcher' && !stateWithMeeting.kingpinFightsDone.includes('fletcher')) {
+    const fightEvent = generateKingpinFightRound(stateWithMeeting.player, kingpin, 1, 0);
+    return {
+      ...stateWithMeeting,
+      pendingEvent: fightEvent,
+      kingpinApproach: approach,
+      kingpinFightRound: 1,
+      kingpinFightScore: 0,
+      pendingSell: { goodId: good.goodId, quantity: good.quantity, baseSellPrice: adjustedPrice, costPerUnit: good.costPerUnit, countryId: 'london' },
+      lastEventMessage: `Meeting ${kingpin.name}...`,
+      gameLog: [...stateWithMeeting.gameLog, `[Turn $${stateWithMeeting.turn}] Approached ${kingpin.name} (${approach}). Meeting ${meetingNumber}. Fight initiation.`],
+    };
+  }
+
+  const fightOutcome = stateWithMeeting.kingpinFightOutcomes[kingpin.id];
+  const kingpinEvent = generateKingpinEncounter(stateWithMeeting.player, kingpin, goodName, productValue, oddsBonus, fightOutcome, shouldTriggerSting);
+  return {
+    ...stateWithMeeting,
+    pendingEvent: kingpinEvent,
+    kingpinApproach: approach,
+    pendingSell: { goodId: good.goodId, quantity: good.quantity, baseSellPrice: adjustedPrice, costPerUnit: good.costPerUnit, countryId: 'london' },
+    lastEventMessage: `Meeting ${kingpin.name}...`,
+    gameLog: [...stateWithMeeting.gameLog, `[Turn $${stateWithMeeting.turn}] Approached ${kingpin.name} (${approach}). Meeting ${meetingNumber}${shouldTriggerSting ? ' — sting triggered' : ''}.`],
+  };
+}
+
+// ── Fletcher fight initiation ─────────────────────────────────
+
+function handleKingpinFight(state: GameState, action: GameAction & { type: 'RESPOND_EVENT'; choiceId: string }): GameState {
+  const kingpin = state.selectedKingpin;
+  if (!kingpin) return { ...state, lastEventMessage: 'No kingpin selected.' };
+  const round = state.kingpinFightRound;
+  const currentScore = state.kingpinFightScore;
+
+  // Look up the fight choice config for this round
+  const config = FIGHT_ROUND_CONFIG[round];
+  if (!config) return { ...state, lastEventMessage: 'Invalid fight round.' };
+
+  const choiceConfig = config.choices.find((c: { id: string; baseOdds: number; scoreValue: number; successMessage: string; failMessage: string }) => c.id === action.choiceId);
+  if (!choiceConfig) return { ...state, lastEventMessage: 'Invalid choice.' };
+
+  // Determine success based on odds
+  const credBonus = Math.min(0.15, state.player.credibility * 0.001);
+  const notBonus = Math.min(0.25, state.player.notoriety * 0.002);
+  const adjustedOdds = Math.min(0.95, Math.max(0.10, choiceConfig.baseOdds + credBonus + notBonus));
+  const success = Math.random() < adjustedOdds;
+  const newScore = currentScore + (success ? choiceConfig.scoreValue : 0);
+
+  if (round < 3) {
+    // Advance to next round
+    const nextRound = round + 1;
+    const nextEvent = generateKingpinFightRound(state.player, kingpin, nextRound, newScore);
+    return {
+      ...state,
+      pendingEvent: nextEvent,
+      kingpinFightRound: nextRound,
+      kingpinFightScore: newScore,
+      lastEventMessage: success ? choiceConfig.successMessage : choiceConfig.failMessage,
+      gameLog: [...state.gameLog, `[Turn $${state.turn}] Fight round ${round}: ${action.choiceId} (${success ? 'win' : 'loss'}). Score: ${newScore}.`],
+    };
+  }
+
+  // Round 3 finished — generate result event
+  const resultEvent = generateKingpinFightRound(state.player, kingpin, 4, newScore);
+  return {
+    ...state,
+    pendingEvent: resultEvent,
+    kingpinFightRound: 0,
+    kingpinFightScore: newScore,
+    lastEventMessage: success ? choiceConfig.successMessage : choiceConfig.failMessage,
+    gameLog: [...state.gameLog, `[Turn $${state.turn}] Fight round ${round}: ${action.choiceId} (${success ? 'win' : 'loss'}). Final score: ${newScore}.`],
+  };
+}
+
+function handleKingpinFightResult(state: GameState, action: GameAction & { type: 'RESPOND_EVENT'; choiceId: string }): GameState {
+  const kingpin = state.selectedKingpin;
+  if (!kingpin) return { ...state, lastEventMessage: 'No kingpin selected.' };
+
+  const finalScore = state.kingpinFightScore;
+  let rapportDelta = 0;
+  let outcome: 'win' | 'comp_loss' | 'loss' = 'loss';
+  if (finalScore >= 3) { outcome = 'win'; rapportDelta = 15; }
+  else if (finalScore >= 2) { outcome = 'comp_loss'; }
+
+  // Apply rapport from fight outcome
+  const oldRapport = state.kingpinRapport[kingpin.id] ?? 0;
+  const newRapport = Math.min(100, Math.max(0, oldRapport + rapportDelta));
+
+  // Apply fight price bonus if win
+  let baseSellPrice = state.pendingSell?.baseSellPrice ?? 0;
+  if (finalScore >= 3 && state.pendingSell) {
+    baseSellPrice = Math.floor(baseSellPrice * 1.1);
+  }
+
+  // Mark fight as done
+  const good = state.player.inventory[0];
+  const sellPriceData = state.currentMarketPrices.find(p => p.goodId === good?.goodId);
+  const goodName = state.goods.find(g => g.id === good?.goodId)?.name ?? 'goods';
+  const productValue = sellPriceData ? sellPriceData.sellPrice * good.quantity : 0;
+  const oddsBonus = state.kingpinApproach ? getApproachOddsBonus(state.kingpinApproach) : undefined;
+  const kingpinEvent = generateKingpinEncounter(state.player, kingpin, goodName, productValue, oddsBonus, outcome);
+
+  return {
+    ...state,
+    pendingEvent: kingpinEvent,
+    kingpinFightRound: 0,
+    kingpinFightScore: 0,
+    kingpinFightsDone: [...state.kingpinFightsDone, 'fletcher'],
+    kingpinFightOutcomes: { ...state.kingpinFightOutcomes, [kingpin.id]: outcome },
+    kingpinRapport: { ...state.kingpinRapport, [kingpin.id]: newRapport },
+    pendingSell: state.pendingSell ? { ...state.pendingSell, baseSellPrice } : null,
+    lastEventMessage: `Fight complete. Rapport ${rapportDelta > 0 ? '+' : ''}${rapportDelta}.`,
+    gameLog: [...state.gameLog, `[Turn $${state.turn}] Fight complete vs ${kingpin.name}. Score: ${finalScore}/3. Outcome: ${outcome}. Rapport: ${rapportDelta > 0 ? '+' : ''}${rapportDelta}.`],
+  };
 }
 
 function handleConfirmFlight(state: GameState, action: GameAction & { type: 'RESPOND_EVENT'; choiceId: string }): GameState {
@@ -439,8 +641,8 @@ function handleSummary(state: GameState, action: GameAction & { type: 'RESPOND_E
   if (action.choiceId === 'fly_home') {
     const hasGoods = state.player.inventory.length > 0;
     if (hasGoods) {
-      const travelClass = state.pendingFlight?.travelClass ?? 'economy';
-      return doTravel({ ...state, gamePhase: 'flying_out', pendingEvent: null, pendingBuy: null }, ORIGIN_COUNTRY, travelClass);
+      const concealEvent = generateConcealmentChoice(state.player.ownedAssets);
+      return { ...state, gamePhase: 'flying_out', pendingEvent: concealEvent, pendingBuy: null, lastEventMessage: 'Choose your concealment method.' };
     }
     let u = { ...state.player, currentCountryId: ORIGIN_COUNTRY };
     return { ...state, player: u, gamePhase: 'home', pendingEvent: null, lastEventMessage: 'Back in London.', gameLog: [...state.gameLog, `[Turn $${state.turn}] Returned home.`] };
@@ -469,9 +671,10 @@ function handleTravelSniff(state: GameState, action: GameAction & { type: 'RESPO
   const choice = state.pendingEvent!.choices.find(c => c.id === action.choiceId);
   if (!choice) return state;
   const isAbort = action.choiceId === 'abort';
+  const isDistract = action.choiceId === 'distract';
   const beginnerMode = state.securitySniffsPassed < 3;
   const roll = Math.random();
-  let success = (!isAbort && beginnerMode) ? true : (roll < choice.odds);
+  let success = (!isAbort && !isDistract && beginnerMode) ? true : (roll < choice.odds);
   if (action.choiceId === 'bribe') success = true;
   const effects = success ? choice.successEffects : choice.failEffects;
   if (effects.cashDelta === 0 && effects.heatDelta === 0 && effects.reputationDelta === 0 && effects.credibilityDelta === 0 && !effects.inventoryLost && effects.message === '') {
@@ -482,30 +685,108 @@ function handleTravelSniff(state: GameState, action: GameAction & { type: 'RESPO
   if (effects.heatDelta) updatedPlayer.heat = Math.min(100, Math.max(0, updatedPlayer.heat + effects.heatDelta));
   if (effects.credibilityDelta) updatedPlayer.credibility = Math.min(100, Math.max(0, updatedPlayer.credibility + effects.credibilityDelta));
   const lostAllCash = effects.inventoryLost ? updatedPlayer.cash : 0;
+  const confiscatedValue = effects.inventoryLost ? updatedPlayer.inventory.reduce((sum, item) => sum + item.costPerUnit * item.quantity, 0) : 0;
   const busted = !success && effects.inventoryLost;
   if (effects.inventoryLost) updatedPlayer = { ...updatedPlayer, inventory: [], cash: Math.max(0, updatedPlayer.cash) };
-  const sniffToCountry = (!busted && choice.id !== 'abort') ? getCountry(state.travelSniff!.toCountryId) : null;
-  if (sniffToCountry) updatedPlayer.currentCountryId = state.travelSniff!.toCountryId;
   updatedPlayer = handleOverdraft(updatedPlayer);
   const outcomeLabel = success ? 'SUCCESS' : 'FAILURE';
   const message = `[${outcomeLabel}] ${effects.message}`;
+
   if (busted) {
-    const bustVariants = ['They slam you face-first onto the counter.', 'Two officers drag you into a windowless room.', 'The dog handler grins as the sniffer sits by your bag.', 'They march you through the terminal in full view.', 'The customs officer reads from a screen.'];
-    const bustContext = bustVariants[Math.floor(Math.random() * bustVariants.length)];
+    const ts = state.travelSniff!;
+    const isReturnLeg = ts.toCountryId === ORIGIN_COUNTRY;
+    // Stage 3: Deep Search — last chance to avoid bust
+    const deepResult = resolveDeepSearch(updatedPlayer, updatedPlayer.concealmentMethod);
+    if (deepResult.success) {
+      // Survived deep search — arrive at destination
+      updatedPlayer = { ...updatedPlayer, concealmentMethod: null };
+      updatedPlayer.currentCountryId = ts.toCountryId;
+      updatedPlayer = setLocation(updatedPlayer, ts.toCountryId);
+      updatedPlayer = incrementTrips(updatedPlayer);
+      const finalMsg = `${deepResult.message} ${'Heat -' + 3 + '.'}`;
+      if (isReturnLeg) {
+        const customsSummary: ChoiceEvent = {
+          id: 'return_summary_' + Date.now().toString(36),
+          title: 'Customs Cleared',
+          context: finalMsg + `\n\nProduct: CONFISCATED ($${confiscatedValue.toLocaleString()} value)\nCash: $0`,
+          choices: [{ id: 'continue', text: 'Continue', ...nullChoice }],
+        };
+        let s: GameState = { ...state, player: handleOverdraft(updatedPlayer), pendingEvent: customsSummary, travelSniff: null, gamePhase: 'selling', lastEventMessage: '', gameLog: [...state.gameLog, `[Turn $${state.turn}] Stage 3 survived: ${finalMsg}`] };
+        if (updatedPlayer.inventory.length === 0) {
+          const emptyReturnEvent: ChoiceEvent = {
+            id: 'empty_return_' + Date.now().toString(36),
+            title: 'Back in London',
+            context: `you have arrived back in London. you had no product on you so customs was no trouble, but I bet you feel like a right useless tit after that failed run, you're a fucking bottle job, just like your old man!`,
+            choices: [{ id: 'agree', text: '(I agree)', ...nullChoice }],
+          };
+          s = { ...s, pendingEvent: emptyReturnEvent, lastEventMessage: '' };
+        }
+        return withDirector(withTurn(s, message), updatedPlayer);
+      }
+      const newCountry = getCountry(ts.toCountryId)!;
+      const tradeVol = getRecentTradeVolume({ ...state, player: updatedPlayer });
+      const newMarketPrices = generateMarketPrices(newCountry, state.director, tradeVol, updatedPlayer.heat);
+      const playerWithPeak = updatePeakNetWorth(updatedPlayer, newMarketPrices);
+      const nw = getNetWorth(playerWithPeak, newMarketPrices);
+      const arrivalLines = [`You pass through ${newCountry.city} airport. ${deepResult.message}`, `You collect your belongings and head towards the exit. Welcome to ${newCountry.city}.`];
+      const arrivalEvent: ChoiceEvent = { id: 'arrival_' + Date.now().toString(36), title: `Customs Clearance — ${newCountry.name}`, context: arrivalLines.join('\n\n'), choices: [{ id: 'proceed_arrival', text: 'Continue', ...nullChoice }] };
+      return withDirector(withTurn(journalEntry({ ...state, marketCasedThisTurn: false, player: playerWithPeak, currentMarketPrices: newMarketPrices, pendingEvent: arrivalEvent, travelSniff: null, gamePhase: 'arrived', lastEventMessage: finalMsg }, { turn: state.turn + 1, type: 'travel', title: `Traveled to ${newCountry.name}`, description: finalMsg, cash: playerWithPeak.cash, netWorth: nw, heat: playerWithPeak.heat, reputation: playerWithPeak.reputation }), finalMsg), playerWithPeak);
+    }
+    // Stage 3 failed — busted
+    const bustVariant = isReturnLeg ? deepResult.message : (['They slam you face-first onto the counter.', 'Two officers drag you into a windowless room.', 'The dog handler grins as the sniffer sits by your bag.', 'They march you through the terminal in full view.', 'The customs officer reads from a screen.'])[Math.floor(Math.random() * 5)];
     const bustSummary: ChoiceEvent = {
       id: 'bust_summary_' + Date.now().toString(36),
       title: 'BUSTED',
-      context: `BUSTED. Taken to police cells.\n\n${bustContext}\n\nFined: $${lostAllCash.toLocaleString()} confiscated`,
+      context: `BUSTED. Taken to police cells.\n\n${bustVariant}\n\nProduct confiscated: $${confiscatedValue.toLocaleString()} value\nFined: $${lostAllCash.toLocaleString()} cash seized\n\nThe cash is gone. If you'd left it in the bank, it'd still be there.`,
       choices: [{ id: 'continue', text: 'Continue', ...nullChoice }],
     };
-    // Return to London after bust
     updatedPlayer.currentCountryId = ORIGIN_COUNTRY;
+    updatedPlayer = { ...updatedPlayer, concealmentMethod: null };
     let s = withDirector(withTurn({ ...state, player: updatePeakNetWorth(updatedPlayer, state.currentMarketPrices), pendingEvent: bustSummary, travelSniff: null, lastEventMessage: '', gamePhase: 'selling' }, message), updatedPlayer);
     if (!s.player.runActive) return { ...s, lastEventMessage: 'Debt exceeds $1,000. Game over.' };
     return s;
   }
+
+  if (choice.id === 'abort') {
+    // Abort success — go home without goods
+    updatedPlayer.currentCountryId = ORIGIN_COUNTRY;
+    updatedPlayer = { ...updatedPlayer, concealmentMethod: null };
+    const abortSummary: ChoiceEvent = {
+      id: 'return_summary_' + Date.now().toString(36),
+      title: 'Aborted',
+      context: message + '\n\nProduct: SAFE\nCash: $0',
+      choices: [{ id: 'continue', text: 'Continue', ...nullChoice }],
+    };
+    return withDirector(withTurn({ ...state, player: updatePeakNetWorth(updatedPlayer, state.currentMarketPrices), pendingEvent: abortSummary, travelSniff: null, lastEventMessage: '', gameLog: [...state.gameLog, `[Turn $${state.turn}] ${message}`] }, message), updatedPlayer);
+  }
+
+  // Stage 2 success — pass through
+  const ts = state.travelSniff!;
+  const isReturnLeg = ts.toCountryId === ORIGIN_COUNTRY;
+  updatedPlayer.currentCountryId = ts.toCountryId;
+  updatedPlayer = { ...updatedPlayer, concealmentMethod: null };
+  if (isReturnLeg) {
+    const customsSummary: ChoiceEvent = {
+      id: 'return_summary_' + Date.now().toString(36),
+      title: 'Customs Cleared',
+      context: message + '\n\nProduct: SAFE\nCash: ' + (effects.cashDelta !== 0 ? (effects.cashDelta < 0 ? '-' : '+') + '$' + Math.abs(effects.cashDelta).toLocaleString() : '$0'),
+      choices: [{ id: 'continue', text: 'Continue', ...nullChoice }],
+    };
+    let s: GameState = { ...state, player: handleOverdraft(updatedPlayer), pendingEvent: customsSummary, travelSniff: null, gamePhase: 'selling', lastEventMessage: '', gameLog: [...state.gameLog, `[Turn $${state.turn}] ${message}`] };
+    if (updatedPlayer.inventory.length === 0) {
+      const emptyReturnEvent: ChoiceEvent = {
+        id: 'empty_return_' + Date.now().toString(36),
+        title: 'Back in London',
+        context: `you have arrived back in London. you had no product on you so customs was no trouble, but I bet you feel like a right useless tit after that failed run, you're a fucking bottle job, just like your old man!`,
+        choices: [{ id: 'agree', text: '(I agree)', ...nullChoice }],
+      };
+      s = { ...s, pendingEvent: emptyReturnEvent, lastEventMessage: '' };
+    }
+    return withDirector(withTurn(s, message), updatedPlayer);
+  }
+  const sniffToCountry = getCountry(ts.toCountryId);
   if (sniffToCountry) {
-    const sniffArrivalLines = [`You pass through ${sniffToCountry.city} airport after the checkpoint. Your documents are in order.`, `You collect your belongings and head towards the exit. Welcome to ${sniffToCountry.city}.`];
+    const sniffArrivalLines = [`You pass through ${sniffToCountry.city} airport after the checkpoint. ${effects.message}`, `You collect your belongings and head towards the exit. Welcome to ${sniffToCountry.city}.`];
     const arrivalEvent: ChoiceEvent = { id: 'arrival_' + Date.now().toString(36), title: `Customs Clearance — ${sniffToCountry.name}`, context: sniffArrivalLines.join('\n\n'), choices: [{ id: 'proceed_arrival', text: 'Continue', ...nullChoice }] };
     let s = withTurn({ ...state, player: updatePeakNetWorth(updatedPlayer, state.currentMarketPrices), pendingEvent: arrivalEvent, travelSniff: null, gamePhase: 'arrived', lastEventMessage: '' }, message);
     s = { ...s, currentMarketPrices: generateMarketPrices(sniffToCountry, state.director, 0, updatedPlayer.heat), securitySniffsPassed: success ? state.securitySniffsPassed + 1 : state.securitySniffsPassed };
@@ -520,7 +801,7 @@ function handleArrival(state: GameState): GameState {
       const tutorialEvent: ChoiceEvent = {
         id: 'tutorial_' + Date.now().toString(36),
         title: 'You Did It',
-        context: `You made it back. You might have finally found something you're actually good at.\n\nDealers in London only buy in bulk. Each kingpin has a minimum — Quentin won't get out of bed for less than $750 worth of product. Avi wants $5,000 and Sergio wants $2,000.\n\nStash your goods after each trip. When you've built up enough, retrieve the product you want to sell and contact a kingpin.\n\nNow — book another flight and build your stash. You're going to need it.`,
+        context: `You made it back. You might have finally found something you're actually good at.\n\nDealers in London only buy in bulk. Each kingpin has a minimum — Quentin won't get out of bed for less than $750 worth of product. Fletcher wants $5,000 and Sergio wants $2,000.\n\nStash your goods after each trip. When you've built up enough, retrieve the product you want to sell and contact a kingpin.\n\nNow — book another flight and build your stash. You're going to need it.`,
         choices: [{ id: 'got_it', text: 'Got it — back to work', ...nullChoice }],
       };
       return { ...state, gamePhase: 'selling', pendingEvent: tutorialEvent, lastEventMessage: '' };
@@ -637,11 +918,18 @@ function handleBuyEncounter(state: GameState, action: GameAction & { type: 'RESP
   const effects = success ? choice.successEffects : choice.failEffects;
   let updatedPlayer = { ...state.player };
   if (effects.cashDelta !== 0) {
-    if (effects.cashDelta < 0) updatedPlayer.cash = Math.max(-1000, updatedPlayer.cash - Math.abs(effects.cashDelta));
-    else updatedPlayer.cash += effects.cashDelta;
+    if (effects.cashDelta < 0) {
+      let loss = Math.abs(effects.cashDelta);
+      if (effects.cashPct !== undefined && updatedPlayer.cash > 0) {
+        const pctLoss = Math.floor(updatedPlayer.cash * effects.cashPct);
+        loss = Math.max(loss, pctLoss);
+      }
+      updatedPlayer.cash = Math.max(-1000, updatedPlayer.cash - loss);
+    } else updatedPlayer.cash += effects.cashDelta;
   }
   if (effects.heatDelta) updatedPlayer.heat = Math.min(100, Math.max(0, updatedPlayer.heat + effects.heatDelta));
   if (effects.credibilityDelta) updatedPlayer.credibility = Math.min(100, Math.max(0, updatedPlayer.credibility + effects.credibilityDelta));
+  const buyConfiscatedValue = effects.inventoryLost ? updatedPlayer.inventory.reduce((sum, item) => sum + item.costPerUnit * item.quantity, 0) : 0;
   if (effects.inventoryLost) updatedPlayer = { ...updatedPlayer, inventory: [] };
 
   let buySummaryMsg: string | null = null;
@@ -652,7 +940,7 @@ function handleBuyEncounter(state: GameState, action: GameAction & { type: 'RESP
   if (s.pendingBuy) {
     if (success) {
       updatedPlayer = deductCash(updatedPlayer, s.pendingBuy.totalCost);
-      updatedPlayer = addGood(updatedPlayer, s.pendingBuy.goodId, s.pendingBuy.quantity);
+      updatedPlayer = addGood(updatedPlayer, s.pendingBuy.goodId, s.pendingBuy.quantity, s.pendingBuy.totalCost / s.pendingBuy.quantity);
       const goodDef = s.goods.find(g => g.id === s.pendingBuy!.goodId);
       buySummaryMsg = `BOUGHT ${s.pendingBuy.quantity} ${goodDef?.unitOfMeasure ?? 'unit'}${s.pendingBuy.quantity > 1 ? 's' : ''} of ${goodDef?.name ?? 'product'} FOR $${s.pendingBuy.totalCost.toLocaleString()}.`;
       const dealerId = s.selectedDealer?.dealerId;
@@ -673,6 +961,7 @@ function handleBuyEncounter(state: GameState, action: GameAction & { type: 'RESP
   const hasGoods = updatedPlayer.inventory.length > 0;
   const flyLines = [messageText];
   if (buySummaryMsg) flyLines.push(buySummaryMsg);
+  if (buyConfiscatedValue > 0) flyLines.push(`Product lost during the encounter: $${buyConfiscatedValue.toLocaleString()} value`);
   if (success && s.selectedDealer) {
     const farewellArr = FAREWELLS[s.selectedDealer.dealerId];
     if (farewellArr && farewellArr.length > 0) {
@@ -704,8 +993,14 @@ function handleSellEncounter(state: GameState, action: GameAction & { type: 'RES
   const effects = success ? choice.successEffects : choice.failEffects;
   let updatedPlayer = { ...state.player };
   if (effects.cashDelta !== 0) {
-    if (effects.cashDelta < 0) updatedPlayer.cash = Math.max(-1000, updatedPlayer.cash - Math.abs(effects.cashDelta));
-    else updatedPlayer.cash += effects.cashDelta;
+    if (effects.cashDelta < 0) {
+      let loss = Math.abs(effects.cashDelta);
+      if (effects.cashPct !== undefined && updatedPlayer.cash > 0) {
+        const pctLoss = Math.floor(updatedPlayer.cash * effects.cashPct);
+        loss = Math.max(loss, pctLoss);
+      }
+      updatedPlayer.cash = Math.max(-1000, updatedPlayer.cash - loss);
+    } else updatedPlayer.cash += effects.cashDelta;
   }
   if (effects.heatDelta) updatedPlayer.heat = Math.min(100, Math.max(0, updatedPlayer.heat + effects.heatDelta));
   if (effects.credibilityDelta) updatedPlayer.credibility = Math.min(100, Math.max(0, updatedPlayer.credibility + effects.credibilityDelta));
@@ -720,14 +1015,50 @@ function handleSellEncounter(state: GameState, action: GameAction & { type: 'RES
   const outcomeLabel = success ? 'SUCCESS' : 'FAILURE';
   const messageText = effects.message ? `[${outcomeLabel}] ${effects.message}` : '';
   const revenue = success && effects.inventoryLost ? state.pendingSell!.baseSellPrice * state.pendingSell!.quantity : 0;
+
+  // ── Kingpin rapport + epilogue ──
+  let s = { ...state };
+  let epilogueLine = '';
+  if (state.selectedKingpin && state.kingpinApproach) {
+    const kid = state.selectedKingpin.id;
+    let rapportDelta = 0;
+    // Approach base delta
+    const approach = state.kingpinApproach;
+    if (approach === 'lowkey') rapportDelta += 5;
+    else if (approach === 'watch') rapportDelta += 2;
+    else if (approach === 'flash') rapportDelta -= 3;
+    // Outcome delta
+    rapportDelta += success ? 2 : -1;
+    // Choice-specific adjustments
+    if (action.choiceId === 'negotiate' && success) rapportDelta += 3;
+    if (action.choiceId === 'close_deal' && !success) rapportDelta -= 2;
+    const oldRapport = s.kingpinRapport[kid] ?? 0;
+    const newRapport = Math.min(100, Math.max(0, oldRapport + rapportDelta));
+    s = { ...s, kingpinRapport: { ...s.kingpinRapport, [kid]: newRapport } };
+    const actualDelta = newRapport - oldRapport;
+    if (actualDelta > 0) {
+      epilogueLine = `${state.selectedKingpin.name} likes you a bit more now. (Rapport +${actualDelta})`;
+    } else if (actualDelta < 0) {
+      epilogueLine = `${state.selectedKingpin.name} is getting tired of your shit. (Rapport ${actualDelta})`;
+    } else {
+      epilogueLine = `${state.selectedKingpin.name}'s opinion of you is unchanged. (Rapport ${actualDelta})`;
+    }
+  }
+  s = { ...s, kingpinApproach: null };
+
+  const totalCost = state.pendingSell!.costPerUnit * state.pendingSell!.quantity;
+  const profit = revenue - totalCost;
+
   const sellLines = success
-    ? [messageText, `SOLD $${state.pendingSell!.quantity} units FOR $${revenue.toLocaleString()}.`, `Cash: $${updatedPlayer.cash.toLocaleString()}    Heat: ${updatedPlayer.heat}/100`, '', 'The deal is done. You head back to your safehouse.']
-    : [messageText, 'The deal failed. No payment received.', `Cash: $${updatedPlayer.cash.toLocaleString()}    Heat: ${updatedPlayer.heat}/100`, '', 'You slink back to your safehouse empty-handed.'];
+    ? [messageText, `SOLD ${state.pendingSell!.quantity} units FOR $${revenue.toLocaleString()}.`, `Cost: $${totalCost.toLocaleString()}    Profit: $${profit.toLocaleString()}`, `Cash: $${updatedPlayer.cash.toLocaleString()}    Heat: ${updatedPlayer.heat}/100`]
+    : [messageText, 'The deal failed. No payment received.', `Cash: $${updatedPlayer.cash.toLocaleString()}    Heat: ${updatedPlayer.heat}/100`];
+  if (epilogueLine) sellLines.push('', epilogueLine);
+  sellLines.push('', 'The deal is done. You head back to your safehouse.');
   const sellSummary: ChoiceEvent = {
     id: 'sell_summary_' + Date.now().toString(36), title: success ? 'Deal Successful' : 'Deal Failed', context: sellLines.join('\n\n'),
     choices: [{ id: 'continue', text: 'Continue', ...nullChoice }],
   };
-  return withDirector(withTurn({ ...state, player: updatePeakNetWorth(updatedPlayer, state.currentMarketPrices), pendingEvent: sellSummary, pendingSell: null, lastEventMessage: '', sellDealsCompleted: success ? state.sellDealsCompleted + 1 : state.sellDealsCompleted }, messageText), updatedPlayer);
+  return withDirector(withTurn({ ...s, player: updatePeakNetWorth(updatedPlayer, s.currentMarketPrices), pendingEvent: sellSummary, pendingSell: null, lastEventMessage: '', sellDealsCompleted: success ? s.sellDealsCompleted + 1 : s.sellDealsCompleted }, messageText), updatedPlayer);
 }
 
 function handleFallbackEvent(state: GameState, action: GameAction & { type: 'RESPOND_EVENT'; choiceId: string }): GameState {
@@ -747,16 +1078,65 @@ function dispatchEventResponse(state: GameState, action: GameAction & { type: 'R
   if (id.startsWith('tutorial_')) return handleTutorial(state);
   if (id.startsWith('no_cash_')) return handleNoCash(state);
   if (id.startsWith('no_buyer_')) return { ...state, pendingEvent: null, lastEventMessage: '' };
+  if (id.startsWith('low_cash_warn_')) {
+    if (action.choiceId === 'risk_it') {
+      const pf = state.pendingFlight;
+      if (!pf) return state;
+      const destCountry = getCountry(pf.toCountryId);
+      if (!destCountry) return state;
+      const confirmEvent: ChoiceEvent = {
+        id: 'confirm_flight_' + Date.now().toString(36),
+        title: 'Confirm Risky Flight',
+        context: `Fly to ${destCountry.city}?\n\nYou're flying without a bribe buffer. If customs pulls you over, you're fucked.\n\nCash on hand: $${state.player.cash.toLocaleString()}`,
+        choices: [
+          { id: 'continue', text: 'Book flight', ...nullChoice },
+          { id: 'go_back', text: 'Go back', ...nullChoice },
+        ],
+      };
+      return { ...state, pendingEvent: confirmEvent, lastEventMessage: 'Confirm risky flight.' };
+    }
+    return { ...state, pendingEvent: null, pendingFlight: null, lastEventMessage: 'Flight cancelled. Find more cash first.' };
+  }
+  if (id.startsWith('excess_cash_warn_')) {
+    if (action.choiceId === 'fly_anyway') {
+      const pf = state.pendingFlight;
+      if (!pf) return state;
+      const destCountry = getCountry(pf.toCountryId);
+      if (!destCountry) return state;
+      const confirmEvent: ChoiceEvent = {
+        id: 'confirm_flight_' + Date.now().toString(36),
+        title: 'Confirm Flight',
+        context: `Fly to ${destCountry.city}?\n\nYou're carrying $${state.player.cash.toLocaleString()} — way more than you need. Remember, it's all at risk.\n\nCash on hand: $${state.player.cash.toLocaleString()}`,
+        choices: [
+          { id: 'continue', text: 'Book flight', ...nullChoice },
+          { id: 'go_back', text: 'Go back', ...nullChoice },
+        ],
+      };
+      return { ...state, pendingEvent: confirmEvent, lastEventMessage: 'Confirm flight with excess cash.' };
+    }
+    return { ...state, pendingEvent: null, pendingFlight: null, lastEventMessage: 'Flight cancelled. Deposit excess cash first.' };
+  }
   if (id.startsWith('end_trip_warn_')) return handleEndTripWarn(state);
   if (id.startsWith('kingpin_warn_')) return handleKingpinWarn(state);
+  if (id.startsWith('kingpin_fight_round_')) return handleKingpinFight(state, action);
+  if (id.startsWith('kingpin_fight_result_')) return handleKingpinFightResult(state, action);
   if (id.startsWith('empty_return_')) {
     return { ...state, pendingEvent: null, selectedDealer: null, pendingBuy: null, lastEventMessage: 'Back in London. Better luck next time.' };
   }
+  if (id.startsWith('conceal_choice_')) {
+    const concealMethod = action.choiceId === 'conceal_body' ? 'body' as const : action.choiceId === 'conceal_luggage' ? 'luggage' as const : action.choiceId === 'conceal_asset' ? 'asset_decoy' as const : null;
+    if (!concealMethod) return { ...state, pendingEvent: null, lastEventMessage: 'Invalid concealment choice.' };
+    const player = { ...state.player, concealmentMethod: concealMethod };
+    const travelClass = state.pendingFlight?.travelClass ?? 'economy';
+    return doTravel({ ...state, player, pendingEvent: null, gamePhase: 'flying_out' }, ORIGIN_COUNTRY, travelClass);
+  }
+  if (id.startsWith('doc_check_')) return handleDocCheck(state, action);
   if (id.startsWith('safehouse_promote_') || id.startsWith('safehouse_demote_')) {
     const nw = state.player.bank + state.player.cash;
     const newTier = getSafehouseTier(nw, state.safehouseTier);
     return { ...state, pendingEvent: null, safehouseTier: newTier, lastEventMessage: '' };
   }
+  if (id.startsWith('kingpin_approach_')) return handleKingpinApproach(state, action);
   if (id.startsWith('refresh_tutorial_')) {
     return { ...state, pendingEvent: null, lastEventMessage: '' };
   }
@@ -768,6 +1148,9 @@ function dispatchEventResponse(state: GameState, action: GameAction & { type: 'R
   }
   if (id.startsWith('heat_tutorial_')) {
     return { ...state, pendingEvent: null, heatTutorialShown: true, lastEventMessage: '' };
+  }
+  if (id.startsWith('safehouse_tutorial_')) {
+    return { ...state, pendingEvent: null, safehouseTutorialShown: true, lastEventMessage: '' };
   }
   if (id.startsWith('assetsell_tutorial_')) {
     return { ...state, pendingEvent: null, lastEventMessage: '' };
@@ -805,6 +1188,55 @@ function dispatchEventResponse(state: GameState, action: GameAction & { type: 'R
   return handleFallbackEvent(state, action);
 }
 
+// ─── Stage 1 Doc Check Handler ───────────────────────────────
+
+function handleDocCheck(state: GameState, action: GameAction & { type: 'RESPOND_EVENT'; choiceId: string }): GameState {
+  const ts = state.travelSniff;
+  if (!ts) return { ...state, pendingEvent: null, lastEventMessage: 'No travel context.' };
+  const isReturnLeg = ts.toCountryId === ORIGIN_COUNTRY;
+  const result = resolveDocCheck(action.choiceId, state.player, state.player.concealmentMethod);
+  let updatedPlayer = { ...state.player };
+  if (result.heatDelta) updatedPlayer.heat = Math.min(100, Math.max(0, updatedPlayer.heat + result.heatDelta));
+  if (result.triggersStage2) {
+    const sniffEvent = generateSniffChoices(updatedPlayer, isReturnLeg, updatedPlayer.concealmentMethod);
+    return { ...state, player: handleOverdraft(updatedPlayer), pendingEvent: sniffEvent, travelSniff: ts, lastEventMessage: result.message, gameLog: [...state.gameLog, `[Turn $${state.turn}] Stage 2 triggered: ${result.message}`] };
+  }
+  // Stage 1 pass — straight through
+  const heatDecay = 3 + Math.floor(Math.random() * 6);
+  updatedPlayer = reduceHeat(updatedPlayer, heatDecay);
+  updatedPlayer = setLocation(updatedPlayer, ts.toCountryId);
+  updatedPlayer = incrementTrips(updatedPlayer);
+  updatedPlayer = { ...updatedPlayer, concealmentMethod: null };
+  const finalMsg = `${result.message} ${'Heat -' + heatDecay + '.'}`;
+  if (isReturnLeg) {
+    const customsSummary: ChoiceEvent = {
+      id: 'return_summary_' + Date.now().toString(36),
+      title: 'Customs Cleared',
+      context: finalMsg + '\n\nProduct: SAFE\nCash: $0',
+      choices: [{ id: 'continue', text: 'Continue', ...nullChoice }],
+    };
+    let s: GameState = { ...state, player: handleOverdraft(updatedPlayer), pendingEvent: customsSummary, travelSniff: null, gamePhase: 'selling', lastEventMessage: '', gameLog: [...state.gameLog, `[Turn $${state.turn}] Stage 1 pass: ${finalMsg}`] };
+    if (updatedPlayer.inventory.length === 0) {
+      const emptyReturnEvent: ChoiceEvent = {
+        id: 'empty_return_' + Date.now().toString(36),
+        title: 'Back in London',
+        context: `you have arrived back in London. you had no product on you so customs was no trouble, but I bet you feel like a right useless tit after that failed run, you're a fucking bottle job, just like your old man!`,
+        choices: [{ id: 'agree', text: '(I agree)', ...nullChoice }],
+      };
+      s = { ...s, pendingEvent: emptyReturnEvent, lastEventMessage: '' };
+    }
+    return s;
+  }
+  const newCountry = getCountry(ts.toCountryId)!;
+  const tradeVol = getRecentTradeVolume({ ...state, player: updatedPlayer });
+  const newMarketPrices = generateMarketPrices(newCountry, state.director, tradeVol, updatedPlayer.heat);
+  const playerWithPeak = updatePeakNetWorth(updatedPlayer, newMarketPrices);
+  const nw = getNetWorth(playerWithPeak, newMarketPrices);
+  const arrivalLines = [`You pass through ${newCountry.city} airport with no trouble. ${result.message}`, `You collect your belongings and head towards the exit. Welcome to ${newCountry.city}.`];
+  const arrivalEvent: ChoiceEvent = { id: 'arrival_' + Date.now().toString(36), title: `Customs Clearance — ${newCountry.name}`, context: arrivalLines.join('\n\n'), choices: [{ id: 'proceed_arrival', text: 'Continue', ...nullChoice }] };
+  return withDirector(withTurn(journalEntry({ ...state, marketCasedThisTurn: false, player: playerWithPeak, currentMarketPrices: newMarketPrices, pendingEvent: arrivalEvent, travelSniff: null, gamePhase: 'arrived', lastEventMessage: finalMsg }, { turn: state.turn + 1, type: 'travel', title: `Traveled to ${newCountry.name}`, description: finalMsg, cash: playerWithPeak.cash, netWorth: nw, heat: playerWithPeak.heat, reputation: playerWithPeak.reputation }), finalMsg), playerWithPeak);
+}
+
 // ─── Direct TRAVEL dispatch (no recursion) ───────────────────
 
 function doTravel(state: GameState, toCountryId: string, travelClass: TravelClass): GameState {
@@ -823,8 +1255,46 @@ function doTravel(state: GameState, toCountryId: string, travelClass: TravelClas
   }
 
   if (result.securitySniffTriggered) {
-    const sniffEvent = generateSniffChoices(player, isReturnLeg);
-    return { ...state, player: handleOverdraft(player), pendingEvent: sniffEvent, travelSniff: { toCountryId, cost: result.cost }, lastEventMessage: result.message, gameLog: [...state.gameLog, `[Turn $${state.turn}] ${result.message}`] };
+    const concealment = player.concealmentMethod;
+    // Stage 1: Document Check — auto-resolves for clean profiles
+    if (stage1AutoPassCheck(player)) {
+      const heatDecay = 3 + Math.floor(Math.random() * 6);
+      player = reduceHeat(player, heatDecay);
+      player = setLocation(player, toCountryId);
+      player = incrementTrips(player);
+      player = { ...player, concealmentMethod: null };
+      const msg = 'Documents in order. The officer waves you through with barely a glance.';
+      if (isReturnLeg) {
+        const customsSummary: ChoiceEvent = {
+          id: 'return_summary_' + Date.now().toString(36),
+          title: 'Customs Cleared',
+          context: msg + '\n\nProduct: SAFE\nCash: $0',
+          choices: [{ id: 'continue', text: 'Continue', ...nullChoice }],
+        };
+        let s: GameState = { ...state, player: handleOverdraft(player), pendingEvent: customsSummary, travelSniff: null, gamePhase: 'selling', lastEventMessage: '', gameLog: [...state.gameLog, `[Turn ${state.turn}] Stage 1 auto-pass.`] };
+        if (player.inventory.length === 0) {
+          const emptyReturnEvent: ChoiceEvent = {
+            id: 'empty_return_' + Date.now().toString(36),
+            title: 'Back in London',
+            context: `you have arrived back in London. you had no product on you so customs was no trouble, but I bet you feel like a right useless tit after that failed run, you're a fucking bottle job, just like your old man!`,
+            choices: [{ id: 'agree', text: '(I agree)', ...nullChoice }],
+          };
+          s = { ...s, pendingEvent: emptyReturnEvent, lastEventMessage: '' };
+        }
+        return s;
+      }
+      const newCountry = getCountry(toCountryId)!;
+      const tradeVol = getRecentTradeVolume({ ...state, player });
+      const newMarketPrices = generateMarketPrices(newCountry, state.director, tradeVol, player.heat);
+      const playerWithPeak = updatePeakNetWorth(player, newMarketPrices);
+      const nw = getNetWorth(playerWithPeak, newMarketPrices);
+      const arrivalLines = [`You pass through ${newCountry.city} airport with no trouble. ${msg}`, `You collect your belongings and head towards the exit. Welcome to ${newCountry.city}.`];
+      const arrivalEvent: ChoiceEvent = { id: 'arrival_' + Date.now().toString(36), title: `Customs Clearance — ${newCountry.name}`, context: arrivalLines.join('\n\n'), choices: [{ id: 'proceed_arrival', text: 'Continue', ...nullChoice }] };
+      return withDirector(withTurn(journalEntry({ ...state, marketCasedThisTurn: false, player: playerWithPeak, currentMarketPrices: newMarketPrices, pendingEvent: arrivalEvent, travelSniff: null, gamePhase: 'arrived', lastEventMessage: msg }, { turn: state.turn + 1, type: 'travel', title: `Traveled to ${newCountry.name}`, description: msg, cash: playerWithPeak.cash, netWorth: nw, heat: playerWithPeak.heat, reputation: playerWithPeak.reputation }), msg), playerWithPeak);
+    }
+    // Stage 1 mini-choice
+    const docEvent = generateDocCheck(player);
+    return { ...state, player: handleOverdraft(player), pendingEvent: docEvent, travelSniff: { toCountryId, cost: result.cost }, lastEventMessage: result.message, gameLog: [...state.gameLog, `[Turn $${state.turn}] ${result.message}`] };
   }
 
   player.currentCountryId = toCountryId;
@@ -833,20 +1303,30 @@ function doTravel(state: GameState, toCountryId: string, travelClass: TravelClas
   const newMarketPrices = generateMarketPrices(newCountry, state.director, tradeVol, player.heat);
   const playerWithPeak = updatePeakNetWorth(player, newMarketPrices);
   const nw = getNetWorth(playerWithPeak, newMarketPrices);
-  let s: GameState = withDirector(withTurn(journalEntry({ ...state, player: playerWithPeak, currentMarketPrices: newMarketPrices, lastEventMessage: result.message }, { turn: state.turn + 1, type: 'travel', title: `Traveled to ${newCountry.name}`, description: result.message, cash: playerWithPeak.cash, netWorth: nw, heat: playerWithPeak.heat, reputation: playerWithPeak.reputation }), result.message), playerWithPeak);
+  let s: GameState = withDirector(withTurn(journalEntry({ ...state, marketCasedThisTurn: false, player: playerWithPeak, currentMarketPrices: newMarketPrices, lastEventMessage: result.message }, { turn: state.turn + 1, type: 'travel', title: `Traveled to ${newCountry.name}`, description: result.message, cash: playerWithPeak.cash, netWorth: nw, heat: playerWithPeak.heat, reputation: playerWithPeak.reputation }), result.message), playerWithPeak);
 
   if (isReturnLeg) {
     s = { ...s, gamePhase: 'selling' };
-    const emptyReturnEvent: ChoiceEvent = {
-      id: 'empty_return_' + Date.now().toString(36),
-      title: 'Back in London',
-      context: `you have arrived back in London. you had no product on you so customs was no trouble, but I bet you feel like a right useless tit after that failed run, you're a fucking bottle job, just like your old man!`,
-      choices: [{ id: 'agree', text: '(I agree)', ...nullChoice }],
-    };
-    s.pendingEvent = emptyReturnEvent;
-    s.lastEventMessage = '';
     s.selectedDealer = null;
     s.pendingBuy = null;
+    if (player.inventory.length === 0) {
+      const emptyReturnEvent: ChoiceEvent = {
+        id: 'empty_return_' + Date.now().toString(36),
+        title: 'Back in London',
+        context: `you have arrived back in London. you had no product on you so customs was no trouble, but I bet you feel like a right useless tit after that failed run, you're a fucking bottle job, just like your old man!`,
+        choices: [{ id: 'agree', text: '(I agree)', ...nullChoice }],
+      };
+      s.pendingEvent = emptyReturnEvent;
+      s.lastEventMessage = '';
+    } else {
+      const returnSummary: ChoiceEvent = {
+        id: 'return_summary_' + Date.now().toString(36),
+        title: 'Back in London',
+        context: result.message + '\n\nProduct: SAFE',
+        choices: [{ id: 'continue', text: 'Continue', ...nullChoice }],
+      };
+      s = { ...s, pendingEvent: returnSummary, lastEventMessage: '' };
+    }
     return s;
   }
 
@@ -914,12 +1394,39 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       const BRIBE_RESERVE = 500;
       const totalNeeded = estCost + minProdCost + BRIBE_RESERVE;
 
-      if (state.player.cash < totalNeeded) {
+      if (state.player.cash < estCost + minProdCost) {
         const reason = state.player.cash < estCost
           ? `You don't have enough cash to buy this ticket.\n\nTicket: $${estCost}\nCash on hand: $${state.player.cash.toLocaleString()}`
-          : `You have enough for the ticket — but not enough to make this trip worthwhile.\n\nTicket: $${estCost}\nMinimum product: $${minProdCost.toLocaleString()} (${selectedGood?.standardDealSize ?? 10} ${selectedGood?.unitOfMeasure ?? 'unit'}${(selectedGood?.standardDealSize ?? 10) > 1 ? 's' : ''} of ${goodName})\nBuffer for expenses: $${BRIBE_RESERVE} — potential bribes can be costly, you'll want at least this spare.\n\nTotal needed: $${totalNeeded.toLocaleString()}\nCash on hand: $${state.player.cash.toLocaleString()}`;
+          : `You can afford the ticket but not even one deal's worth of product.\n\nTicket: $${estCost}\nMinimum product: $${minProdCost.toLocaleString()} (${selectedGood?.standardDealSize ?? 10} ${selectedGood?.unitOfMeasure ?? 'unit'}${(selectedGood?.standardDealSize ?? 10) > 1 ? 's' : ''} of ${goodName})\nCash on hand: $${state.player.cash.toLocaleString()}`;
         const we: ChoiceEvent = { id: 'no_cash_' + Date.now().toString(36), title: 'Not Enough Cash', context: `${reason}\n\nGo to the ATM at the top of the screen and withdraw more cash.`, choices: [{ id: 'understood', text: 'I understand', ...nullChoice }] };
         return { ...state, pendingEvent: we, lastEventMessage: 'Not enough cash to make this trip.' };
+      }
+      if (state.player.cash < totalNeeded) {
+        const warning: ChoiceEvent = {
+          id: 'low_cash_warn_' + Date.now().toString(36),
+          title: 'No Bribe Buffer',
+          context: `You've got enough for the ticket and a bag of product — but you're running on fumes. No bribe money. No backup. If customs pulls you over, you've got nothing to grease the wheels with.\n\nYou can still go — but you're gambling with your freedom.\n\nTicket: $${estCost}\nMin product: $${minProdCost.toLocaleString()}\nBribe buffer: $${BRIBE_RESERVE} (you're short $${(totalNeeded - state.player.cash).toLocaleString()})\nCash on hand: $${state.player.cash.toLocaleString()}`,
+          choices: [
+            { id: 'risk_it', text: 'Risk it — book the flight anyway', ...nullChoice },
+            { id: 'go_back', text: 'Go back — find more cash', ...nullChoice },
+          ],
+        };
+        return { ...state, pendingEvent: warning, pendingFlight: { toCountryId: action.toCountryId, travelClass: action.travelClass }, lastEventMessage: 'Not enough for bribes. Risky flight.' };
+      }
+
+      // Excess cash advisory — warn if carrying significantly more than needed
+      const excessCash = state.player.cash - totalNeeded;
+      if (excessCash > 5000) {
+        const excessWarn: ChoiceEvent = {
+          id: 'excess_cash_warn_' + Date.now().toString(36),
+          title: 'Carrying Too Much Cash',
+          context: `Listen, you daft prick. You've got $${state.player.cash.toLocaleString()} on you, but you only need about $${totalNeeded.toLocaleString()} for this trip. That's $${excessCash.toLocaleString()} of pointless risk.\n\nIf customs bust you, if you get rolled in an alley, if some cunt dips your pocket — that extra cash is gone. Vanished. And I'll be standing over your shoulder saying "I told you so, you muggy little nonce."\n\nPut the excess in the bank before you fly. Take what you need — nothing more.`,
+          choices: [
+            { id: 'fly_anyway', text: 'Risk it — book the flight', ...nullChoice },
+            { id: 'go_bank', text: 'Go back — deposit some cash first', ...nullChoice },
+          ],
+        };
+        return { ...state, pendingEvent: excessWarn, pendingFlight: { toCountryId: action.toCountryId, travelClass: action.travelClass }, lastEventMessage: 'Carrying excessive cash. Risky.' };
       }
 
       // Buyer check — can the player actually sell this product back home?
@@ -932,7 +1439,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         const unit = selectedGood.unitOfMeasure ?? 'unit';
         if (!cheapestBuyer) {
           const allBuys = [...new Set(KINGPIN_POOL.flatMap(k => k.buys))].map(id => state.goods.find(g => g.id === id)?.name ?? id).join(', ');
-          const we: ChoiceEvent = { id: 'no_buyer_' + Date.now().toString(36), title: 'No Buyer', context: `Nobody in London wants ${goodName}, Angelo. The kingpins are fussy cunts — Avi only does ecstasy and cocaine, Sergio does heroin and meth, and Quentin's too busy doing lines off his chaise longue to deal in anything besides cocaine, hashish, and weed. They'll buy: ${allBuys}. Pick something else, you daft prick.`, choices: [{ id: 'understood', text: 'Understood', ...nullChoice }] };
+          const we: ChoiceEvent = { id: 'no_buyer_' + Date.now().toString(36), title: 'No Buyer', context: `Nobody in London wants ${goodName}, Angelo. The kingpins are fussy cunts — Fletcher only does cocaine and heroin, Sergio does heroin and meth, and Quentin's too busy doing lines off his chaise longue to deal in anything besides cocaine, hashish, and weed. They'll buy: ${allBuys}. Pick something else, you daft prick.`, choices: [{ id: 'understood', text: 'Understood', ...nullChoice }] };
           return { ...state, pendingEvent: we, lastEventMessage: 'No London buyer for this product.' };
         }
         const minQty = Math.ceil(cheapestBuyer.minStashValue / baseVal);
@@ -975,6 +1482,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       };
       return {
         ...state,
+        marketCasedThisTurn: false,
         gamePhase: 'selecting_dealer',
         pendingEvent: dealerEvent,
         lastEventMessage: 'Choose your supplier.',
@@ -1037,43 +1545,41 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'CONTACT_KINGPIN': {
-      if (state.gamePhase !== 'selling') return { ...state, pendingEvent: warnEvent('Not Available', 'You can only contact kingpins once you meet the minimum stash threshold. Fly abroad, do some deals, and build up your stash first.') };
+      const trackedState = normalizeKingpinTracking(state);
+      if (trackedState.gamePhase !== 'selling') return { ...trackedState, pendingEvent: warnEvent('Not Available', 'You can only contact kingpins once you meet the minimum stash threshold. Fly abroad, do some deals, and build up your stash first.') };
+      if (trackedState.turn < trackedState.kingpinCooldown) return { ...trackedState, pendingEvent: warnEvent('Try Later', `The kingpin you burned is in a mood. Word travels fast in London's underworld — they all know you bottled it last time. Give it a turn, let things cool off. Go lie low, move some product around your stash, do something useful with yourself before you waste their time again.`) };
       const kingpin = KINGPIN_POOL.find(k => k.id === action.kingpinId);
-      if (!kingpin) return { ...state, pendingEvent: warnEvent('Error', 'Invalid kingpin selection.') };
-      if (state.player.inventory.length === 0) return { ...state, pendingEvent: warnEvent('No Product', `You've got nothing on you, Angelo. Empty pockets, empty bag. You need to retrieve product from your stash first. The kingpins aren't going to buy fresh air, you daft little cunt. Go to the Inventory panel, click what you want to sell, bring it out — THEN make the call. fuck me they said you were lazy this takes the piss!`), lastEventMessage: 'No product to sell.' };
-      if (state.player.inventory.length > 1) {
-        const names = state.player.inventory.map(i => state.goods.find(g => g.id === i.goodId)?.name ?? i.goodId).join(', ');
-        return { ...state, pendingEvent: warnEvent('One At A Time', `You can only sell one type of product at a time.\n\nYou're carrying: ${names}\n\nStash the ones you're not selling first.`), lastEventMessage: 'Sell one product at a time.' };
+      if (!kingpin) return { ...trackedState, pendingEvent: warnEvent('Error', 'Invalid kingpin selection.') };
+      if (trackedState.player.inventory.length === 0) return { ...trackedState, pendingEvent: warnEvent('No Product', `You've got nothing on you, Angelo. Empty pockets, empty bag. You need to retrieve product from your stash first. The kingpins aren't going to buy fresh air, you daft little cunt. Go to the Inventory panel, click what you want to sell, bring it out — THEN make the call. fuck me they said you were lazy this takes the piss!`), lastEventMessage: 'No product to sell.' };
+      if (trackedState.player.inventory.length > 1) {
+        const names = trackedState.player.inventory.map(i => trackedState.goods.find(g => g.id === i.goodId)?.name ?? i.goodId).join(', ');
+        return { ...trackedState, pendingEvent: warnEvent('One At A Time', `You can only sell one type of product at a time.\n\nYou're carrying: ${names}\n\nStash the ones you're not selling first.`), lastEventMessage: 'Sell one product at a time.' };
       }
-      const sellGood = state.player.inventory[0];
-      const goodDef = state.goods.find(g => g.id === sellGood.goodId);
-      const sellPriceData = state.currentMarketPrices.find(p => p.goodId === sellGood.goodId);
-      if (!sellPriceData) return { ...state, pendingEvent: warnEvent('No Buyer', 'No buyer for this product right now. Check the market prices first.') };
+      const sellGood = trackedState.player.inventory[0];
+      const goodDef = trackedState.goods.find(g => g.id === sellGood.goodId);
+      const sellPriceData = trackedState.currentMarketPrices.find(p => p.goodId === sellGood.goodId);
+      if (!sellPriceData) return { ...trackedState, pendingEvent: warnEvent('No Buyer', 'No buyer for this product right now. Check the market prices first.') };
       if (kingpin.buys && !kingpin.buys.includes(sellGood.goodId)) {
-        const accepted = kingpin.buys.map(id => state.goods.find(g => g.id === id)?.name ?? id).join(', ');
+        const accepted = kingpin.buys.map(id => trackedState.goods.find(g => g.id === id)?.name ?? id).join(', ');
         const gName = goodDef?.name ?? sellGood.goodId;
-        return { ...state, pendingEvent: warnEvent('Wrong Product', `${kingpin.name} doesn't deal in ${gName}. ${kingpin.name} only buys ${accepted}. Take that shit somewhere else.`) };
+        return { ...trackedState, pendingEvent: warnEvent('Wrong Product', `${kingpin.name} doesn't deal in ${gName}. ${kingpin.name} only buys ${accepted}. Take that shit somewhere else.`) };
       }
       const productValue = sellPriceData.sellPrice * sellGood.quantity;
       if (productValue < kingpin.minStashValue) {
-        return { ...state, pendingEvent: warnEvent('Below Minimum', `These kingpins don't get out of bed for pocket change, Angelo, you lazy coon. You've got to build up your stash first — make a few runs, stack some product, THEN give them a bell. You can't walk into Hatton Garden with a tenner and expect Avi to roll out the red carpet, that covetous Jew will take everything you've got, even if you've got nothing. So start small with the chav behind Chicken Cottage. Build up. Then go big. When you've got enough product, the big boys will take your call. Until then, you're just another wannabe with a bag of nothing. You cant fuck about here, Angelo, youre not in Zimbabwe anymore!`), lastEventMessage: 'Need more product.' };
+        return { ...trackedState, pendingEvent: warnEvent('Below Minimum', `These kingpins don't get out of bed for pocket change, Angelo, you lazy bastard. You've got to build up your stash first — make a few runs, stack some product, THEN give them a bell. You can't walk into Fletcher's gym with a tenner and expect him to stop the pad work — he'll have you sparring Danny for pocket money, and Danny doesn't do light sparring. So start small with the chav behind Chicken Cottage. Build up. Then go big. When you've got enough product, the big boys will take your call. Until then, you're just another wannabe with a bag of nothing. You can't fuck about here, Angelo, you're not in Zimbabwe anymore!`), lastEventMessage: 'Need more product.' };
       }
       const goodName = goodDef?.name ?? 'goods';
-      const adjustedPrice = Math.floor(sellPriceData.sellPrice * kingpin.sellPriceMod);
-      const kingpinEvent = generateKingpinEncounter(state.player, kingpin, goodName, productValue);
-      return { ...state, selectedKingpin: kingpin, pendingEvent: kingpinEvent, pendingSell: { goodId: sellGood.goodId, quantity: sellGood.quantity, baseSellPrice: adjustedPrice, countryId: 'london' }, lastEventMessage: `Calling ${kingpin.name}...`, gameLog: [...state.gameLog, `[Turn $${state.turn}] Contacted kingpin: ${kingpin.name}.`] };
+      const fightOutcome = trackedState.kingpinFightOutcomes[kingpin.id];
+      const approachEvent = generateKingpinApproachEvent(kingpin, fightOutcome);
+      return { ...trackedState, selectedKingpin: kingpin, pendingEvent: approachEvent, kingpinApproach: null, pendingBuy: null, pendingSell: null, lastEventMessage: `Calling ${kingpin.name}...`, gameLog: [...trackedState.gameLog, `[Turn $${trackedState.turn}] Contacted kingpin: ${kingpin.name}.`] };
     }
 
     case 'MEET_KINGPIN': {
-      if (state.gamePhase !== 'selling') return { ...state, lastEventMessage: 'No kingpin available now.' };
-      if (state.player.inventory.length === 0) return { ...state, lastEventMessage: 'No product to sell. Retrieve goods from stash first.' };
-      const sellGood = state.player.inventory[0];
-      const sellPriceData = state.currentMarketPrices.find(p => p.goodId === sellGood.goodId);
-      if (!sellPriceData) return { ...state, lastEventMessage: 'No buyer for this product right now.' };
-      const goodName = GOODS.find(g => g.id === sellGood.goodId)?.name ?? 'goods';
-      const country = getCountry(state.player.currentCountryId)!;
-      const kingpinEvent = generateSellEncounter(state.player, country, goodName);
-      return { ...state, pendingEvent: kingpinEvent, pendingSell: { goodId: sellGood.goodId, quantity: sellGood.quantity, baseSellPrice: sellPriceData.sellPrice, countryId: country.id }, lastEventMessage: `Meeting kingpin in ${country.city}...`, gameLog: [...state.gameLog, `[Turn $${state.turn}] Kingpin meeting.`] };
+      return {
+        ...normalizeKingpinTracking(state),
+        pendingEvent: warnEvent('Choose a Kingpin', 'Pick a named kingpin contact. Generic kingpin meetings are disabled so each kingpin can only trigger one tracked sting per run.'),
+        lastEventMessage: 'Choose a named kingpin contact.',
+      };
     }
 
     case 'SELL': {
@@ -1090,8 +1596,13 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       let updatedStash = state.player.stash.map(s => ({ ...s }));
       for (const item of state.player.inventory) {
         const idx = updatedStash.findIndex(s => s.goodId === item.goodId);
-        if (idx >= 0) { updatedStash[idx] = { ...updatedStash[idx], quantity: updatedStash[idx].quantity + item.quantity }; }
-        else { updatedStash.push({ goodId: item.goodId, quantity: item.quantity }); }
+        if (idx >= 0) {
+          const existing = updatedStash[idx];
+          const totalQty = existing.quantity + item.quantity;
+          const mergedCost = (existing.costPerUnit * existing.quantity + item.costPerUnit * item.quantity) / totalQty;
+          updatedStash[idx] = { ...existing, quantity: totalQty, costPerUnit: mergedCost };
+        }
+        else { updatedStash.push({ goodId: item.goodId, quantity: item.quantity, costPerUnit: item.costPerUnit }); }
       }
       return { ...state, player: { ...state.player, inventory: [], stash: updatedStash }, lastEventMessage: `Stashed $${state.player.inventory.reduce((s, i) => s + i.quantity, 0)} units in your storage.`, gameLog: [...state.gameLog, `[Turn $${state.turn}] Goods stashed.`] };
     }
@@ -1105,10 +1616,14 @@ case 'RETRIEVE_GOODS': {
        const capFree = state.player.inventoryCapacity - state.player.inventory.reduce((sum, item) => { const gi = state.goods.find(x => x.id === item.goodId); return sum + (gi ? gi.weight * item.quantity : 0); }, 0);
        if (weightNeeded > capFree) return { ...state, lastEventMessage: 'Not enough inventory space.' };
        let newStash = state.player.stash.map(s => s.goodId === action.goodId ? { ...s, quantity: s.quantity - action.quantity } : s).filter(s => s.quantity > 0);
-       let newInv = state.player.inventory.map(i => ({ ...i }));
-       const existing = newInv.find(i => i.goodId === action.goodId);
-       if (existing) { newInv = newInv.map(i => i.goodId === action.goodId ? { ...i, quantity: i.quantity + action.quantity } : i); }
-       else { newInv.push({ goodId: action.goodId, quantity: action.quantity }); }
+        let newInv = state.player.inventory.map(i => ({ ...i }));
+        const existing = newInv.find(i => i.goodId === action.goodId);
+        if (existing) {
+          const totalQty = existing.quantity + action.quantity;
+          const mergedCost = (existing.costPerUnit * existing.quantity + stashItem.costPerUnit * action.quantity) / totalQty;
+          newInv = newInv.map(i => i.goodId === action.goodId ? { ...i, quantity: totalQty, costPerUnit: mergedCost } : i);
+        }
+        else { newInv.push({ goodId: action.goodId, quantity: action.quantity, costPerUnit: stashItem.costPerUnit }); }
        return { ...state, player: { ...state.player, stash: newStash, inventory: newInv }, lastEventMessage: `Retrieved $${action.quantity}x from stash.`, gameLog: [...state.gameLog, `[Turn $${state.turn}] Retrieved from stash.`] };
      }
 
@@ -1123,25 +1638,24 @@ case 'RETRIEVE_GOODS': {
 
     case 'VIEW_MARKET': {
       const country = getCountry(state.player.currentCountryId)!;
+      if (state.marketCasedThisTurn) return { ...state, lastEventMessage: 'You already cased the market this turn. Lie low or travel to get fresh intel.' };
       const tradeVol = getRecentTradeVolume(state);
       const prices = generateMarketPrices(country, state.director, tradeVol, state.player.heat);
       const priceList = prices.map(p => `${p.goodName}: Buy=$${p.buyPrice} Sell=$${p.sellPrice} (Demand:${p.demand})`).join('\n  ');
-      const updatedPlayer = { ...state.player, reputation: Math.max(0, state.player.reputation - 2) };
-      return { ...state, player: updatedPlayer, currentMarketPrices: prices, lastEventMessage: `Market prices in ${country.name}:\n  ${priceList}` };
+      return { ...state, currentMarketPrices: prices, marketCasedThisTurn: true, lastEventMessage: `Market prices in ${country.name}:\n  ${priceList}` };
     }
 
     case 'MARKET_REFRESH_TUTORIAL': {
       const country = getCountry(state.player.currentCountryId)!;
       const tradeVol = getRecentTradeVolume(state);
       const prices = generateMarketPrices(country, state.director, tradeVol, state.player.heat);
-      const updatedPlayer = { ...state.player, reputation: Math.max(0, state.player.reputation - 2) };
       const refreshEvt: ChoiceEvent = {
         id: 'refresh_tutorial_' + Date.now().toString(36),
-        title: 'Refreshing Prices',
-        context: `You're basically hanging around waiting for the market to shift, Angelo. Every time you refresh prices, dealers notice you lurking — you look desperate. Loses you a bit of street rep. Not much — just enough that people start thinking you're a bit of a melt. Every refresh: -2 reputation. Don't spam it, you needy little prick.`,
+        title: 'Casing the Market',
+        context: `You're casing the market — ear to the ground, watching the numbers move like crack on a council estate. Good boy. But here's the catch, you impatient little cunt: you can only do this ONCE per turn. One look. That's it. After that you've got to lie low, take a flight, or let some time pass before the intel refreshes.\n\nNo rep cost. No cred loss. Just timing. Use it wisely or don't use it at all — I don't give a fuck, Angelo.`,
         choices: [{ id: 'understood', text: 'Understood', ...nullChoice }],
       };
-      return { ...state, player: updatedPlayer, currentMarketPrices: prices, marketRefreshTutorialShown: true, pendingEvent: refreshEvt, lastEventMessage: 'Prices refreshed (-2 rep).' };
+      return { ...state, currentMarketPrices: prices, marketCasedThisTurn: true, marketRefreshTutorialShown: true, pendingEvent: refreshEvt, lastEventMessage: 'Market cased (once per turn).' };
     }
 
     case 'VIEW_INVENTORY': {
@@ -1194,6 +1708,23 @@ case 'RETRIEVE_GOODS': {
       return { ...state, pendingEvent: heatEvt, lastEventMessage: '' };
     }
 
+    case 'SAFEHOUSE_TUTORIAL': {
+      if (state.safehouseTutorialShown) return state;
+      const shEvt: ChoiceEvent = {
+        id: 'safehouse_tutorial_' + Date.now().toString(36),
+        title: 'Your Safehouse',
+        context: `Right, you dense little prick. This box here is your safehouse — where you kip between jobs. Right now you're in your parents basement: your mum does your washing, your stepdad gives you a hard time, but it's free. The whole point of this game is to climb the ladder — from that shithole to a proper gaff.
+
+Your safehouse level depends on how much liquid wealth you've got (cash + bank combined). Hit the thresholds and you move up: 25K gets you a one-bed flat, 60K a secure apartment, 200K a villa with a pool, 600K a corporate safehouse with your own airstrip. Each tier gives you a bigger stash, better protection, and — once you move out of your parents basement your nonce of a stepdad won't be able to give you a hard time anymore…
+
+But here's the catch — if your wealth drops below the demotion threshold, you get knocked back down. One day you're in a penthouse, the next you're back in a shitty flat wondering where it all went wrong. So don't be a cunt and blow it all on flash cars before you've secured the bag.
+
+Bottom line: more money = better safehouse = more stash space + respect. Now get on with it.`,
+        choices: [{ id: 'understood', text: 'Got it', ...nullChoice }],
+      };
+      return { ...state, pendingEvent: shEvt, lastEventMessage: '' };
+    }
+
     case 'ASSET_SELL_TUTORIAL': {
       const sellEvt: ChoiceEvent = {
         id: 'assetsell_tutorial_' + Date.now().toString(36),
@@ -1217,6 +1748,56 @@ case 'RETRIEVE_GOODS': {
 
     case 'FIRST_CLASS_WARNING_SHOWN': return { ...state, firstClassWarningShown: true };
 
+    case 'REALTIME_TICK': {
+      if (state.gamePhase !== 'home' && state.gamePhase !== 'selling') return state;
+      if (state.pendingEvent) return state;
+      const newDay = (state.realtimeDay + 1) % 7;
+      // Full market reroll on new week, small drift otherwise
+      const isNewWeek = newDay === 0;
+      const newPrices = isNewWeek
+        ? generateMarketPrices(
+            getCountry(state.player.currentCountryId)!,
+            state.director,
+            getRecentTradeVolume(state),
+            state.player.heat,
+          )
+        : state.currentMarketPrices.map(p => ({
+            ...p,
+            buyPrice: Math.max(1, Math.floor(p.buyPrice * (1 + (Math.random() - 0.5) * 0.05))),
+            sellPrice: Math.max(1, Math.floor(p.sellPrice * (1 + (Math.random() - 0.5) * 0.05))),
+          }));
+      const newDaysSinceRecase = state.realtimeDaysSinceRecase + 1;
+      const recaseReset = newDaysSinceRecase >= 3;
+      // Desperation timer — player has 7 real-time days to escape the dead zone
+      let newDesperationTimer = state.desperationTimer;
+      if (isInDeadZone(state)) {
+        if (newDesperationTimer === 0) newDesperationTimer = 7;
+        else newDesperationTimer -= 1;
+      } else {
+        newDesperationTimer = 0;
+      }
+      if (newDesperationTimer <= 0 && state.desperationTimer > 0) {
+        // Timer hit 0 — game over
+        const msg = `The week's up. You've had seven days to scrape together a ticket and a few quid for product — and you've got nothing. No cash, no stash, no deals. The underground's moved on without you. You're back stacking shelves at Tesco, security guard at some warehouse, watching the clock crawl. Your stepdad's insufferable. Your mum's disappointed. And every night you lie awake wondering what could've been. Enjoy the 9-to-5, you useless wanker!`;
+        return { ...state, player: { ...state.player, runActive: false }, lastEventMessage: msg, gameLog: [...state.gameLog, `[Turn $${state.turn}] ${msg}`] };
+      }
+      return {
+        ...state,
+        realtimeDay: newDay,
+        realtimeDayProgress: 0,
+        realtimeDaysSinceRecase: recaseReset ? 0 : newDaysSinceRecase,
+        marketCasedThisTurn: recaseReset ? false : state.marketCasedThisTurn,
+        currentMarketPrices: newPrices,
+        desperationTimer: newDesperationTimer,
+        player: { ...state.player, heat: Math.max(0, state.player.heat - 1) },
+        director: {
+          ...state.director,
+          boredom: Math.min(100, state.director.boredom + 3),
+          timeSinceLastEvent: state.director.timeSinceLastEvent + 1,
+        },
+      };
+    }
+
     case 'WAIT': {
       let updatedPlayer: PlayerState = { ...state.player };
       const ops = getActiveOperationalBenefits(updatedPlayer);
@@ -1225,7 +1806,7 @@ case 'RETRIEVE_GOODS': {
       updatedPlayer.credibility = Math.max(0, updatedPlayer.credibility - 5);
       const repDecay = Math.floor(1 + Math.random() * 2);
       updatedPlayer.reputation = Math.max(0, updatedPlayer.reputation - repDecay);
-      let s: GameState = withTurn({ ...state, player: updatedPlayer, lastEventMessage: `You wait and lie low. Heat -$${decay}. Credibility -5. Reputation -${repDecay}.` }, `Waited. Heat -${decay}. Cred -5. Rep -${repDecay}.`);
+      let s: GameState = withTurn({ ...state, marketCasedThisTurn: false, player: updatedPlayer, lastEventMessage: `You wait and lie low. Heat -$${decay}. Credibility -5. Reputation -${repDecay}.` }, `Waited. Heat -${decay}. Cred -5. Rep -${repDecay}.`);
       return tryTriggerProceduralEvent(withDirector(s, updatedPlayer));
     }
 
@@ -1236,19 +1817,19 @@ case 'RETRIEVE_GOODS': {
 
     case 'END_TRIP': {
       const { player, message } = bankEndTrip(state.player, ORIGIN_COUNTRY);
-      let s: GameState = withTurn({ ...state, player: updatePeakNetWorth(player, state.currentMarketPrices), lastEventMessage: message, gamePhase: 'home' }, message);
+      let s: GameState = withTurn({ ...state, marketCasedThisTurn: false, player: updatePeakNetWorth(player, state.currentMarketPrices), lastEventMessage: message, gamePhase: 'home' }, message);
       return withDirector(s, player);
     }
 
     case 'TRANSFER_FROM_BANK': {
       const { player, success, message } = transferFromBank(state.player, action.amount);
       if (!success) return { ...state, lastEventMessage: message, gameLog: [...state.gameLog, `[Turn $${state.turn}] ${message}`] };
-      return { ...state, player: handleOverdraft(player), lastEventMessage: message, gameLog: [...state.gameLog, `[Turn $${state.turn}] ${message}`] };
+      return { ...state, player: updatePeakNetWorth(handleOverdraft(player), state.currentMarketPrices), lastEventMessage: message, gameLog: [...state.gameLog, `[Turn $${state.turn}] ${message}`] };
     }
     case 'TRANSFER_TO_BANK': {
       const { player, success, message } = transferToBank(state.player, action.amount);
       if (!success) return { ...state, lastEventMessage: message, gameLog: [...state.gameLog, `[Turn $${state.turn}] ${message}`] };
-      return { ...state, player, lastEventMessage: message, gameLog: [...state.gameLog, `[Turn $${state.turn}] ${message}`] };
+      return { ...state, player: updatePeakNetWorth(player, state.currentMarketPrices), lastEventMessage: message, gameLog: [...state.gameLog, `[Turn $${state.turn}] ${message}`] };
     }
 
     case 'BUY_ASSET': {
@@ -1325,7 +1906,8 @@ case 'RETRIEVE_GOODS': {
       try {
         const saveData = localStorage.getItem('angelo_save');
         if (!saveData) return { ...state, lastEventMessage: 'No save data found.' };
-        return { ...JSON.parse(saveData), lastEventMessage: 'Game loaded successfully.', gameLog: [...JSON.parse(saveData).gameLog, `[Turn $${JSON.parse(saveData).turn}] Game loaded.`] };
+        const loaded = normalizeKingpinTracking(JSON.parse(saveData));
+        return { ...loaded, lastEventMessage: 'Game loaded successfully.', gameLog: [...loaded.gameLog, `[Turn $${loaded.turn}] Game loaded.`] };
       } catch { return { ...state, lastEventMessage: 'Failed to load save. Corrupted data.' }; }
     }
 
@@ -1339,13 +1921,27 @@ case 'RETRIEVE_GOODS': {
       if (newTier === state.safehouseTier) return state;
       const isPromotion = newTier > state.safehouseTier;
       const tier = isPromotion ? newTier : state.safehouseTier - 1;
+      const tierData = SAFEHOUSE_LEVELS[newTier - 1];
+      const stashBonus = (state.player.ownedAssets ?? []).reduce((sum, id) => {
+        const a = getAsset(id);
+        return sum + (a?.stashBonus ?? 0);
+      }, 0);
+      const inventoryBonus = (state.player.ownedAssets ?? []).reduce((sum, id) => {
+        const a = getAsset(id);
+        return sum + (a?.inventoryBonus ?? 0);
+      }, 0);
+      const updatedPlayer = {
+        ...state.player,
+        stashCapacity: tierData.stashCapacity + stashBonus,
+        inventoryCapacity: tierData.inventoryCapacity + inventoryBonus,
+      };
       let seriousNote: string;
       if (isPromotion) {
         const newLevel = SAFEHOUSE_LEVELS[newTier - 1];
-        seriousNote = `\n\n[Your liquid wealth (cash + bank = $${nw.toLocaleString()}) is now above the $${newLevel.advanceAt.toLocaleString()} threshold required for ${newLevel.name}. Your safehouse has been upgraded.]`;
+        seriousNote = `\n\n[Your liquid wealth (cash + bank = $${nw.toLocaleString()}) is now above the $${newLevel.advanceAt.toLocaleString()} threshold required for ${newLevel.name}. Your safehouse has been upgraded.\n\nStash capacity: ${updatedPlayer.stashCapacity} kg | Carry capacity: ${updatedPlayer.inventoryCapacity} kg]`;
       } else {
         const oldLevel = SAFEHOUSE_LEVELS[state.safehouseTier - 1];
-        seriousNote = `\n\n[Your liquid wealth (cash + bank = $${nw.toLocaleString()}) dropped below the $${oldLevel.demoteAt.toLocaleString()} threshold required for ${oldLevel.name}. Your safehouse has been downgraded.]`;
+        seriousNote = `\n\n[Your liquid wealth (cash + bank = $${nw.toLocaleString()}) dropped below the $${oldLevel.demoteAt.toLocaleString()} threshold required for ${oldLevel.name}. Your safehouse has been downgraded.\n\nStash capacity: ${updatedPlayer.stashCapacity} kg | Carry capacity: ${updatedPlayer.inventoryCapacity} kg]`;
       }
       const baseContext = isPromotion ? (SAFEHOUSE_ADVANCE_MSGS[tier] ?? '') : (SAFEHOUSE_DEMOTE_MSGS[tier] ?? '');
       const evt: ChoiceEvent = {
@@ -1354,7 +1950,7 @@ case 'RETRIEVE_GOODS': {
         context: baseContext + seriousNote,
         choices: [{ id: 'continue', text: 'Continue', ...nullChoice }],
       };
-      return { ...state, pendingEvent: evt, lastEventMessage: '' };
+      return { ...state, player: updatedPlayer, pendingEvent: evt, lastEventMessage: '' };
     }
     default: return state;
   }
