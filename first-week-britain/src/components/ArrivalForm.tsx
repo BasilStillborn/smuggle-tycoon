@@ -7,9 +7,10 @@ type ArrivalFormProps = {
   value: ArrivalProfile;
   onChange: (nextValue: ArrivalProfile) => void;
   onSubmit: (nextValue: ArrivalProfile) => void;
+  submitLabel?: string;
 };
 
-function ArrivalForm({ value, onChange, onSubmit }: ArrivalFormProps) {
+function ArrivalForm({ value, onChange, onSubmit, submitLabel = 'Generate my arrival checklist' }: ArrivalFormProps) {
   const [tripLengthDraft, setTripLengthDraft] = useState(String(value.tripLengthDays));
 
   useEffect(() => {
@@ -65,7 +66,7 @@ function ArrivalForm({ value, onChange, onSubmit }: ArrivalFormProps) {
       <div className="mb-7">
         <p className="text-sm font-black uppercase tracking-[0.18em] text-britain-red">Personalise the first week</p>
         <h2 className="mt-2 font-serif text-2xl font-black tracking-tight text-britain-ink sm:text-4xl">Tell us your arrival context.</h2>
-        <p className="mt-3 text-base leading-7 text-britain-ink/65">The MVP uses this to prioritise payments, data, airport routes, emergency help, and trip-specific tasks.</p>
+        <p className="mt-3 text-base leading-7 text-britain-ink/65">This setup powers your compact dashboard windows for arrival, payments, transport, translation, emergency help, and phrases.</p>
       </div>
 
       {value.country === 'china' && (
@@ -161,7 +162,7 @@ function ArrivalForm({ value, onChange, onSubmit }: ArrivalFormProps) {
         className="focus-ring mt-6 w-full rounded-2xl bg-britain-ink px-5 py-4 text-base font-black text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-britain-navy"
         data-track="generate-checklist"
       >
-        Generate my arrival checklist
+        {submitLabel}
       </button>
     </form>
   );

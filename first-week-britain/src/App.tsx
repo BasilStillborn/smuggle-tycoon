@@ -1,25 +1,43 @@
 import { useEffect, useRef, useState } from 'react';
 import AppDashboard from './components/AppDashboard';
+import type { WindowId } from './components/AppDashboard';
+import AppShell from './components/AppShell';
 import ArrivalForm from './components/ArrivalForm';
-import Hero from './components/Hero';
-import { defaultProfile, getAirport, getCity, getCountry, getTripType, type ArrivalProfile } from './data/arrivals';
+import BottomNav from './components/BottomNav';
+import InfoWindow from './components/InfoWindow';
+import { defaultProfile, type ArrivalProfile } from './data/arrivals';
 import { isChineseVisitor } from './data/chineseVisitor';
 import { initAnalytics, trackEvent } from './lib/analytics';
+import { loadSavedProfile, saveProfile } from './lib/profileStorage';
+
+function getInitialState() {
+  const savedProfile = loadSavedProfile();
+  return {
+    profile: savedProfile ?? defaultProfile,
+    hasSavedProfile: Boolean(savedProfile),
+  };
+}
 
 function App() {
-  const [draftProfile, setDraftProfile] = useState<ArrivalProfile>(defaultProfile);
-  const [activeProfile, setActiveProfile] = useState<ArrivalProfile>(defaultProfile);
-  const [hasGenerated, setHasGenerated] = useState(false);
+  const [initialState] = useState(getInitialState);
+  const [draftProfile, setDraftProfile] = useState<ArrivalProfile>(initialState.profile);
+  const [activeProfile, setActiveProfile] = useState<ArrivalProfile>(initialState.profile);
+  const [hasGenerated, setHasGenerated] = useState(initialState.hasSavedProfile);
+  const [setupOpen, setSetupOpen] = useState(!initialState.hasSavedProfile);
+  const [activeWindow, setActiveWindow] = useState<WindowId | null>(null);
   const dashboardRef = useRef<HTMLElement | null>(null);
-  const country = getCountry(draftProfile);
-  const airport = getAirport(draftProfile);
-  const city = getCity(draftProfile);
-  const tripType = getTripType(draftProfile);
   const activeChineseMode = isChineseVisitor(activeProfile.country);
   const trackedChineseModeKey = useRef('');
 
   useEffect(() => {
     initAnalytics();
+    if (initialState.hasSavedProfile) {
+      trackEvent('profile_loaded_from_storage', {
+        country: initialState.profile.country,
+        airport: initialState.profile.airport,
+        trip_type: initialState.profile.tripType,
+      });
+    }
   }, []);
 
   useEffect(() => {
@@ -41,13 +59,23 @@ function App() {
     });
   }, [activeChineseMode, activeProfile.airport, activeProfile.country, activeProfile.language, activeProfile.tripType]);
 
-  function scrollToForm() {
-    document.getElementById('arrival-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  function openSetup(source: string) {
+    setDraftProfile(activeProfile);
+    setSetupOpen(true);
+    trackEvent('setup_window_opened', { source });
   }
 
-  function handleGenerate(profile: ArrivalProfile) {
+  function closeSetup() {
+    setSetupOpen(false);
+  }
+
+  function handleSaveSetup(profile: ArrivalProfile) {
     setActiveProfile(profile);
+    setDraftProfile(profile);
     setHasGenerated(true);
+    setSetupOpen(false);
+    setActiveWindow('arrival');
+    saveProfile(profile);
     trackEvent('checklist_generated', {
       country: profile.country,
       airport: profile.airport,
@@ -57,47 +85,51 @@ function App() {
       trip_length_days: profile.tripLengthDays,
       visitor_segment: profile.country === 'china' ? 'chinese' : 'general',
     });
+    trackEvent('setup_saved', {
+      country: profile.country,
+      airport: profile.airport,
+      trip_type: profile.tripType,
+      visitor_segment: profile.country === 'china' ? 'chinese' : 'general',
+    });
     window.setTimeout(() => {
       dashboardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 80);
   }
 
+  function openWindow(windowId: WindowId, source = 'dashboard') {
+    setActiveWindow(windowId);
+    if (source === 'bottom_nav') {
+      trackEvent('bottom_nav_clicked', { target: windowId });
+    }
+  }
+
+  function goHome() {
+    setActiveWindow(null);
+    trackEvent('bottom_nav_clicked', { target: 'home' });
+    dashboardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   return (
-    <main className="min-h-screen overflow-x-hidden bg-britain-cream text-britain-ink">
-      <Hero onStart={scrollToForm} />
-
-      <section id="arrival-form" className="paper-texture relative py-12 sm:py-16 lg:py-24">
-        <div className="absolute left-0 top-0 h-32 w-full bg-gradient-to-b from-britain-ink/15 to-transparent" />
-        <div className="relative mx-auto grid max-w-7xl gap-8 px-5 sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
-          <ArrivalForm value={draftProfile} onChange={setDraftProfile} onSubmit={handleGenerate} />
-
-          <aside className="rounded-[1.5rem] border border-britain-ink/10 bg-britain-paper p-5 shadow-card sm:rounded-[2rem] sm:p-8">
-            <p className="text-sm font-black uppercase tracking-[0.18em] text-britain-red">Why this shape</p>
-            <h2 className="mt-2 font-serif text-2xl font-black tracking-tight text-britain-ink sm:text-3xl">SinoGuide-style category, UK visitor focus.</h2>
-            <p className="mt-4 text-base font-semibold leading-7 text-britain-ink/65">
-              The product is not another travel blog. It is a guided setup layer for the first week: data, payment, airport transfer, transport, health, etiquette, and official sources.
-            </p>
-
-            <div className="mt-6 grid gap-3">
-              {[
-                ['Country signal', country.note],
-                ['Airport signal', airport.note],
-                ['City signal', city.note],
-                ['Trip signal', tripType.note],
-              ].map(([label, note]) => (
-                <div key={label} className="rounded-3xl bg-white p-4">
-                  <p className="text-xs font-black uppercase tracking-[0.16em] text-britain-ink/45">{label}</p>
-                  <p className="mt-2 text-sm font-bold leading-6 text-britain-ink/72">{note}</p>
-                </div>
-              ))}
-            </div>
-          </aside>
-        </div>
-      </section>
+    <main className="min-h-screen overflow-x-hidden bg-britain-cream pb-24 text-britain-ink md:pb-0">
+      <AppShell profile={activeProfile} onEditTrip={() => openSetup('app_shell')} />
 
       <section ref={dashboardRef} id="dashboard-app">
-        <AppDashboard profile={activeProfile} hasGenerated={hasGenerated} />
+        <AppDashboard
+          profile={activeProfile}
+          hasGenerated={hasGenerated}
+          activeWindow={activeWindow}
+          onOpenWindow={(windowId) => openWindow(windowId)}
+          onCloseWindow={() => setActiveWindow(null)}
+        />
       </section>
+
+      {setupOpen && (
+        <InfoWindow title="Trip Setup" subtitle="Save your arrival context to personalise every app window." onClose={closeSetup}>
+          <ArrivalForm value={draftProfile} onChange={setDraftProfile} onSubmit={handleSaveSetup} submitLabel="Save trip and open arrival" />
+        </InfoWindow>
+      )}
+
+      <BottomNav onHome={goHome} onSetup={() => openSetup('bottom_nav')} onOpenWindow={(windowId) => openWindow(windowId, 'bottom_nav')} />
 
       <footer className="bg-britain-ink px-5 py-8 text-white sm:px-8">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 text-sm font-bold text-white/55 sm:flex-row sm:items-center sm:justify-between">

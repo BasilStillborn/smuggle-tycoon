@@ -16,7 +16,7 @@ import CategoryTile from './CategoryTile';
 import InfoWindow from './InfoWindow';
 import Waitlist from './Waitlist';
 
-type WindowId = 'arrival' | 'airport' | 'transport' | 'payments' | 'translation' | 'emergency' | 'phrases' | 'apps' | 'official' | 'waitlist';
+export type WindowId = 'arrival' | 'airport' | 'transport' | 'payments' | 'translation' | 'emergency' | 'phrases' | 'apps' | 'official' | 'waitlist';
 
 type Tile = {
   id: WindowId;
@@ -31,6 +31,9 @@ type Tile = {
 type AppDashboardProps = {
   profile: ArrivalProfile;
   hasGenerated: boolean;
+  activeWindow: WindowId | null;
+  onOpenWindow: (windowId: WindowId) => void;
+  onCloseWindow: () => void;
 };
 
 const tiles: Tile[] = [
@@ -126,6 +129,18 @@ const tiles: Tile[] = [
   },
 ];
 
+const nextWindowMap: Partial<Record<WindowId, WindowId>> = {
+  arrival: 'payments',
+  payments: 'transport',
+  transport: 'emergency',
+  airport: 'transport',
+  translation: 'phrases',
+  emergency: 'phrases',
+  phrases: 'apps',
+  apps: 'official',
+  official: 'waitlist',
+};
+
 function copyWithFallback(text: string) {
   if (navigator.clipboard?.writeText) {
     return navigator.clipboard.writeText(text);
@@ -193,8 +208,7 @@ function GuideSummary({ guide }: { guide?: GuideCard }) {
   );
 }
 
-function AppDashboard({ profile, hasGenerated }: AppDashboardProps) {
-  const [activeWindow, setActiveWindow] = useState<WindowId | null>(null);
+function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onCloseWindow }: AppDashboardProps) {
   const [copiedPhrase, setCopiedPhrase] = useState<string | null>(null);
   const country = getCountry(profile);
   const airport = getAirport(profile);
@@ -224,7 +238,7 @@ function AppDashboard({ profile, hasGenerated }: AppDashboardProps) {
   }, [chineseMode, hasGenerated, profile.airport, profile.country, profile.tripType]);
 
   function openWindow(id: WindowId) {
-    setActiveWindow(id);
+    onOpenWindow(id);
     trackEvent('category_tile_opened', {
       window_id: id,
       country: profile.country,
@@ -236,7 +250,12 @@ function AppDashboard({ profile, hasGenerated }: AppDashboardProps) {
     if (activeWindow) {
       trackEvent('category_tile_closed', { window_id: activeWindow });
     }
-    setActiveWindow(null);
+    onCloseWindow();
+  }
+
+  function openNextWindow(id: WindowId) {
+    trackEvent('next_window_clicked', { from_window_id: activeWindow ?? 'unknown', to_window_id: id });
+    openWindow(id);
   }
 
   async function copyPhrase(id: string, text: string) {
@@ -403,6 +422,9 @@ function AppDashboard({ profile, hasGenerated }: AppDashboardProps) {
     }
   }
 
+  const nextWindow = activeWindow ? nextWindowMap[activeWindow] : null;
+  const nextTile = nextWindow ? visibleTiles.find((tile) => tile.id === nextWindow) : null;
+
   return (
     <section id="dashboard" className="bg-britain-cream px-4 py-12 sm:px-8 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-7xl">
@@ -437,7 +459,18 @@ function AppDashboard({ profile, hasGenerated }: AppDashboardProps) {
 
       {activeTile && (
         <InfoWindow title={activeTile.title} subtitle={activeTile.subtitle} onClose={closeWindow}>
-          {renderWindowContent()}
+          <div className="space-y-5">
+            {renderWindowContent()}
+            {nextTile && (
+              <button
+                type="button"
+                onClick={() => openNextWindow(nextTile.id)}
+                className="focus-ring w-full rounded-2xl bg-britain-red px-5 py-4 text-sm font-black text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-red-700"
+              >
+                Next: {nextTile.title}
+              </button>
+            )}
+          </div>
         </InfoWindow>
       )}
     </section>

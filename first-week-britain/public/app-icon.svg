@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">First Week in Britain app icon</title>
+  <rect width="512" height="512" rx="112" fill="#102033"/>
+  <path d="M96 155h320v202H96z" fill="#fffaf0"/>
+  <path d="M96 155h320v52H96z" fill="#c8252c"/>
+  <path d="M132 248h248v22H132zm0 50h174v22H132z" fill="#102033"/>
+  <circle cx="373" cy="320" r="44" fill="#d69e2e"/>
+  <path d="M356 321l13 13 27-31" fill="none" stroke="#102033" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
