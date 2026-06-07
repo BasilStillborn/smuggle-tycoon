@@ -40,13 +40,13 @@ const copy: Record<AppLocale, {
     footerNext: 'Next: form endpoint, ad tests, Chinese traffic, more UK cities.',
   },
   zh: {
-    setupTitle: '行程设置',
-    setupSubtitle: '保存你的到达情况，用来生成每个应用窗口。',
-    setupSubmit: '保存并打开到达清单',
+    setupTitle: '调整行程',
+    setupSubtitle: '按你的机场、城市和停留时间微调工具箱内容。',
+    setupSubmit: '保存并回到工具箱',
     appWindow: '应用窗口',
     closeWindow: '关闭窗口',
-    footer: '英国第一周 MVP。独立指南，不是英国政府官方网站。',
-    footerNext: '下一步：表单验证、广告测试、中国流量和更多英国城市。',
+    footer: '中国游客英国到达工具箱。独立指南，不是英国政府官方网站。',
+    footerNext: '汇率仅供参考，实际扣款以银行、支付平台或发卡机构为准。',
   },
 };
 
@@ -55,7 +55,7 @@ function getRouteLocale(): AppLocale {
     return 'en';
   }
 
-  return window.location.pathname.startsWith('/zh') ? 'zh' : 'en';
+  return window.location.pathname.startsWith('/en') ? 'en' : 'zh';
 }
 
 function getInitialState(locale: AppLocale) {
@@ -68,6 +68,7 @@ function getInitialState(locale: AppLocale) {
   return {
     profile,
     hasSavedProfile: Boolean(canUseSavedProfile && savedProfile),
+    shouldOpenSetup: locale === 'en' && !savedProfile,
   };
 }
 
@@ -76,17 +77,17 @@ function App() {
   const [initialState] = useState(() => getInitialState(routeLocale));
   const [draftProfile, setDraftProfile] = useState<ArrivalProfile>(initialState.profile);
   const [activeProfile, setActiveProfile] = useState<ArrivalProfile>(initialState.profile);
-  const [hasGenerated, setHasGenerated] = useState(initialState.hasSavedProfile);
-  const [setupOpen, setSetupOpen] = useState(!initialState.hasSavedProfile);
+  const [hasGenerated, setHasGenerated] = useState(routeLocale === 'zh' || initialState.hasSavedProfile);
+  const [setupOpen, setSetupOpen] = useState(initialState.shouldOpenSetup);
   const [activeWindow, setActiveWindow] = useState<WindowId | null>(null);
   const dashboardRef = useRef<HTMLElement | null>(null);
-  const activeChineseMode = isChineseVisitor(activeProfile.country);
+  const activeChineseMode = routeLocale === 'zh' || isChineseVisitor(activeProfile.country);
   const trackedChineseModeKey = useRef('');
   const t = copy[routeLocale];
 
   useEffect(() => {
     document.documentElement.lang = routeLocale === 'zh' ? 'zh-CN' : 'en';
-    document.title = routeLocale === 'zh' ? '英国第一周 | 中国游客到达助手' : 'First Week in Britain';
+    document.title = routeLocale === 'zh' ? '中国游客英国到达工具箱' : 'First Week in Britain';
     initAnalytics();
     if (initialState.hasSavedProfile) {
       trackEvent('profile_loaded_from_storage', {

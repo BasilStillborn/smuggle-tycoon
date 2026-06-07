@@ -27,18 +27,18 @@ const copy = {
     sectionBody: 'This form posts to your configured endpoint when `VITE_WAITLIST_ENDPOINT` is set. Without one, it stays in safe demo mode for local testing.',
   },
   zh: {
-    tagEyebrow: '当前兴趣标签',
+    tagEyebrow: '你的到达场景',
     segment: '中国游客分组',
-    emailLabel: '用于早期访问的邮箱',
+    emailLabel: '留个邮箱，下一版工具上线时通知你',
     sending: '发送中...',
-    submit: '加入验证名单',
+    submit: '加入名单，告诉我下一版',
     invalidEmail: '请输入有效邮箱地址。',
     demoSaved: '本地演示模式已保存。设置 VITE_WAITLIST_ENDPOINT 后可发送真实报名。',
-    success: '你已加入名单。我们会用你的到达情况决定下一版重点。',
+    success: '你已加入名单。我们会优先根据中国游客的真实需求做下一版。',
     failed: '报名未发送成功。请检查端点或稍后重试。',
-    sectionEyebrow: '验证层',
-    sectionTitle: '用等待名单做第一轮需求测试。',
-    sectionBody: '设置 VITE_WAITLIST_ENDPOINT 后，表单会发送到配置端点。没有端点时，本地测试会保持安全演示模式。',
+    sectionEyebrow: '下一版验证',
+    sectionTitle: '你最需要哪个英国到达工具？',
+    sectionBody: '我们会看中国游客实际点击和报名，优先做最有用的工具，不做花架子。',
   },
 };
 
@@ -75,7 +75,7 @@ function Waitlist({ profile, variant = 'section', locale = 'en' }: WaitlistProps
   const airport = getAirport(profile);
   const city = getCity(profile);
   const tripType = getTripType(profile);
-  const chineseModeEnabled = isChineseVisitor(profile.country);
+  const chineseModeEnabled = locale === 'zh' || isChineseVisitor(profile.country);
   const visitorSegment = chineseModeEnabled ? 'chinese' : 'general';
 
   function trackSuccessfulSignup(mode: string) {

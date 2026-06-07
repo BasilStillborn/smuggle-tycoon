@@ -3,20 +3,31 @@ import type { ReactNode } from 'react';
 import type { ArrivalProfile } from '../data/arrivals';
 import { getAirport, getChecklist, getCity, getCountry, getTripType } from '../data/arrivals';
 import {
+  appLauncherGroups,
   baiduTranslateGuide,
   bilingualPhrases,
   chinaPaymentGuide,
   chineseAirportNotes,
+  firstTenMinuteChecklist,
+  foodDeliveryApps,
+  foodDeliveryNotes,
   isChineseVisitor,
   recommendedApps,
+  rideApps,
+  rideHailingNotes,
+  translationApps,
+  transportApps,
+  transportQuickRules,
+  type ToolApp,
 } from '../data/chineseVisitor';
 import { getGuideCards, getOfficialLinks, phraseCards, type GuideCard } from '../data/guides';
 import { trackEvent } from '../lib/analytics';
 import CategoryTile from './CategoryTile';
+import CurrencyConverter from './CurrencyConverter';
 import InfoWindow from './InfoWindow';
 import Waitlist from './Waitlist';
 
-export type WindowId = 'arrival' | 'airport' | 'transport' | 'payments' | 'translation' | 'emergency' | 'phrases' | 'apps' | 'official' | 'waitlist';
+export type WindowId = 'arrival' | 'airport' | 'transport' | 'payments' | 'translation' | 'currency' | 'delivery' | 'rides' | 'emergency' | 'phrases' | 'apps' | 'official' | 'waitlist';
 
 type AppLocale = 'en' | 'zh';
 
@@ -132,6 +143,117 @@ const tiles: Tile[] = [
   },
 ];
 
+const chineseToolboxTiles: Tile[] = [
+  {
+    id: 'arrival',
+    title: '刚到英国先看',
+    summary: '落地 10 分钟内先把关键事搞定。',
+    subtitle: '别刚落地就开始抓瞎，先按这个顺序来。',
+    icon: '先',
+    accent: 'bg-britain-red text-white',
+    segment: 'all',
+  },
+  {
+    id: 'translation',
+    title: '翻译工具',
+    summary: '百度翻译、拍照、语音、离线英文包。',
+    subtitle: '把翻译工具先装好，现场沟通会轻松很多。',
+    icon: '译',
+    accent: 'bg-britain-ink text-white',
+    segment: 'all',
+  },
+  {
+    id: 'currency',
+    title: '英镑人民币',
+    summary: '实时 GBP/CNY 汇率和快速估算。',
+    subtitle: '买东西、打车、点外卖前先心里有个数。',
+    icon: '¥',
+    accent: 'bg-britain-gold text-britain-ink',
+    segment: 'all',
+  },
+  {
+    id: 'payments',
+    title: '英国支付',
+    summary: '银行卡、contactless、微信/支付宝限制。',
+    subtitle: '英国支付逻辑和国内不一样，别只靠二维码。',
+    icon: '卡',
+    accent: 'bg-britain-green text-white',
+    segment: 'all',
+  },
+  {
+    id: 'airport',
+    title: '机场进城',
+    summary: '希思罗/盖特威克到伦敦怎么选。',
+    subtitle: '按预算、行李、时间和酒店区域选路线。',
+    icon: '机',
+    accent: 'bg-britain-mist text-britain-navy',
+    segment: 'all',
+  },
+  {
+    id: 'transport',
+    title: '伦敦交通',
+    summary: 'TfL Go、Citymapper、National Rail。',
+    subtitle: '地铁、公交、Elizabeth line、火车，一次理清。',
+    icon: '轨',
+    accent: 'bg-britain-blue text-white',
+    segment: 'all',
+  },
+  {
+    id: 'delivery',
+    title: '外卖应用',
+    summary: 'Deliveroo、Uber Eats、Just Eat。',
+    subtitle: '刚到酒店太累了，先知道英国外卖怎么点。',
+    icon: '餐',
+    accent: 'bg-britain-red text-white',
+    segment: 'all',
+  },
+  {
+    id: 'rides',
+    title: '打车应用',
+    summary: 'Uber、Bolt、Black cabs 和机场避坑。',
+    subtitle: '深夜、行李多、带老人小孩时更省心。',
+    icon: '车',
+    accent: 'bg-britain-ink text-white',
+    segment: 'all',
+  },
+  {
+    id: 'emergency',
+    title: '紧急求助',
+    summary: '999、NHS 111、药店、保险。',
+    subtitle: '真遇到事，别临时搜索，先知道该找谁。',
+    icon: '999',
+    accent: 'bg-britain-red text-white',
+    segment: 'all',
+  },
+  {
+    id: 'phrases',
+    title: '常用英文',
+    summary: '给酒店、车站、药店、司机看的句子。',
+    subtitle: '复制英文句子，直接给工作人员看。',
+    icon: 'Aa',
+    accent: 'bg-britain-gold text-britain-ink',
+    segment: 'all',
+  },
+  {
+    id: 'apps',
+    title: '必备应用',
+    summary: '翻译、交通、外卖、打车、地图、天气。',
+    subtitle: '你真正需要装的 UK apps，集中放在这里。',
+    icon: 'APP',
+    accent: 'bg-britain-ink text-white',
+    segment: 'all',
+  },
+  {
+    id: 'waitlist',
+    title: '加入名单',
+    summary: '告诉我们中国游客最需要什么功能。',
+    subtitle: '加入验证名单，帮我们决定下一版优先做什么。',
+    icon: '@',
+    accent: 'bg-britain-red text-white',
+    segment: 'all',
+  },
+];
+
 const tileTranslations: Record<AppLocale, Partial<Record<WindowId, Pick<Tile, 'title' | 'summary' | 'subtitle'>>>> = {
   en: {},
   zh: {
@@ -218,14 +340,14 @@ const dashboardCopy = {
   zh: {
     appWindow: '应用窗口',
     closeWindow: '关闭窗口',
-    dashboardEyebrow: '紧凑应用面板',
-    dashboardTitle: '选择一个窗口',
-    ready: '你的清单已准备好。',
-    sample: '保存前先显示示例面板。',
-    instruction: '点击下方窗口。建议先打开“到达清单”。',
+    dashboardEyebrow: '中国游客英国到达工具箱',
+    dashboardTitle: '别刚落地就开始抓瞎',
+    ready: '先把这几个东西搞定。',
+    sample: '先把这几个东西搞定。',
+    instruction: '翻译、汇率、支付、交通、外卖、打车都在这里。',
     days: '天',
     open: '打开',
-    startHere: '先看这里',
+    startHere: '先看',
     next: '下一步：',
     routeOptions: '路线选择',
     fastRules: '快速规则',
@@ -250,6 +372,33 @@ function localizeTile(tile: Tile, locale: AppLocale): Tile {
   };
 }
 
+const zhProfileLabels: Record<string, Record<string, string>> = {
+  country: {
+    china: '中国出发',
+    india: '印度出发',
+    usa: '美国出发',
+    eu: '欧盟/欧洲出发',
+    gulf: '海湾地区出发',
+    other: '其他国家出发',
+  },
+  airport: {
+    heathrow: '希思罗 Heathrow',
+    gatwick: '盖特威克 Gatwick',
+  },
+  city: {
+    london: '伦敦',
+  },
+  tripType: {
+    tourist: '旅游',
+    student: '留学',
+    business: '商务',
+  },
+};
+
+function profileLabel(locale: AppLocale, group: keyof typeof zhProfileLabels, id: string, fallback: string) {
+  return locale === 'zh' ? zhProfileLabels[group][id] ?? fallback : fallback;
+}
+
 const nextWindowMap: Partial<Record<WindowId, WindowId>> = {
   arrival: 'payments',
   payments: 'transport',
@@ -260,6 +409,20 @@ const nextWindowMap: Partial<Record<WindowId, WindowId>> = {
   phrases: 'apps',
   apps: 'official',
   official: 'waitlist',
+};
+
+const chineseNextWindowMap: Partial<Record<WindowId, WindowId>> = {
+  arrival: 'translation',
+  translation: 'currency',
+  currency: 'payments',
+  payments: 'airport',
+  airport: 'transport',
+  transport: 'delivery',
+  delivery: 'rides',
+  rides: 'emergency',
+  emergency: 'phrases',
+  phrases: 'apps',
+  apps: 'waitlist',
 };
 
 function copyWithFallback(text: string) {
@@ -316,6 +479,22 @@ function ActionLink({ href, label, eventName, params }: { href: string; label: s
   );
 }
 
+function AppLinkGrid({ apps, windowId, openLabel }: { apps: ToolApp[]; windowId: WindowId; openLabel: string }) {
+  return (
+    <div className="grid gap-4 sm:grid-cols-2">
+      {apps.map((app) => (
+        <MiniCard key={app.id} title={app.chineseName ? `${app.chineseName} / ${app.name}` : app.name} eyebrow={app.category}>
+          <p>{app.description}</p>
+          {app.caution && <p className="mt-3 rounded-2xl bg-britain-cream p-3 text-xs leading-5 text-britain-ink/58">{app.caution}</p>}
+          <div className="mt-4">
+            <ActionLink href={app.href} label={openLabel} eventName="tool_app_clicked" params={{ app_id: app.id, window_id: windowId }} />
+          </div>
+        </MiniCard>
+      ))}
+    </div>
+  );
+}
+
 function GuideSummary({ guide }: { guide?: GuideCard }) {
   if (!guide) {
     return null;
@@ -339,10 +518,10 @@ function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onClo
   const checklist = getChecklist(profile);
   const guideCards = getGuideCards(profile);
   const officialLinks = getOfficialLinks(profile.airport);
-  const chineseMode = isChineseVisitor(profile.country);
+  const chineseMode = locale === 'zh' || isChineseVisitor(profile.country);
   const localizedTiles = tiles.map((tile) => localizeTile(tile, locale));
-  const visibleTiles = localizedTiles.filter((tile) => tile.segment === 'all' || chineseMode);
-  const activeTile = activeWindow ? localizedTiles.find((tile) => tile.id === activeWindow) : null;
+  const visibleTiles = locale === 'zh' ? chineseToolboxTiles : localizedTiles.filter((tile) => tile.segment === 'all' || chineseMode);
+  const activeTile = activeWindow ? visibleTiles.find((tile) => tile.id === activeWindow) : null;
   const airportChineseGuide = chineseAirportNotes[profile.airport];
   const paymentGuide = guideCards.find((guide) => guide.id === 'payments');
   const transferGuide = guideCards.find((guide) => guide.id === 'airport-transfer');
@@ -391,6 +570,33 @@ function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onClo
   function renderWindowContent() {
     switch (activeWindow) {
       case 'arrival':
+        if (locale === 'zh') {
+          return (
+            <div className="space-y-4">
+              <MiniCard title="落地后 10 分钟" eyebrow="先别乱点应用">
+                <p className="mb-3 text-britain-ink/60">先把网络、地址、支付和路线稳住，后面就不容易慌。</p>
+                <BulletList items={firstTenMinuteChecklist} />
+              </MiniCard>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <MiniCard title="去酒店前" eyebrow="机场出口前检查">
+                  <BulletList items={[
+                    '确认酒店英文地址、postcode 和入住截图都能离线打开。',
+                    '决定交通方式前，先看行李多不多、到达时间晚不晚、酒店离车站远不远。',
+                    '如果要坐伦敦交通，同一段旅程别混用实体卡和手机钱包。',
+                  ]} />
+                </MiniCard>
+                <MiniCard title="今晚先稳住" eyebrow="别把小事拖成大麻烦">
+                  <BulletList items={[
+                    '太晚到酒店时，先买水和简单食物，外卖深夜选择会少很多。',
+                    '找出附近药店、超市和最近的地铁/火车站。',
+                    '把 999、NHS 111 和保险联系方式保存到手机。',
+                  ]} />
+                </MiniCard>
+              </div>
+            </div>
+          );
+        }
+
         return (
           <div className="grid gap-4 sm:grid-cols-2">
             {checklist.map((section, index) => (
@@ -418,6 +624,17 @@ function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onClo
           </div>
         );
       case 'transport':
+        if (locale === 'zh') {
+          return (
+            <div className="space-y-4">
+              <AppLinkGrid apps={transportApps} windowId="transport" openLabel={t.openLink} />
+              <MiniCard title="伦敦交通快速规则" eyebrow="少踩坑">
+                <BulletList items={transportQuickRules} />
+              </MiniCard>
+            </div>
+          );
+        }
+
         return (
           <div className="space-y-4">
             <GuideSummary guide={transportGuide} />
@@ -445,6 +662,16 @@ function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onClo
                 <BulletList items={chinaPaymentGuide.points} />
               </MiniCard>
             )}
+            {locale === 'zh' && (
+              <MiniCard title="支付失败时怎么办" eyebrow="别在闸机口慌">
+                <BulletList items={[
+                  '先找工作人员，不要连续换好几张卡乱刷。',
+                  '确认是不是用了不同设备：实体卡、Apple Pay、Google Pay 会被当成不同支付方式。',
+                  '保留一张实体备用卡，手机没电时能救命。',
+                  '小额现金可以备用，但不要指望所有地方都愿意收现金。',
+                ]} />
+              </MiniCard>
+            )}
             <ActionLink href="https://tfl.gov.uk/fares/contactless-and-oyster-account" label={t.tflContactless} eventName="window_action_clicked" params={{ window_id: 'payments', action: 'tfl_contactless' }} />
           </div>
         );
@@ -455,10 +682,50 @@ function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onClo
               <p className="mb-3 text-britain-ink/60">{baiduTranslateGuide.subtitle}</p>
               <BulletList items={baiduTranslateGuide.points} />
             </MiniCard>
-            <ActionLink href="https://fanyi.baidu.com/" label={t.openBaiduTranslate} eventName="baidu_translate_clicked" params={{ visitor_segment: 'chinese', location: 'dashboard_window' }} />
+            {locale === 'zh' ? (
+              <AppLinkGrid apps={translationApps} windowId="translation" openLabel={t.openLink} />
+            ) : (
+              <ActionLink href="https://fanyi.baidu.com/" label={t.openBaiduTranslate} eventName="baidu_translate_clicked" params={{ visitor_segment: 'chinese', location: 'dashboard_window' }} />
+            )}
+          </div>
+        );
+      case 'currency':
+        return <CurrencyConverter />;
+      case 'delivery':
+        return (
+          <div className="space-y-4">
+            <AppLinkGrid apps={foodDeliveryApps} windowId="delivery" openLabel={t.openLink} />
+            <MiniCard title="英国点外卖先注意这些" eyebrow="别等饿疯了再研究">
+              <BulletList items={foodDeliveryNotes} />
+            </MiniCard>
+          </div>
+        );
+      case 'rides':
+        return (
+          <div className="space-y-4">
+            <AppLinkGrid apps={rideApps} windowId="rides" openLabel={t.openLink} />
+            <MiniCard title="打车和机场接送避坑" eyebrow="安全第一">
+              <BulletList items={rideHailingNotes} />
+            </MiniCard>
           </div>
         );
       case 'emergency':
+        if (locale === 'zh') {
+          return (
+            <div className="space-y-4">
+              <MiniCard title="英国紧急电话怎么用" eyebrow="先存下来">
+                <BulletList items={[
+                  '999：警察、消防、救护车、正在发生的危险或严重伤情。',
+                  'NHS 111：不危及生命，但需要尽快获得医疗建议。',
+                  '药店 pharmacy：轻微不适、常见药、感冒发烧、皮肤问题等可以先问药剂师。',
+                  '旅行保险：私立医疗、理赔、紧急协助和中文支持要看你的保险条款。',
+                ]} />
+              </MiniCard>
+              <ActionLink href="https://111.nhs.uk/" label={t.nhs111} eventName="window_action_clicked" params={{ window_id: 'emergency', action: 'nhs_111' }} />
+            </div>
+          );
+        }
+
         return (
           <div className="space-y-4">
             <GuideSummary guide={emergencyGuide} />
@@ -500,6 +767,19 @@ function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onClo
           </div>
         );
       case 'apps':
+        if (locale === 'zh') {
+          return (
+            <div className="space-y-4">
+              {appLauncherGroups.map((group) => (
+                <MiniCard key={group.id} title={group.title} eyebrow="直接打开">
+                  <p className="mb-4 text-britain-ink/60">{group.subtitle}</p>
+                  <AppLinkGrid apps={group.apps} windowId="apps" openLabel={t.openLink} />
+                </MiniCard>
+              ))}
+            </div>
+          );
+        }
+
         return (
           <div className="space-y-4">
             <GuideSummary guide={mobileDataGuide} />
@@ -545,7 +825,7 @@ function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onClo
     }
   }
 
-  const nextWindow = activeWindow ? nextWindowMap[activeWindow] : null;
+  const nextWindow = activeWindow ? (locale === 'zh' ? chineseNextWindowMap[activeWindow] : nextWindowMap[activeWindow]) : null;
   const nextTile = nextWindow ? visibleTiles.find((tile) => tile.id === nextWindow) : null;
 
   return (
@@ -561,7 +841,7 @@ function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onClo
               </p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4 text-sm font-bold leading-6 text-white/75">
-              {country.label} · {airport.label} · {city.label} · {tripType.label} · {profile.tripLengthDays} {t.days}
+              {profileLabel(locale, 'country', profile.country, country.label)} · {profileLabel(locale, 'airport', profile.airport, airport.label)} · {profileLabel(locale, 'city', profile.city, city.label)} · {profileLabel(locale, 'tripType', profile.tripType, tripType.label)} · {profile.tripLengthDays} {t.days}
             </div>
           </div>
         </div>

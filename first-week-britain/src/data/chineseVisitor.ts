@@ -16,6 +16,23 @@ export type RecommendedApp = {
   caution?: string;
 };
 
+export type ToolApp = {
+  id: string;
+  name: string;
+  chineseName?: string;
+  category: string;
+  description: string;
+  href: string;
+  caution?: string;
+};
+
+export type ToolAppGroup = {
+  id: string;
+  title: string;
+  subtitle: string;
+  apps: ToolApp[];
+};
+
 export type BilingualPhrase = {
   id: string;
   situation: string;
@@ -27,7 +44,7 @@ export type BilingualPhrase = {
 
 export const baiduTranslateGuide: ChineseGuideBlock = {
   title: '出发前设置百度翻译',
-  subtitle: 'Use Baidu Translate as the translation tool, and use this app as your UK arrival checklist.',
+  subtitle: '翻译别等到现场再折腾。离线包、拍照翻译、语音翻译先准备好。',
   points: [
     '出发前安装百度翻译，不要等到机场网络不稳定时再下载。',
     '提前下载英文离线翻译包，避免刚落地时没有网络。',
@@ -38,8 +55,8 @@ export const baiduTranslateGuide: ChineseGuideBlock = {
 };
 
 export const chinaPaymentGuide: ChineseGuideBlock = {
-  title: '英国支付和中国游客注意事项',
-  subtitle: 'The UK is card/contactless-first. Do not assume Chinese QR payment works everywhere.',
+  title: '英国支付别只靠微信/支付宝',
+  subtitle: '英国是银行卡和 contactless 为主。微信支付、支付宝、银联都不能当作唯一方案。',
   points: [
     '英国城市里信用卡、借记卡、Apple Pay 和 Google Pay 很常见。现金只是备用。',
     '微信支付和支付宝在英国不是通用支付方式，不能依赖它们乘地铁或日常消费。',
@@ -125,6 +142,185 @@ export const recommendedApps: RecommendedApp[] = [
     category: 'Mobile data',
     description: '未来可接入 eSIM 合作链接。当前版本只提醒你提前准备网络。',
   },
+];
+
+export const firstTenMinuteChecklist = [
+  '连上机场 Wi-Fi 后，先确认手机流量或 eSIM 能用。',
+  '把酒店英文地址和 postcode 截图保存，别只留中文名。',
+  '准备一张 Visa/Mastercard 或能境外 contactless 的卡，别只靠微信/支付宝。',
+  '打开地图确认去酒店路线，再决定坐地铁、火车、打车还是预约车。',
+  '保存 999 和 NHS 111。真出事时别搜索，直接用。',
+];
+
+export const translationApps: ToolApp[] = [
+  {
+    id: 'baidu-translate',
+    name: 'Baidu Translate',
+    chineseName: '百度翻译',
+    category: '翻译首选',
+    description: '中文用户更顺手。提前下载英文离线包，打开拍照、语音和对话翻译权限。',
+    href: 'https://fanyi.baidu.com/',
+    caution: '推荐工具，不代表本应用与百度有合作关系。',
+  },
+  {
+    id: 'google-translate',
+    name: 'Google Translate',
+    chineseName: 'Google 翻译',
+    category: '备用翻译',
+    description: '有些场景下识别英文菜单、标识和长句也很方便，可以作为备用。',
+    href: 'https://translate.google.com/',
+  },
+];
+
+export const transportApps: ToolApp[] = [
+  {
+    id: 'tfl-go',
+    name: 'TfL Go',
+    category: '官方伦敦交通',
+    description: '看地铁、Elizabeth line、公交和线路状态。遇到延误先看这里。',
+    href: 'https://tfl.gov.uk/maps_/tfl-go',
+  },
+  {
+    id: 'citymapper',
+    name: 'Citymapper',
+    category: '路线规划',
+    description: '在伦敦非常好用，适合比较地铁、公交、步行和打车方案。',
+    href: 'https://citymapper.com/london',
+  },
+  {
+    id: 'national-rail',
+    name: 'National Rail',
+    category: '英国火车',
+    description: '查英国火车时刻、延误、罢工和站台变化。伦敦外行程建议装。',
+    href: 'https://www.nationalrail.co.uk/',
+  },
+];
+
+export const foodDeliveryApps: ToolApp[] = [
+  {
+    id: 'deliveroo',
+    name: 'Deliveroo',
+    category: '外卖',
+    description: '英国常见外卖平台。适合餐厅选择多的城市区域。',
+    href: 'https://deliveroo.co.uk/',
+  },
+  {
+    id: 'uber-eats',
+    name: 'Uber Eats',
+    category: '外卖',
+    description: '很多城市可用，和 Uber 账号体系接近，上手比较快。',
+    href: 'https://www.ubereats.com/gb',
+  },
+  {
+    id: 'just-eat',
+    name: 'Just Eat',
+    category: '外卖',
+    description: '覆盖面广，部分小店会在这里出现。',
+    href: 'https://www.just-eat.co.uk/',
+  },
+];
+
+export const rideApps: ToolApp[] = [
+  {
+    id: 'uber',
+    name: 'Uber',
+    category: '网约车',
+    description: '伦敦和英国很多城市可用。上车前核对车牌、车型和司机姓名。',
+    href: 'https://www.uber.com/gb/en/ride/',
+  },
+  {
+    id: 'bolt',
+    name: 'Bolt',
+    category: '网约车',
+    description: '伦敦常见的 Uber 备用选择。价格和等待时间可以对比。',
+    href: 'https://bolt.eu/en-gb/',
+  },
+  {
+    id: 'black-cabs',
+    name: 'Black cabs',
+    chineseName: '伦敦黑色出租车',
+    category: '正规出租车',
+    description: '机场和市区出租车点可用，通常更贵，但适合深夜、行李多或不想折腾时。',
+    href: 'https://tfl.gov.uk/modes/taxis-and-minicabs/',
+  },
+];
+
+export const appLauncherGroups: ToolAppGroup[] = [
+  {
+    id: 'translation',
+    title: '翻译',
+    subtitle: '拍照、语音、离线英文包，先准备好。',
+    apps: translationApps,
+  },
+  {
+    id: 'transport',
+    title: '交通',
+    subtitle: '伦敦地铁公交、全国火车和实时路线。',
+    apps: transportApps,
+  },
+  {
+    id: 'food',
+    title: '外卖',
+    subtitle: '刚到酒店累了，可以先用这些找吃的。',
+    apps: foodDeliveryApps,
+  },
+  {
+    id: 'rides',
+    title: '打车',
+    subtitle: '深夜、大件行李、带老人小孩时更省心。',
+    apps: rideApps,
+  },
+  {
+    id: 'maps-weather',
+    title: '地图和天气',
+    subtitle: '英国天气变脸快，地址也离不开 postcode。',
+    apps: [
+      {
+        id: 'google-maps',
+        name: 'Google Maps',
+        category: '地图',
+        description: '提前保存酒店、机场、药店、超市和第一个车站。',
+        href: 'https://www.google.com/maps',
+      },
+      {
+        id: 'apple-maps',
+        name: 'Apple Maps',
+        category: '地图',
+        description: 'iPhone 用户可直接用。建议把酒店地址加入收藏。',
+        href: 'https://maps.apple.com/',
+      },
+      {
+        id: 'met-office',
+        name: 'Met Office',
+        chineseName: '英国气象局',
+        category: '天气',
+        description: '查英国官方天气预报。出门前看雨、风和体感温度。',
+        href: 'https://www.metoffice.gov.uk/weather/forecast/gcpvj0v07',
+      },
+    ],
+  },
+];
+
+export const foodDeliveryNotes = [
+  '英国外卖主要靠 postcode 找地址。酒店名不够，最好填完整英文地址和邮编。',
+  '下单前确认酒店是否允许外卖送到前台。有些酒店只让你自己下楼取。',
+  '多数平台需要银行卡、Apple Pay 或 Google Pay。别默认能用微信/支付宝。',
+  '深夜可选项会明显变少，刚到英国别拖到太晚才找吃的。',
+  '小费不是强制，但服务费、配送费和小额订单费可能会叠加。',
+];
+
+export const rideHailingNotes = [
+  '机场内有人主动拉客，直接拒绝。用官方出租车点、正规网约车或提前预约车。',
+  '上车前核对车牌、车型、司机姓名和目的地。不要只看对方说“Uber”。',
+  '深夜、行李多、带老人小孩时，打车比转车更省心，但费用会高很多。',
+  'Black cab 通常更贵，但在伦敦比较正规，很多车可以刷卡。',
+];
+
+export const transportQuickRules = [
+  '坐地铁、Elizabeth line 和多数火车时，同一段旅程进出站必须用同一张卡或同一个手机。',
+  '公交通常只上车刷一次，不需要下车再刷。',
+  '自动扶梯靠右站，左边留给赶路的人。',
+  '遇到罢工、维修或延误，先看 TfL Go、Citymapper 或 National Rail。',
 ];
 
 export const bilingualPhrases: BilingualPhrase[] = [

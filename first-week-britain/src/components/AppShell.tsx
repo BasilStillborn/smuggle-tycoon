@@ -17,12 +17,39 @@ const copy: Record<AppLocale, { eyebrow: string; title: string; edit: string; da
     days: 'days',
   },
   zh: {
-    eyebrow: '英国到达助手',
-    title: '英国第一周',
+    eyebrow: '中国游客英国工具箱',
+    title: '刚到英国先看这个',
     edit: '修改行程',
     days: '天',
   },
 };
+
+const zhProfileLabels: Record<string, Record<string, string>> = {
+  country: {
+    china: '中国出发',
+    india: '印度出发',
+    usa: '美国出发',
+    eu: '欧盟/欧洲出发',
+    gulf: '海湾地区出发',
+    other: '其他国家出发',
+  },
+  airport: {
+    heathrow: '希思罗 Heathrow',
+    gatwick: '盖特威克 Gatwick',
+  },
+  city: {
+    london: '伦敦',
+  },
+  tripType: {
+    tourist: '旅游',
+    student: '留学',
+    business: '商务',
+  },
+};
+
+function profileLabel(locale: AppLocale, group: keyof typeof zhProfileLabels, id: string, fallback: string) {
+  return locale === 'zh' ? zhProfileLabels[group][id] ?? fallback : fallback;
+}
 
 function AppShell({ profile, onEditTrip, locale = 'en' }: AppShellProps) {
   const country = getCountry(profile);
@@ -38,7 +65,7 @@ function AppShell({ profile, onEditTrip, locale = 'en' }: AppShellProps) {
           <p className="text-xs font-black uppercase tracking-[0.18em] text-britain-red">{t.eyebrow}</p>
           <h1 className="truncate font-serif text-xl font-black tracking-tight text-britain-ink sm:text-2xl">{t.title}</h1>
           <p className="mt-1 truncate text-xs font-bold text-britain-ink/58 sm:text-sm">
-            {country.label} · {airport.label} · {city.label} · {tripType.label} · {profile.tripLengthDays} {t.days}
+            {profileLabel(locale, 'country', profile.country, country.label)} · {profileLabel(locale, 'airport', profile.airport, airport.label)} · {profileLabel(locale, 'city', profile.city, city.label)} · {profileLabel(locale, 'tripType', profile.tripType, tripType.label)} · {profile.tripLengthDays} {t.days}
           </p>
         </div>
         <button
