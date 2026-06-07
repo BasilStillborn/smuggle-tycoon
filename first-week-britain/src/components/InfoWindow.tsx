@@ -5,9 +5,11 @@ type InfoWindowProps = {
   subtitle: string;
   children: ReactNode;
   onClose: () => void;
+  eyebrow?: string;
+  closeLabel?: string;
 };
 
-function InfoWindow({ title, subtitle, children, onClose }: InfoWindowProps) {
+function InfoWindow({ title, subtitle, children, onClose, eyebrow = 'App window', closeLabel = 'Close window' }: InfoWindowProps) {
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
@@ -26,7 +28,7 @@ function InfoWindow({ title, subtitle, children, onClose }: InfoWindowProps) {
           <div className="border-b border-britain-ink/10 bg-white px-5 py-4 sm:px-6">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-britain-red">App window</p>
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-britain-red">{eyebrow}</p>
                 <h2 id="info-window-title" className="mt-1 font-serif text-2xl font-black leading-tight tracking-tight text-britain-ink sm:text-3xl">
                   {title}
                 </h2>
@@ -36,7 +38,7 @@ function InfoWindow({ title, subtitle, children, onClose }: InfoWindowProps) {
                 type="button"
                 onClick={onClose}
                 className="focus-ring flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-britain-ink text-xl font-black text-white transition hover:bg-britain-navy"
-                aria-label="Close window"
+                aria-label={closeLabel}
               >
                 ×
               </button>

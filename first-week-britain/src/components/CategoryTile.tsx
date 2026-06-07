@@ -3,10 +3,12 @@ type CategoryTileProps = {
   summary: string;
   icon: string;
   accent: string;
+  badge?: string;
+  openLabel?: string;
   onClick: () => void;
 };
 
-function CategoryTile({ title, summary, icon, accent, onClick }: CategoryTileProps) {
+function CategoryTile({ title, summary, icon, accent, badge, openLabel = 'Open', onClick }: CategoryTileProps) {
   return (
     <button
       type="button"
@@ -17,8 +19,8 @@ function CategoryTile({ title, summary, icon, accent, onClick }: CategoryTilePro
         <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-xl ${accent}`} aria-hidden="true">
           {icon}
         </div>
-        <span className="rounded-full bg-britain-cream px-3 py-1 text-xs font-black uppercase tracking-[0.14em] text-britain-ink/45 transition group-hover:bg-britain-mist group-hover:text-britain-navy">
-          Open
+        <span className={`rounded-full px-3 py-1 text-xs font-black uppercase tracking-[0.14em] transition ${badge ? 'bg-britain-red text-white' : 'bg-britain-cream text-britain-ink/45 group-hover:bg-britain-mist group-hover:text-britain-navy'}`}>
+          {badge ?? openLabel}
         </span>
       </div>
       <h3 className="mt-4 text-lg font-black leading-tight text-britain-ink">{title}</h3>

@@ -18,6 +18,8 @@ import Waitlist from './Waitlist';
 
 export type WindowId = 'arrival' | 'airport' | 'transport' | 'payments' | 'translation' | 'emergency' | 'phrases' | 'apps' | 'official' | 'waitlist';
 
+type AppLocale = 'en' | 'zh';
+
 type Tile = {
   id: WindowId;
   title: string;
@@ -34,6 +36,7 @@ type AppDashboardProps = {
   activeWindow: WindowId | null;
   onOpenWindow: (windowId: WindowId) => void;
   onCloseWindow: () => void;
+  locale?: AppLocale;
 };
 
 const tiles: Tile[] = [
@@ -129,6 +132,124 @@ const tiles: Tile[] = [
   },
 ];
 
+const tileTranslations: Record<AppLocale, Partial<Record<WindowId, Pick<Tile, 'title' | 'summary' | 'subtitle'>>>> = {
+  en: {},
+  zh: {
+    arrival: {
+      title: '到达清单',
+      summary: '第一小时、第一晚、前三天。',
+      subtitle: '你的英国第一周行动窗口。',
+    },
+    airport: {
+      title: '机场进城',
+      summary: '希思罗/盖特威克路线和出租车提醒。',
+      subtitle: '按预算、行李、时间和酒店区域选择路线。',
+    },
+    transport: {
+      title: '伦敦交通',
+      summary: '地铁、火车、公交、刷卡和延误。',
+      subtitle: '一次学会最重要的伦敦交通规则。',
+    },
+    payments: {
+      title: '支付',
+      summary: 'Contactless、银行卡、备用现金和 TfL 规则。',
+      subtitle: '避免闸机和收银台付款失败。',
+    },
+    translation: {
+      title: '翻译',
+      summary: '百度翻译设置和英文离线包。',
+      subtitle: '离开机场 Wi-Fi 前完成翻译准备。',
+    },
+    emergency: {
+      title: '紧急求助',
+      summary: '999、NHS 111、药店、保险和使领馆。',
+      subtitle: '紧张之前先知道该找谁。',
+    },
+    phrases: {
+      title: '常用短句',
+      summary: '出租车、酒店、药店可复制英文句子。',
+      subtitle: '可以快速出示或复制的短句。',
+    },
+    apps: {
+      title: '推荐应用',
+      summary: '地图、交通、翻译、火车和打车。',
+      subtitle: '在第一次紧张场景前安装并测试。',
+    },
+    official: {
+      title: '官方链接',
+      summary: 'GOV.UK、TfL、NHS、National Rail、Met Office。',
+      subtitle: '可信来源，用实用语言解释。',
+    },
+    waitlist: {
+      title: '加入名单',
+      summary: '告诉我们下一版该做什么到达助手。',
+      subtitle: '加入验证名单，并标记你的到达情况。',
+    },
+  },
+};
+
+const dashboardCopy = {
+  en: {
+    appWindow: 'App window',
+    closeWindow: 'Close window',
+    dashboardEyebrow: 'Compact app dashboard',
+    dashboardTitle: 'Choose a window.',
+    ready: 'Your checklist is ready.',
+    sample: 'Sample dashboard shown before generation.',
+    instruction: 'Tap a window below. Start with Arrival.',
+    days: 'days',
+    open: 'Open',
+    startHere: 'Start here',
+    next: 'Next:',
+    routeOptions: 'Route options',
+    fastRules: 'Fast rules',
+    londonBasics: 'London basics',
+    copyTip: 'Copy this sentence or show it to staff.',
+    copied: 'Copied',
+    copyPhrase: 'Copy phrase',
+    openSource: 'Open source',
+    openLink: 'Open',
+    tflJourneyPlanner: 'TfL journey planner',
+    citymapperLondon: 'Citymapper London',
+    tflContactless: 'TfL contactless guidance',
+    openBaiduTranslate: 'Open Baidu Translate',
+    nhs111: 'NHS 111 online',
+  },
+  zh: {
+    appWindow: '应用窗口',
+    closeWindow: '关闭窗口',
+    dashboardEyebrow: '紧凑应用面板',
+    dashboardTitle: '选择一个窗口',
+    ready: '你的清单已准备好。',
+    sample: '保存前先显示示例面板。',
+    instruction: '点击下方窗口。建议先打开“到达清单”。',
+    days: '天',
+    open: '打开',
+    startHere: '先看这里',
+    next: '下一步：',
+    routeOptions: '路线选择',
+    fastRules: '快速规则',
+    londonBasics: '伦敦基础',
+    copyTip: '复制这句话，或直接出示给工作人员。',
+    copied: '已复制',
+    copyPhrase: '复制短句',
+    openSource: '打开来源',
+    openLink: '打开',
+    tflJourneyPlanner: 'TfL 路线规划',
+    citymapperLondon: 'Citymapper 伦敦',
+    tflContactless: 'TfL contactless 说明',
+    openBaiduTranslate: '打开百度翻译',
+    nhs111: '打开 NHS 111',
+  },
+} satisfies Record<AppLocale, Record<string, string>>;
+
+function localizeTile(tile: Tile, locale: AppLocale): Tile {
+  return {
+    ...tile,
+    ...tileTranslations[locale][tile.id],
+  };
+}
+
 const nextWindowMap: Partial<Record<WindowId, WindowId>> = {
   arrival: 'payments',
   payments: 'transport',
@@ -208,8 +329,9 @@ function GuideSummary({ guide }: { guide?: GuideCard }) {
   );
 }
 
-function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onCloseWindow }: AppDashboardProps) {
+function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onCloseWindow, locale = 'en' }: AppDashboardProps) {
   const [copiedPhrase, setCopiedPhrase] = useState<string | null>(null);
+  const t = dashboardCopy[locale];
   const country = getCountry(profile);
   const airport = getAirport(profile);
   const city = getCity(profile);
@@ -218,8 +340,9 @@ function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onClo
   const guideCards = getGuideCards(profile);
   const officialLinks = getOfficialLinks(profile.airport);
   const chineseMode = isChineseVisitor(profile.country);
-  const visibleTiles = tiles.filter((tile) => tile.segment === 'all' || chineseMode);
-  const activeTile = activeWindow ? tiles.find((tile) => tile.id === activeWindow) : null;
+  const localizedTiles = tiles.map((tile) => localizeTile(tile, locale));
+  const visibleTiles = localizedTiles.filter((tile) => tile.segment === 'all' || chineseMode);
+  const activeTile = activeWindow ? localizedTiles.find((tile) => tile.id === activeWindow) : null;
   const airportChineseGuide = chineseAirportNotes[profile.airport];
   const paymentGuide = guideCards.find((guide) => guide.id === 'payments');
   const transferGuide = guideCards.find((guide) => guide.id === 'airport-transfer');
@@ -281,7 +404,7 @@ function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onClo
       case 'airport':
         return (
           <div className="space-y-4">
-            <MiniCard title={`${airport.label} to ${city.label}`} eyebrow="Route options">
+            <MiniCard title={`${airport.label} to ${city.label}`} eyebrow={t.routeOptions}>
               <p className="mb-3">{airport.terminalTip}</p>
               <BulletList items={airport.primaryRoutes} />
             </MiniCard>
@@ -298,7 +421,7 @@ function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onClo
         return (
           <div className="space-y-4">
             <GuideSummary guide={transportGuide} />
-            <MiniCard title="Fast rules" eyebrow="London basics">
+            <MiniCard title={t.fastRules} eyebrow={t.londonBasics}>
               <BulletList items={[
                 'Use the same card or phone when tapping in and out on Tube and rail journeys.',
                 'For buses, usually tap only when boarding.',
@@ -307,8 +430,8 @@ function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onClo
               ]} />
             </MiniCard>
             <div className="flex flex-col gap-3 sm:flex-row">
-              <ActionLink href="https://tfl.gov.uk/plan-a-journey/" label="TfL journey planner" eventName="window_action_clicked" params={{ window_id: 'transport', action: 'tfl' }} />
-              <ActionLink href="https://citymapper.com/london" label="Citymapper London" eventName="window_action_clicked" params={{ window_id: 'transport', action: 'citymapper' }} />
+              <ActionLink href="https://tfl.gov.uk/plan-a-journey/" label={t.tflJourneyPlanner} eventName="window_action_clicked" params={{ window_id: 'transport', action: 'tfl' }} />
+              <ActionLink href="https://citymapper.com/london" label={t.citymapperLondon} eventName="window_action_clicked" params={{ window_id: 'transport', action: 'citymapper' }} />
             </div>
           </div>
         );
@@ -322,7 +445,7 @@ function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onClo
                 <BulletList items={chinaPaymentGuide.points} />
               </MiniCard>
             )}
-            <ActionLink href="https://tfl.gov.uk/fares/contactless-and-oyster-account" label="TfL contactless guidance" eventName="window_action_clicked" params={{ window_id: 'payments', action: 'tfl_contactless' }} />
+            <ActionLink href="https://tfl.gov.uk/fares/contactless-and-oyster-account" label={t.tflContactless} eventName="window_action_clicked" params={{ window_id: 'payments', action: 'tfl_contactless' }} />
           </div>
         );
       case 'translation':
@@ -332,7 +455,7 @@ function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onClo
               <p className="mb-3 text-britain-ink/60">{baiduTranslateGuide.subtitle}</p>
               <BulletList items={baiduTranslateGuide.points} />
             </MiniCard>
-            <ActionLink href="https://fanyi.baidu.com/" label="Open Baidu Translate" eventName="baidu_translate_clicked" params={{ visitor_segment: 'chinese', location: 'dashboard_window' }} />
+            <ActionLink href="https://fanyi.baidu.com/" label={t.openBaiduTranslate} eventName="baidu_translate_clicked" params={{ visitor_segment: 'chinese', location: 'dashboard_window' }} />
           </div>
         );
       case 'emergency':
@@ -347,7 +470,7 @@ function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onClo
                 'Use your travel insurance for private care, claims, or medical support lines.',
               ]} />
             </MiniCard>
-            <ActionLink href="https://111.nhs.uk/" label="NHS 111 online" eventName="window_action_clicked" params={{ window_id: 'emergency', action: 'nhs_111' }} />
+            <ActionLink href="https://111.nhs.uk/" label={t.nhs111} eventName="window_action_clicked" params={{ window_id: 'emergency', action: 'nhs_111' }} />
           </div>
         );
       case 'phrases':
@@ -359,7 +482,7 @@ function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onClo
               chineseSituation: phrase.situation,
               english: phrase.sayThis,
               chineseMeaning: phrase.means,
-              tip: 'Copy this sentence or show it to staff.',
+              tip: t.copyTip,
             }))).map((phrase) => (
               <MiniCard key={phrase.id} title={phrase.chineseSituation} eyebrow={phrase.situation}>
                 <p className="text-base font-black leading-7 text-britain-ink">"{phrase.english}"</p>
@@ -370,7 +493,7 @@ function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onClo
                   onClick={() => copyPhrase(phrase.id, phrase.english)}
                   className="focus-ring mt-4 w-full rounded-full bg-britain-ink px-4 py-3 text-sm font-black text-white transition hover:bg-britain-navy"
                 >
-                  {copiedPhrase === phrase.id ? 'Copied' : 'Copy phrase'}
+                  {copiedPhrase === phrase.id ? t.copied : t.copyPhrase}
                 </button>
               </MiniCard>
             ))}
@@ -387,7 +510,7 @@ function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onClo
                   {app.caution && <p className="mt-3 rounded-2xl bg-britain-cream p-3 text-xs leading-5 text-britain-ink/58">{app.caution}</p>}
                   {app.href && (
                     <div className="mt-4">
-                      <ActionLink href={app.href} label="Open" eventName="recommended_app_clicked" params={{ app_id: app.id, visitor_segment: chineseMode ? 'chinese' : 'general' }} />
+                      <ActionLink href={app.href} label={t.openLink} eventName="recommended_app_clicked" params={{ app_id: app.id, visitor_segment: chineseMode ? 'chinese' : 'general' }} />
                     </div>
                   )}
                 </MiniCard>
@@ -410,13 +533,13 @@ function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onClo
                 <p className="text-xs font-black uppercase tracking-[0.16em] text-britain-red">{link.tag}</p>
                 <h3 className="mt-2 text-lg font-black text-britain-ink">{link.label}</h3>
                 <p className="mt-3 text-sm font-bold leading-6 text-britain-ink/62">{link.description}</p>
-                <p className="mt-4 text-sm font-black text-britain-red">Open source</p>
+                <p className="mt-4 text-sm font-black text-britain-red">{t.openSource}</p>
               </a>
             ))}
           </div>
         );
       case 'waitlist':
-        return <Waitlist profile={profile} variant="panel" />;
+        return <Waitlist profile={profile} variant="panel" locale={locale} />;
       default:
         return null;
     }
@@ -429,16 +552,16 @@ function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onClo
     <section id="dashboard" className="bg-britain-cream px-4 py-12 sm:px-8 sm:py-16 lg:py-20">
       <div className="mx-auto max-w-7xl">
         <div className="mb-6 rounded-[2rem] bg-britain-ink p-5 text-white shadow-card sm:p-7">
-          <p className="text-xs font-black uppercase tracking-[0.18em] text-britain-gold">Compact app dashboard</p>
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-britain-gold">{t.dashboardEyebrow}</p>
           <div className="mt-3 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <h2 className="font-serif text-3xl font-black tracking-tight sm:text-5xl">Choose a window.</h2>
+              <h2 className="font-serif text-3xl font-black tracking-tight sm:text-5xl">{t.dashboardTitle}</h2>
               <p className="mt-3 max-w-3xl text-sm font-semibold leading-6 text-white/68 sm:text-base sm:leading-7">
-                {hasGenerated ? 'Your checklist is ready.' : 'Sample dashboard shown before generation.'} Open only the category you need, then close it and move on.
+                {hasGenerated ? t.ready : t.sample} {t.instruction}
               </p>
             </div>
             <div className="rounded-3xl bg-white/10 p-4 text-sm font-bold leading-6 text-white/75">
-              {country.label} · {airport.label} · {city.label} · {tripType.label} · {profile.tripLengthDays} days
+              {country.label} · {airport.label} · {city.label} · {tripType.label} · {profile.tripLengthDays} {t.days}
             </div>
           </div>
         </div>
@@ -451,6 +574,8 @@ function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onClo
               summary={tile.summary}
               icon={tile.icon}
               accent={tile.accent}
+              badge={tile.id === 'arrival' ? t.startHere : undefined}
+              openLabel={t.open}
               onClick={() => openWindow(tile.id)}
             />
           ))}
@@ -458,7 +583,7 @@ function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onClo
       </div>
 
       {activeTile && (
-        <InfoWindow title={activeTile.title} subtitle={activeTile.subtitle} onClose={closeWindow}>
+        <InfoWindow title={activeTile.title} subtitle={activeTile.subtitle} onClose={closeWindow} eyebrow={t.appWindow} closeLabel={t.closeWindow}>
           <div className="space-y-5">
             {renderWindowContent()}
             {nextTile && (
@@ -467,7 +592,7 @@ function AppDashboard({ profile, hasGenerated, activeWindow, onOpenWindow, onClo
                 onClick={() => openNextWindow(nextTile.id)}
                 className="focus-ring w-full rounded-2xl bg-britain-red px-5 py-4 text-sm font-black text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-red-700"
               >
-                Next: {nextTile.title}
+                {t.next} {nextTile.title}
               </button>
             )}
           </div>

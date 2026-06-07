@@ -10,16 +10,70 @@ import { isChineseVisitor } from './data/chineseVisitor';
 import { initAnalytics, trackEvent } from './lib/analytics';
 import { loadSavedProfile, saveProfile } from './lib/profileStorage';
 
-function getInitialState() {
+type AppLocale = 'en' | 'zh';
+
+const chineseRouteDefaultProfile: ArrivalProfile = {
+  ...defaultProfile,
+  country: 'china',
+  language: 'chinese',
+  airport: 'heathrow',
+  city: 'london',
+  tripType: 'tourist',
+};
+
+const copy: Record<AppLocale, {
+  setupTitle: string;
+  setupSubtitle: string;
+  setupSubmit: string;
+  appWindow: string;
+  closeWindow: string;
+  footer: string;
+  footerNext: string;
+}> = {
+  en: {
+    setupTitle: 'Trip Setup',
+    setupSubtitle: 'Save your arrival context to personalise every app window.',
+    setupSubmit: 'Save trip and open arrival',
+    appWindow: 'App window',
+    closeWindow: 'Close window',
+    footer: 'First Week in Britain MVP. Independent guide, not an official UK government service.',
+    footerNext: 'Next: form endpoint, ad tests, Chinese traffic, more UK cities.',
+  },
+  zh: {
+    setupTitle: '行程设置',
+    setupSubtitle: '保存你的到达情况，用来生成每个应用窗口。',
+    setupSubmit: '保存并打开到达清单',
+    appWindow: '应用窗口',
+    closeWindow: '关闭窗口',
+    footer: '英国第一周 MVP。独立指南，不是英国政府官方网站。',
+    footerNext: '下一步：表单验证、广告测试、中国流量和更多英国城市。',
+  },
+};
+
+function getRouteLocale(): AppLocale {
+  if (typeof window === 'undefined') {
+    return 'en';
+  }
+
+  return window.location.pathname.startsWith('/zh') ? 'zh' : 'en';
+}
+
+function getInitialState(locale: AppLocale) {
   const savedProfile = loadSavedProfile();
+  const canUseSavedProfile = locale !== 'zh' || !savedProfile || savedProfile.country === 'china';
+  const profile = canUseSavedProfile && savedProfile
+    ? locale === 'zh' ? { ...savedProfile, language: 'chinese' as const } : savedProfile
+    : locale === 'zh' ? chineseRouteDefaultProfile : defaultProfile;
+
   return {
-    profile: savedProfile ?? defaultProfile,
-    hasSavedProfile: Boolean(savedProfile),
+    profile,
+    hasSavedProfile: Boolean(canUseSavedProfile && savedProfile),
   };
 }
 
 function App() {
-  const [initialState] = useState(getInitialState);
+  const [routeLocale] = useState<AppLocale>(getRouteLocale);
+  const [initialState] = useState(() => getInitialState(routeLocale));
   const [draftProfile, setDraftProfile] = useState<ArrivalProfile>(initialState.profile);
   const [activeProfile, setActiveProfile] = useState<ArrivalProfile>(initialState.profile);
   const [hasGenerated, setHasGenerated] = useState(initialState.hasSavedProfile);
@@ -28,8 +82,11 @@ function App() {
   const dashboardRef = useRef<HTMLElement | null>(null);
   const activeChineseMode = isChineseVisitor(activeProfile.country);
   const trackedChineseModeKey = useRef('');
+  const t = copy[routeLocale];
 
   useEffect(() => {
+    document.documentElement.lang = routeLocale === 'zh' ? 'zh-CN' : 'en';
+    document.title = routeLocale === 'zh' ? '英国第一周 | 中国游客到达助手' : 'First Week in Britain';
     initAnalytics();
     if (initialState.hasSavedProfile) {
       trackEvent('profile_loaded_from_storage', {
@@ -38,7 +95,7 @@ function App() {
         trip_type: initialState.profile.tripType,
       });
     }
-  }, []);
+  }, [initialState.hasSavedProfile, initialState.profile.airport, initialState.profile.country, initialState.profile.tripType, routeLocale]);
 
   useEffect(() => {
     if (!activeChineseMode) {
@@ -111,7 +168,7 @@ function App() {
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-britain-cream pb-24 text-britain-ink md:pb-0">
-      <AppShell profile={activeProfile} onEditTrip={() => openSetup('app_shell')} />
+      <AppShell profile={activeProfile} onEditTrip={() => openSetup('app_shell')} locale={routeLocale} />
 
       <section ref={dashboardRef} id="dashboard-app">
         <AppDashboard
@@ -120,21 +177,22 @@ function App() {
           activeWindow={activeWindow}
           onOpenWindow={(windowId) => openWindow(windowId)}
           onCloseWindow={() => setActiveWindow(null)}
+          locale={routeLocale}
         />
       </section>
 
       {setupOpen && (
-        <InfoWindow title="Trip Setup" subtitle="Save your arrival context to personalise every app window." onClose={closeSetup}>
-          <ArrivalForm value={draftProfile} onChange={setDraftProfile} onSubmit={handleSaveSetup} submitLabel="Save trip and open arrival" />
+        <InfoWindow title={t.setupTitle} subtitle={t.setupSubtitle} onClose={closeSetup} eyebrow={t.appWindow} closeLabel={t.closeWindow}>
+          <ArrivalForm value={draftProfile} onChange={setDraftProfile} onSubmit={handleSaveSetup} submitLabel={t.setupSubmit} locale={routeLocale} />
         </InfoWindow>
       )}
 
-      <BottomNav onHome={goHome} onSetup={() => openSetup('bottom_nav')} onOpenWindow={(windowId) => openWindow(windowId, 'bottom_nav')} />
+      <BottomNav onHome={goHome} onSetup={() => openSetup('bottom_nav')} onOpenWindow={(windowId) => openWindow(windowId, 'bottom_nav')} locale={routeLocale} />
 
       <footer className="bg-britain-ink px-5 py-8 text-white sm:px-8">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 text-sm font-bold text-white/55 sm:flex-row sm:items-center sm:justify-between">
-          <p>First Week in Britain MVP. Independent guide, not an official UK government service.</p>
-          <p>Next: form endpoint, ad tests, Chinese traffic, more UK cities.</p>
+          <p>{t.footer}</p>
+          <p>{t.footerNext}</p>
         </div>
       </footer>
     </main>
