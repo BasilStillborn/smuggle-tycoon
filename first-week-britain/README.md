@@ -1,21 +1,23 @@
-# First Week in Britain
+# UK Arrival Kit
 
-A mobile-first MVP for a UK arrival assistant inspired by the SinoGuide category: a practical first-week operating system for foreign visitors, students, and business travellers.
+A Chinese-first Britain arrival toolbox for translation, GBP/CNY currency estimates, UK payments, airport transfer, London transport, food delivery, taxi safety, emergency help, app links, and practical English phrases.
 
 ## What It Includes
 
-- Personalised arrival form
-- Just-landed checklist
+- Chinese-first dashboard on `/` and `/zh`
+- English/general fallback on `/en`
+- Top-bar quick Chinese-to-English translation action
+- Just-landed toolbox checklist
+- Live GBP/CNY converter with cached/fallback rate
 - Heathrow and Gatwick guidance
 - London transport and payment basics
+- Food delivery and taxi/ride-hailing app launchers
 - NHS, emergency, etiquette, and phrase cards
-- Official source links
-- Endpoint-ready waitlist form with local demo mode
+- Feedback-aware waitlist form with Formspree endpoint support
 - GA4-ready validation event tracking
-- SEO content block for first-time London visitors
-- Chinese Visitor Mode with Baidu Translate setup guidance
-- Bilingual copyable phrase cards for Chinese visitors
-- Recommended app checklist for Chinese first-time visitors
+- Capacitor config for iOS/Android packaging
+- Codemagic cloud build starter config
+- Privacy, Support, and Disclaimer pages for store submissions
 
 ## Commands
 
@@ -24,7 +26,12 @@ npm install
 npm run dev
 npm run build
 npm run preview
+npm run native:sync
+npm run native:android
+npm run native:ios
 ```
+
+`native:*` commands require the relevant Capacitor native platform directory. The Codemagic workflow can generate these directories in cloud builds.
 
 ## Environment Variables
 
@@ -59,6 +66,12 @@ Tracked events include:
 - `waitlist_submit_attempted`
 - `waitlist_submit_success`
 - `waitlist_submit_error`
+- `quick_translate_opened`
+- `quick_translate_google_clicked`
+- `quick_translate_baidu_clicked`
+- `feedback_option_selected`
+- `currency_rate_loaded`
+- `tool_app_clicked`
 
 ## Deploy On Vercel
 
@@ -74,10 +87,31 @@ Add the environment variables above in Vercel Project Settings before deploying.
 
 After deploying, submit a test waitlist email and confirm Formspree receives the profile fields, including `visitor_segment` and `chinese_mode_enabled`.
 
+## Native Store Builds
+
+This app uses Capacitor for native packaging:
+
+- App name: `UK Arrival Kit`
+- Bundle/package ID: `app.ukarrivalkit.mobile`
+- Web output directory: `dist`
+- Cloud build config: `../codemagic.yaml`
+
+Before App Store / Google Play submission, create:
+
+- Apple Developer Program account
+- App Store Connect app record
+- Google Play Console account
+- Google Play app record
+- Codemagic signing integrations and secrets
+- Production PNG icon/splash assets
+
+See `STORE_RELEASE_CHECKLIST.md` for listing copy, screenshot requirements, legal URLs, and QA checklist.
+
 ## Next Product Steps
 
-- Add Chinese-language content
-- Add more UK airports and cities
-- Replace partner placeholders with vetted affiliate offers
-- Create three ad/SEO variants: first-time London, just landed in Britain, UK arrival checklist
-- Create Chinese ad/SEO variants: 第一次去英国旅游, 中国游客英国支付, 英国地铁怎么坐, 英国旅游翻译软件
+- Configure Apple/Google/Codemagic signing
+- Generate production PNG icon and splash assets
+- Build Android internal testing release
+- Build iOS TestFlight release
+- Capture store screenshots from native builds
+- Run one focused feature build after validation data picks the winner

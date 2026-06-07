@@ -1,7 +1,7 @@
 {
-  "name": "First Week in Britain",
-  "short_name": "First Week",
-  "description": "A compact UK arrival assistant for first-time visitors.",
+  "name": "UK Arrival Kit",
+  "short_name": "Arrival Kit",
+  "description": "A Chinese-first UK arrival toolbox for translation, currency, payments, transport, delivery, taxis, and emergency help.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

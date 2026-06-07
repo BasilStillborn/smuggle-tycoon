@@ -9,6 +9,7 @@ import QuickTranslate from './components/QuickTranslate';
 import { defaultProfile, type ArrivalProfile } from './data/arrivals';
 import { isChineseVisitor } from './data/chineseVisitor';
 import { initAnalytics, trackEvent } from './lib/analytics';
+import { installNativeExternalLinkHandler } from './lib/nativeExternalLinks';
 import { loadSavedProfile, saveProfile } from './lib/profileStorage';
 
 type AppLocale = 'en' | 'zh';
@@ -95,7 +96,8 @@ function App() {
 
   useEffect(() => {
     document.documentElement.lang = routeLocale === 'zh' ? 'zh-CN' : 'en';
-    document.title = routeLocale === 'zh' ? '中国游客英国到达工具箱' : 'First Week in Britain';
+    document.title = routeLocale === 'zh' ? 'UK Arrival Kit | 英国到达工具箱' : 'UK Arrival Kit';
+    const removeNativeExternalLinkHandler = installNativeExternalLinkHandler();
     initAnalytics();
     if (initialState.hasSavedProfile) {
       trackEvent('profile_loaded_from_storage', {
@@ -104,6 +106,8 @@ function App() {
         trip_type: initialState.profile.tripType,
       });
     }
+
+    return removeNativeExternalLinkHandler;
   }, [initialState.hasSavedProfile, initialState.profile.airport, initialState.profile.country, initialState.profile.tripType, routeLocale]);
 
   useEffect(() => {
@@ -214,9 +218,16 @@ function App() {
       <BottomNav onHome={goHome} onSetup={() => openSetup('bottom_nav')} onOpenWindow={(windowId) => openWindow(windowId, 'bottom_nav')} locale={routeLocale} />
 
       <footer className="bg-britain-ink px-5 py-8 text-white sm:px-8">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 text-sm font-bold text-white/55 sm:flex-row sm:items-center sm:justify-between">
-          <p>{t.footer}</p>
-          <p>{t.footerNext}</p>
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 text-sm font-bold text-white/55 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-2">
+            <p>{t.footer}</p>
+            <p>{t.footerNext}</p>
+          </div>
+          <nav className="flex flex-wrap gap-3" aria-label="Legal links">
+            <a className="transition hover:text-white" href="/privacy.html" target="_blank" rel="noreferrer">Privacy</a>
+            <a className="transition hover:text-white" href="/support.html" target="_blank" rel="noreferrer">Support</a>
+            <a className="transition hover:text-white" href="/disclaimer.html" target="_blank" rel="noreferrer">Disclaimer</a>
+          </nav>
         </div>
       </footer>
     </main>
