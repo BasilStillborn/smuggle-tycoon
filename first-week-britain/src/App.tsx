@@ -5,6 +5,7 @@ import AppShell from './components/AppShell';
 import ArrivalForm from './components/ArrivalForm';
 import BottomNav from './components/BottomNav';
 import InfoWindow from './components/InfoWindow';
+import QuickTranslate from './components/QuickTranslate';
 import { defaultProfile, type ArrivalProfile } from './data/arrivals';
 import { isChineseVisitor } from './data/chineseVisitor';
 import { initAnalytics, trackEvent } from './lib/analytics';
@@ -25,6 +26,8 @@ const copy: Record<AppLocale, {
   setupTitle: string;
   setupSubtitle: string;
   setupSubmit: string;
+  quickTranslateTitle: string;
+  quickTranslateSubtitle: string;
   appWindow: string;
   closeWindow: string;
   footer: string;
@@ -34,6 +37,8 @@ const copy: Record<AppLocale, {
     setupTitle: 'Trip Setup',
     setupSubtitle: 'Save your arrival context to personalise every app window.',
     setupSubmit: 'Save trip and open arrival',
+    quickTranslateTitle: 'Quick Translate',
+    quickTranslateSubtitle: 'Translate a short message into English.',
     appWindow: 'App window',
     closeWindow: 'Close window',
     footer: 'First Week in Britain MVP. Independent guide, not an official UK government service.',
@@ -43,6 +48,8 @@ const copy: Record<AppLocale, {
     setupTitle: '调整行程',
     setupSubtitle: '按你的机场、城市和停留时间微调工具箱内容。',
     setupSubmit: '保存并回到工具箱',
+    quickTranslateTitle: '快速译成英文',
+    quickTranslateSubtitle: '输入中文，一键打开翻译工具给英国工作人员看。',
     appWindow: '应用窗口',
     closeWindow: '关闭窗口',
     footer: '中国游客英国到达工具箱。独立指南，不是英国政府官方网站。',
@@ -79,6 +86,7 @@ function App() {
   const [activeProfile, setActiveProfile] = useState<ArrivalProfile>(initialState.profile);
   const [hasGenerated, setHasGenerated] = useState(routeLocale === 'zh' || initialState.hasSavedProfile);
   const [setupOpen, setSetupOpen] = useState(initialState.shouldOpenSetup);
+  const [quickTranslateOpen, setQuickTranslateOpen] = useState(false);
   const [activeWindow, setActiveWindow] = useState<WindowId | null>(null);
   const dashboardRef = useRef<HTMLElement | null>(null);
   const activeChineseMode = routeLocale === 'zh' || isChineseVisitor(activeProfile.country);
@@ -127,6 +135,15 @@ function App() {
     setSetupOpen(false);
   }
 
+  function openQuickTranslate() {
+    setQuickTranslateOpen(true);
+    trackEvent('quick_translate_opened', { source: 'app_shell', locale: routeLocale });
+  }
+
+  function closeQuickTranslate() {
+    setQuickTranslateOpen(false);
+  }
+
   function handleSaveSetup(profile: ArrivalProfile) {
     setActiveProfile(profile);
     setDraftProfile(profile);
@@ -169,7 +186,7 @@ function App() {
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-britain-cream pb-24 text-britain-ink md:pb-0">
-      <AppShell profile={activeProfile} onEditTrip={() => openSetup('app_shell')} locale={routeLocale} />
+      <AppShell profile={activeProfile} onEditTrip={() => openSetup('app_shell')} onQuickTranslate={routeLocale === 'zh' ? openQuickTranslate : undefined} locale={routeLocale} />
 
       <section ref={dashboardRef} id="dashboard-app">
         <AppDashboard
@@ -185,6 +202,12 @@ function App() {
       {setupOpen && (
         <InfoWindow title={t.setupTitle} subtitle={t.setupSubtitle} onClose={closeSetup} eyebrow={t.appWindow} closeLabel={t.closeWindow}>
           <ArrivalForm value={draftProfile} onChange={setDraftProfile} onSubmit={handleSaveSetup} submitLabel={t.setupSubmit} locale={routeLocale} />
+        </InfoWindow>
+      )}
+
+      {quickTranslateOpen && (
+        <InfoWindow title={t.quickTranslateTitle} subtitle={t.quickTranslateSubtitle} onClose={closeQuickTranslate} eyebrow={t.appWindow} closeLabel={t.closeWindow}>
+          <QuickTranslate />
         </InfoWindow>
       )}
 

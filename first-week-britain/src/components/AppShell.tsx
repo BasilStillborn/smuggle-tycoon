@@ -6,20 +6,23 @@ type AppLocale = 'en' | 'zh';
 type AppShellProps = {
   profile: ArrivalProfile;
   onEditTrip: () => void;
+  onQuickTranslate?: () => void;
   locale?: AppLocale;
 };
 
-const copy: Record<AppLocale, { eyebrow: string; title: string; edit: string; days: string }> = {
+const copy: Record<AppLocale, { eyebrow: string; title: string; edit: string; quickTranslate: string; days: string }> = {
   en: {
     eyebrow: 'Arrival assistant',
     title: 'First Week in Britain',
     edit: 'Edit trip',
+    quickTranslate: 'Translate',
     days: 'days',
   },
   zh: {
     eyebrow: '中国游客英国工具箱',
     title: '刚到英国先看这个',
     edit: '修改行程',
+    quickTranslate: '译成英文',
     days: '天',
   },
 };
@@ -51,7 +54,7 @@ function profileLabel(locale: AppLocale, group: keyof typeof zhProfileLabels, id
   return locale === 'zh' ? zhProfileLabels[group][id] ?? fallback : fallback;
 }
 
-function AppShell({ profile, onEditTrip, locale = 'en' }: AppShellProps) {
+function AppShell({ profile, onEditTrip, onQuickTranslate, locale = 'en' }: AppShellProps) {
   const country = getCountry(profile);
   const airport = getAirport(profile);
   const city = getCity(profile);
@@ -68,13 +71,24 @@ function AppShell({ profile, onEditTrip, locale = 'en' }: AppShellProps) {
             {profileLabel(locale, 'country', profile.country, country.label)} · {profileLabel(locale, 'airport', profile.airport, airport.label)} · {profileLabel(locale, 'city', profile.city, city.label)} · {profileLabel(locale, 'tripType', profile.tripType, tripType.label)} · {profile.tripLengthDays} {t.days}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={onEditTrip}
-          className="focus-ring shrink-0 rounded-full bg-britain-ink px-4 py-3 text-sm font-black text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-britain-navy"
-        >
-          {t.edit}
-        </button>
+        <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+          {locale === 'zh' && onQuickTranslate && (
+            <button
+              type="button"
+              onClick={onQuickTranslate}
+              className="focus-ring whitespace-nowrap rounded-full bg-britain-red px-4 py-3 text-sm font-black text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-red-700"
+            >
+              {t.quickTranslate}
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={onEditTrip}
+            className="focus-ring whitespace-nowrap rounded-full bg-britain-ink px-4 py-3 text-sm font-black text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-britain-navy"
+          >
+            {t.edit}
+          </button>
+        </div>
       </div>
     </header>
   );
