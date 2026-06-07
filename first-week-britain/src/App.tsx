@@ -1,12 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+import AppDashboard from './components/AppDashboard';
 import ArrivalForm from './components/ArrivalForm';
-import Checklist from './components/Checklist';
-import ChineseVisitorGuide from './components/ChineseVisitorGuide';
-import GuideCards from './components/GuideCards';
 import Hero from './components/Hero';
-import LondonChecklistSeo from './components/LondonChecklistSeo';
-import OfficialLinks from './components/OfficialLinks';
-import Waitlist from './components/Waitlist';
 import { defaultProfile, getAirport, getCity, getCountry, getTripType, type ArrivalProfile } from './data/arrivals';
 import { isChineseVisitor } from './data/chineseVisitor';
 import { initAnalytics, trackEvent } from './lib/analytics';
@@ -15,7 +10,7 @@ function App() {
   const [draftProfile, setDraftProfile] = useState<ArrivalProfile>(defaultProfile);
   const [activeProfile, setActiveProfile] = useState<ArrivalProfile>(defaultProfile);
   const [hasGenerated, setHasGenerated] = useState(false);
-  const checklistRef = useRef<HTMLElement | null>(null);
+  const dashboardRef = useRef<HTMLElement | null>(null);
   const country = getCountry(draftProfile);
   const airport = getAirport(draftProfile);
   const city = getCity(draftProfile);
@@ -63,7 +58,7 @@ function App() {
       visitor_segment: profile.country === 'china' ? 'chinese' : 'general',
     });
     window.setTimeout(() => {
-      checklistRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      dashboardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 80);
   }
 
@@ -100,15 +95,9 @@ function App() {
         </div>
       </section>
 
-      <section ref={checklistRef} id="checklist">
-        <Checklist profile={activeProfile} hasGenerated={hasGenerated} />
+      <section ref={dashboardRef} id="dashboard-app">
+        <AppDashboard profile={activeProfile} hasGenerated={hasGenerated} />
       </section>
-
-      <GuideCards profile={activeProfile} />
-      <OfficialLinks profile={activeProfile} />
-      {activeChineseMode && <ChineseVisitorGuide profile={activeProfile} />}
-      <LondonChecklistSeo onStart={scrollToForm} />
-      <Waitlist profile={activeProfile} />
 
       <footer className="bg-britain-ink px-5 py-8 text-white sm:px-8">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 text-sm font-bold text-white/55 sm:flex-row sm:items-center sm:justify-between">

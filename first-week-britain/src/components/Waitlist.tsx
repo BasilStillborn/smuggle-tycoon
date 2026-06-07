@@ -7,9 +7,10 @@ import { trackEvent } from '../lib/analytics';
 
 type WaitlistProps = {
   profile: ArrivalProfile;
+  variant?: 'section' | 'panel';
 };
 
-function Waitlist({ profile }: WaitlistProps) {
+function Waitlist({ profile, variant = 'section' }: WaitlistProps) {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'error' | 'submitting' | 'success'>('idle');
   const [message, setMessage] = useState('');
@@ -114,6 +115,49 @@ function Waitlist({ profile }: WaitlistProps) {
     }
   }
 
+  const form = (
+    <form onSubmit={handleSubmit} className="rounded-[1.5rem] bg-white p-5 text-britain-ink shadow-card sm:rounded-[2rem] sm:p-8">
+      <div className="rounded-3xl bg-britain-cream p-4">
+        <p className="text-xs font-black uppercase tracking-[0.16em] text-britain-red">Current interest tag</p>
+        <p className="mt-2 text-sm font-bold leading-6 text-britain-ink/70">
+          {tripType.label} from {country.label}, arriving at {airport.label}{chineseModeEnabled ? ' · Chinese visitor segment' : ''}
+        </p>
+      </div>
+      <label className="mt-5 block">
+        <span className="mb-2 block text-sm font-black">Email for early access</span>
+        <input
+          type="email"
+          value={email}
+          onChange={(event) => {
+            setEmail(event.target.value);
+            setStatus('idle');
+          }}
+          placeholder="you@example.com"
+          autoComplete="email"
+          className="focus-ring w-full rounded-2xl border border-britain-ink/15 bg-white px-4 py-4 font-bold text-britain-ink sm:py-3"
+        />
+      </label>
+      <button
+        type="submit"
+        disabled={status === 'submitting'}
+        className="focus-ring mt-4 w-full rounded-2xl bg-britain-ink px-5 py-4 text-base font-black text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-britain-navy disabled:cursor-not-allowed disabled:opacity-70"
+        data-track="waitlist-submit-placeholder"
+      >
+        {status === 'submitting' ? 'Sending...' : 'Join the validation list'}
+      </button>
+      {status === 'error' && (
+        <p className="mt-3 rounded-2xl bg-red-50 px-4 py-3 text-sm font-bold text-britain-red">{message}</p>
+      )}
+      {status === 'success' && (
+        <p className="mt-3 rounded-2xl bg-green-50 px-4 py-3 text-sm font-bold text-britain-green">{message}</p>
+      )}
+    </form>
+  );
+
+  if (variant === 'panel') {
+    return form;
+  }
+
   return (
     <section className="bg-britain-red px-4 py-12 text-white sm:px-8 sm:py-16 lg:py-24">
       <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1fr_0.9fr] lg:items-center">
@@ -125,42 +169,7 @@ function Waitlist({ profile }: WaitlistProps) {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="rounded-[1.5rem] bg-white p-5 text-britain-ink shadow-card sm:rounded-[2rem] sm:p-8">
-          <div className="rounded-3xl bg-britain-cream p-4">
-            <p className="text-xs font-black uppercase tracking-[0.16em] text-britain-red">Current interest tag</p>
-            <p className="mt-2 text-sm font-bold leading-6 text-britain-ink/70">
-              {tripType.label} from {country.label}, arriving at {airport.label}{chineseModeEnabled ? ' · Chinese visitor segment' : ''}
-            </p>
-          </div>
-          <label className="mt-5 block">
-            <span className="mb-2 block text-sm font-black">Email for early access</span>
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => {
-                setEmail(event.target.value);
-                setStatus('idle');
-              }}
-              placeholder="you@example.com"
-              autoComplete="email"
-              className="focus-ring w-full rounded-2xl border border-britain-ink/15 bg-white px-4 py-4 font-bold text-britain-ink sm:py-3"
-            />
-          </label>
-          <button
-            type="submit"
-            disabled={status === 'submitting'}
-            className="focus-ring mt-4 w-full rounded-2xl bg-britain-ink px-5 py-4 text-base font-black text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-britain-navy disabled:cursor-not-allowed disabled:opacity-70"
-            data-track="waitlist-submit-placeholder"
-          >
-            {status === 'submitting' ? 'Sending...' : 'Join the validation list'}
-          </button>
-          {status === 'error' && (
-            <p className="mt-3 rounded-2xl bg-red-50 px-4 py-3 text-sm font-bold text-britain-red">{message}</p>
-          )}
-          {status === 'success' && (
-            <p className="mt-3 rounded-2xl bg-green-50 px-4 py-3 text-sm font-bold text-britain-green">{message}</p>
-          )}
-        </form>
+        {form}
       </div>
     </section>
   );
