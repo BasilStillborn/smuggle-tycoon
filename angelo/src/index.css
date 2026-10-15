@@ -1,0 +1,280 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #0a0a0a;
+  --bg-panel: #121212;
+  --bg-card: #181818;
+  --border: #1e1e1e;
+  --border-light: #2a2a2a;
+  --text: #e8e8e8;
+  --text-dim: #888888;
+  --text-muted: #555555;
+  --accent: #d4a017;
+  --accent-dim: rgba(212, 160, 23, 0.15);
+  --danger: #dc2626;
+  --danger-dim: rgba(220, 38, 38, 0.1);
+  --success: #22c55e;
+  --success-dim: rgba(34, 197, 94, 0.1);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --page-padding: 16px;
+  --page-title-size: 20px;
+  --card-pad: 14px 16px;
+  --card-pad-lg: 20px 24px;
+  --btn-pad: 12px 20px;
+  --stat-min: 120px;
+}
+
+@media (max-width: 500px) {
+  :root {
+    --page-padding: 12px;
+    --page-title-size: 17px;
+    --card-pad: 10px 12px;
+    --card-pad-lg: 14px 16px;
+    --btn-pad: 12px 14px;
+    --stat-min: 100px;
+  }
+  .page-title { font-size: var(--page-title-size); }
+  .page-subtitle { font-size: 11px; margin-bottom: 12px; }
+  .btn { padding: var(--btn-pad); font-size: 13px; }
+  .card { border-radius: 10px; }
+  .card-highlight { border-radius: 10px; }
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+  height: 100dvh;
+  width: 100dvw;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#root {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 2px; }
+
+/* Animations */
+/* Page layout */
+.page {
+  padding: var(--page-padding);
+  padding-bottom: 0;
+}
+.page-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 2px;
+}
+.page-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0 0 16px;
+}
+.page-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--border-light);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.input {
+  background: var(--bg);
+  border: 1px solid var(--border-light);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 16px;
+  outline: none;
+  width: 100%;
+}
+.input:focus {
+  border-color: var(--accent);
+}
+select.input {
+  appearance: auto;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideOutRight {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
+}
+@keyframes slideOutLeft {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-100%); opacity: 0; }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes sheetUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+@keyframes sheetDown {
+  from { transform: translateY(0); }
+  to { transform: translateY(100%); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+@keyframes heatPulse {
+  0%, 100% { box-shadow: 0 0 4px rgba(220, 38, 38, 0.3); }
+  50% { box-shadow: 0 0 16px rgba(220, 38, 38, 0.7); }
+}
+
+/* Utility classes */
+.slide-in-right { animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.slide-in-left { animation: slideInLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.slide-out-right { animation: slideOutRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.slide-out-left { animation: slideOutLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.fade-in { animation: fadeIn 0.2s ease-out forwards; }
+.sheet-up { animation: sheetUp 0.35s cubic-bezier(0.32, 0.72, 0, 1) forwards; }
+.sheet-down { animation: sheetDown 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards; }
+.heat-pulse { animation: heatPulse 1.5s ease-in-out infinite; }
+
+.tap-highlight {
+  transition: background 0.15s ease;
+}
+.tap-highlight:active {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.card-highlight {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.card-highlight:active {
+  border-color: var(--accent);
+  box-shadow: 0 0 12px rgba(212, 160, 23, 0.15);
+}
+
+.card-selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 12px rgba(212, 160, 23, 0.15);
+  background: linear-gradient(135deg, rgba(212, 160, 23, 0.08), transparent);
+}
+
+.btn {
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px 20px;
+  transition: all 0.15s;
+  cursor: pointer;
+  border: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #000;
+}
+.btn-primary:active {
+  background: #b8890f;
+}
+
+.btn-secondary {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  color: var(--text);
+}
+.btn-secondary:active {
+  background: #222;
+}
+
+.btn-danger {
+  background: var(--danger-dim);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  color: var(--danger);
+}
+
+.btn-disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+  background: var(--bg);
+  border: 1px solid var(--border-light);
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  width: 100%;
+}
+input[type='number']:focus {
+  border-color: var(--accent);
+}
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Safe area for notched phones */
+.safe-bottom {
+  padding-bottom: var(--safe-bottom);
+}
+.safe-top {
+  padding-top: var(--safe-top);
+}
