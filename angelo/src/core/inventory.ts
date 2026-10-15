@@ -12,7 +12,7 @@ export function getRemainingCapacity(player: PlayerState): number {
   return player.inventoryCapacity - getUsedCapacity(player);
 }
 
-export function addGood(player: PlayerState, goodId: string, quantity: number): PlayerState {
+export function addGood(player: PlayerState, goodId: string, quantity: number, costPerUnit = 0): PlayerState {
   const good = GOODS.find((g) => g.id === goodId);
   if (!good) return player;
 
@@ -32,7 +32,7 @@ export function addGood(player: PlayerState, goodId: string, quantity: number): 
 
   return {
     ...player,
-    inventory: [...player.inventory, { goodId, quantity }],
+    inventory: [...player.inventory, { goodId, quantity, costPerUnit }],
   };
 }
 
