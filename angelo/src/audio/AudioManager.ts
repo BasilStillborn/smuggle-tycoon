@@ -3,13 +3,11 @@ import { DEFAULT_AUDIO_SETTINGS } from './types';
 import { loadAudioSettings, saveAudioSettings } from './settings';
 import { getSharedContext } from './oscillator';
 import { playSfx, setSfxVolume, type SfxType } from './sfx';
-import { playAmbience, stopAmbience, setAmbienceVolume } from './ambience';
 
 class AudioManager {
   private settings: AudioSettings;
   private initialized = false;
   private _lastHeatLevel: string = 'low';
-  private _lastCountryId: string = 'colombia';
 
   constructor() {
     this.settings = loadAudioSettings();
@@ -27,9 +25,11 @@ class AudioManager {
       }
       document.removeEventListener('click', resume);
       document.removeEventListener('keydown', resume);
+      document.removeEventListener('touchstart', resume);
     };
     document.addEventListener('click', resume);
     document.addEventListener('keydown', resume);
+    document.addEventListener('touchstart', resume);
   }
 
   async resumeAudioFromUserGesture(): Promise<void> {
@@ -41,7 +41,6 @@ class AudioManager {
 
   private applySettings(): void {
     setSfxVolume(this.settings.sfxVolume * this.settings.masterVolume);
-    setAmbienceVolume(this.settings.ambienceVolume * this.settings.masterVolume);
   }
 
   getSettings(): AudioSettings {
@@ -56,11 +55,6 @@ class AudioManager {
 
   toggleMute(): void {
     this.updateSettings({ muted: !this.settings.muted });
-    if (this.settings.muted) {
-      this.stopAll();
-    } else {
-      this.applySettings();
-    }
   }
 
   isMuted(): boolean {
@@ -72,44 +66,22 @@ class AudioManager {
     playSfx(type);
   }
 
-  playAmbience(countryId: string): void {
-    if (this.settings.muted) return;
-    playAmbience(countryId);
-    this._lastCountryId = countryId;
-  }
-
-  stopAmbience(): void {
-    stopAmbience();
-  }
-
-  updateFromGameState(gameState: {
-    heat: number;
-    currentCountryId: string;
-    cash: number;
-    pendingEvent: boolean;
-    runActive: boolean;
-  }): void {
+  updateFromGameState(gameState: { heat: number; pendingEvent: boolean; runActive: boolean }): void {
     if (this.settings.muted) return;
 
     const heatLevel = gameState.heat >= 80 ? 'critical' : gameState.heat >= 50 ? 'high' : gameState.heat >= 25 ? 'medium' : 'low';
 
-    if (gameState.currentCountryId !== this._lastCountryId) {
-      this.playAmbience(gameState.currentCountryId);
-    }
-
     if (heatLevel === 'critical' && this._lastHeatLevel !== 'critical') {
       this.playSfx('siren');
-    }
-    if (heatLevel === 'high' && this._lastHeatLevel !== 'high') {
+    } else if (heatLevel === 'high' && this._lastHeatLevel !== 'high') {
       this.playSfx('alert');
     }
 
     this._lastHeatLevel = heatLevel;
-    this._lastCountryId = gameState.currentCountryId;
   }
 
   stopAll(): void {
-    this.stopAmbience();
+    /* SFX are one-shots; nothing to stop */
   }
 }
 

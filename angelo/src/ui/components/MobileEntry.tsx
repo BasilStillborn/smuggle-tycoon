@@ -1,6 +1,6 @@
 import { useState, useCallback, Component, type ReactNode } from 'react';
 import type { GameState } from '../../core';
-import { MobileGameScreen } from './MobileGameScreen';
+import { GameShell } from '../flow/GameShell';
 import { ContentWarning } from './ContentWarning';
 import { UniversalIntro } from './UniversalIntro';
 import { BriefingScreen } from './BriefingScreen';
@@ -83,7 +83,7 @@ export const MobileEntry: React.FC = () => {
   if (screen === 'game') {
     return (
       <ErrorBoundary onReset={() => { setScreen('warning'); }}>
-        <MobileGameScreen
+        <GameShell
           onNewGame={handleNewGame}
           onLeaderboard={handleLeaderboard}
           initialState={loadedState}

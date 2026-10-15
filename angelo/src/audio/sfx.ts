@@ -11,7 +11,9 @@ export type SfxType =
    | 'cash'
    | 'cash_register'
    | 'bust'
-   | 'event_appear';
+   | 'event_appear'
+   // Curated UI palette (iOS/AAA pass)
+   | 'processing' | 'money' | 'warning' | 'danger' | 'reveal';
 
 let volume = 0.8;
 let cashRegisterBuffer: AudioBuffer | null = null;
@@ -150,6 +152,43 @@ export function playSfx(type: SfxType): void {
       playTone(ctx, masterGain, 440, 'triangle', 0.1, now, 0.15);
       playTone(ctx, masterGain, 660, 'triangle', 0.1, now + 0.1, 0.12);
       playTone(ctx, masterGain, 880, 'triangle', 0.15, now + 0.2, 0.1);
+      break;
+
+    // ── Curated UI palette ──────────────────────────────
+    case 'processing': {
+      // Window handoff: soft airy whoosh + muted tick
+      playNoise(ctx, masterGain, 0.22, now, 0.05);
+      playTone(ctx, masterGain, 320, 'sine', 0.10, now, 0.05);
+      playTone(ctx, masterGain, 480, 'sine', 0.08, now + 0.05, 0.04);
+      break;
+    }
+
+    case 'money':
+      if (cashRegisterBuffer) {
+        playBuffer(ctx, masterGain, cashRegisterBuffer, now, 0.95);
+      } else {
+        void ensureCashRegisterBuffer(ctx);
+        playTone(ctx, masterGain, 1050, 'triangle', 0.08, now, 0.09);
+        playTone(ctx, masterGain, 1450, 'triangle', 0.08, now + 0.05, 0.08);
+        playTone(ctx, masterGain, 2200, 'sine', 0.05, now + 0.1, 0.06);
+      }
+      break;
+
+    case 'warning':
+      playTone(ctx, masterGain, 440, 'triangle', 0.12, now, 0.14);
+      playTone(ctx, masterGain, 330, 'triangle', 0.16, now + 0.14, 0.13);
+      break;
+
+    case 'danger':
+      playTone(ctx, masterGain, 220, 'sawtooth', 0.22, now, 0.16);
+      playTone(ctx, masterGain, 160, 'sawtooth', 0.28, now + 0.16, 0.15);
+      playNoise(ctx, masterGain, 0.3, now, 0.08);
+      break;
+
+    case 'reveal':
+      playTone(ctx, masterGain, 300, 'sine', 0.12, now, 0.09);
+      playTone(ctx, masterGain, 600, 'sine', 0.12, now + 0.07, 0.09);
+      playTone(ctx, masterGain, 900, 'triangle', 0.2, now + 0.14, 0.1);
       break;
   }
 
