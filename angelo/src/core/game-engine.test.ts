@@ -63,9 +63,12 @@ describe('ANGELO Core Engine', () => {
       state = gameReducer(state, { type: 'RESPOND_EVENT', choiceId: state.pendingEvent.choices[0].id });
     }
 
+    const cashBefore = state.player.cash;
+    const bankBefore = state.player.bank;
+
     state = gameReducer(state, { type: 'END_TRIP' });
     expect(state.player.cash).toBe(0);
-    expect(state.player.bank).toBe(5000);
+    expect(state.player.bank).toBe(bankBefore + cashBefore);
     expect(state.player.totalTrips).toBe(1);
     expect(state.player.currentCountryId).toBe('london');
   });
