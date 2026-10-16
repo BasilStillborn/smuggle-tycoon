@@ -923,3 +923,25 @@ Note: the `$pron` fix (#1) is clearly "broken logic"; #2 uses only presentation 
 **Files changed:** `angelo/src/audio/sfx.ts`, `angelo/src/ui/flow/useGameFlow.ts`, `angelo/src/ui/components/StatusStrip.tsx`, `angelo/src/index.css`.
 
 **Next:** (1) route the remaining dialogue pools through the new `getDialogue(...)` corpus (migrate `DEALER_INTROS`/`FAREWELLS`/`HAGGLE_*` one scene at a time, verify parity); (2) Mac runbook unchanged (signing team → Run on device → verify SFX-through-silent-switch); (3) optional: split the 526 kB main JS chunk.
+
+---
+
+### Session 2026-10-16f — RC handoff (Director: "Get the build")
+
+**Windows-side execution completed (the maximum possible here):**
+- Fresh production build green (`npm run build`, 82 modules) → `npx cap sync ios` (copied `dist` → `ios/App/App/public`, registered 1 plugin). Committed + **pushed** `c90b0f7`.
+- **NEW one-command Mac RC builder:** `angelo/ios/make-ipa.sh` — `npm ci` → `npm run build` → `npx cap sync ios` → `xcodebuild archive` (Release, arm64) → `xcodebuild -exportArchive` → `.ipa` at `angelo/ios/build/ipa/`. Team auto-resolved; override with `TEAM_ID=…`.
+- **NEW** `angelo/ios/ExportOptions.plist` (`method: development` for direct-device; switch to `app-store` for TestFlight).
+- `ios/.gitignore` now ignores `build/` (archives/ipa never committed).
+
+**HARD BLOCKER (unchanged, physically impossible from Windows):** `.ipa` creation needs `xcodebuild` + Apple code-signing, which exist **only on macOS with Xcode**. No `pod`/`xcodebuild`/`xcrun`/`ruby`/`fastlane` here. The Mac step is now a **single command**.
+
+**Mac delivery (single point of contact):**
+1. `git pull` on `feature/m2-polish-pass` (has `c90b0f7`).
+2. `bash angelo/ios/make-ipa.sh` (first run: Xcode may prompt to create scheme/signing — accept; ensure a signing team is selected).
+3. Install: Xcode → Window → Devices & Simulators → drag the `.ipa` onto the iPhone → Trust in Settings → VPN & Device Management.
+   - If `-scheme App` errors on first try, open `ios/App/App.xcodeproj` once in Xcode (creates the scheme), then rerun the script.
+
+**Then:** pivot to Bug Hunting on-device (Director's mode switch) — verify portrait lock, safe-area, **SFX-through-silent-switch**, and the credibility-drop beat audibly.
+
+**Commits now on origin:** `…bbb0337`, `7a85bb6` (Click audit + credibility cue), `c90b0f7` (RC handoff).
