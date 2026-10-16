@@ -32,6 +32,19 @@ export function StatusStrip({ state }: Props) {
     prevRank.current = rank;
   }, [level]);
 
+  const [dropping, setDropping] = useState(false);
+  const prevCred = useRef(credibility);
+
+  useEffect(() => {
+    if (credibility < prevCred.current) {
+      setDropping(true);
+      const t = setTimeout(() => setDropping(false), 700);
+      prevCred.current = credibility;
+      return () => clearTimeout(t);
+    }
+    prevCred.current = credibility;
+  }, [credibility]);
+
   const pct = (n: number) => `${Math.max(0, Math.min(100, n))}%`;
 
   return (
@@ -44,7 +57,7 @@ export function StatusStrip({ state }: Props) {
         <div className="status__track"><div className="status__fill" style={{ width: pct(heat) }} /></div>
       </div>
 
-      <div className="status__meter status__meter--cred">
+      <div className={`status__meter status__meter--cred${dropping ? ' is-dropping' : ''}`}>
         <div className="status__row">
           <span className="status__key">Credibility</span>
           <span className="status__val">{credibility}</span>

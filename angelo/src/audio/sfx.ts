@@ -13,7 +13,8 @@ export type SfxType =
    | 'bust'
    | 'event_appear'
    // Curated UI palette (iOS/AAA pass)
-   | 'processing' | 'money' | 'warning' | 'danger' | 'reveal';
+   | 'processing' | 'money' | 'warning' | 'danger' | 'reveal'
+   | 'credibility_drop';
 
 let volume = 0.8;
 let cashRegisterBuffer: AudioBuffer | null = null;
@@ -189,6 +190,12 @@ export function playSfx(type: SfxType): void {
       playTone(ctx, masterGain, 300, 'sine', 0.12, now, 0.09);
       playTone(ctx, masterGain, 600, 'sine', 0.12, now + 0.07, 0.09);
       playTone(ctx, masterGain, 900, 'triangle', 0.2, now + 0.14, 0.1);
+      break;
+
+    case 'credibility_drop':
+      // Quiet descending downbeat — "standing" slipping. Deliberately small.
+      playTone(ctx, masterGain, 330, 'sine', 0.05, now, 0.09);
+      playTone(ctx, masterGain, 262, 'sine', 0.045, now + 0.07, 0.11);
       break;
   }
 

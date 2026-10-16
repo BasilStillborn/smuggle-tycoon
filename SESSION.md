@@ -905,3 +905,21 @@ Note: the `$pron` fix (#1) is clearly "broken logic"; #2 uses only presentation 
 3. **Main JS chunk 526 kB** — pre-existing Vite size warning; candidate for route/feature code-splitting if launch feels heavy on device.
 
 **Committed/pushed:** `armv7→arm64` + on-brand icon/splash. Branch `feature/m2-polish-pass` stays current on origin for the Mac to pull.
+
+---
+
+### Session 2026-10-16e — "The Click" audit + credibility-drop cue
+
+**Click coverage audit (Director rule #3: every interaction needs audio + haptic):**
+- Confirmed the **active GameShell flow routes every interactive surface through the `Tap` primitive** (`Tap.tsx` = the single Click source: sound + haptic by construction). Grepped `src/ui/**` for raw `<button>`: only the legacy modals `CashModal`, `GameBriefingModal`, `GuideGatekeeper`, `PeakWealthModal`, `ScoreSubmitModal` still contain raw `<button onClick>` — and a repo-wide import search shows **none of them are imported anywhere** (dead code from the pre-M1 `MobileGameScreen`). No change needed; not worth touching dead files.
+- `HubStatBar` (`components/HubStatBar.tsx`) uses a raw `<div onClick={onPress}>`, but `onPress` is never passed (`GameShell` renders `<HubStatBar state={state} day={day} />`) → inert, no interaction, no Click required.
+
+**New: subtle credibility-drop cue (Director's named example — "the quiet click when credibility slips 70→69"):**
+- `src/audio/sfx.ts` — new `SfxType` **`'credibility_drop'`**: a deliberately tiny descending two-note sine (330→262 Hz, amp ~0.05) — a quiet downbeat, not an alert.
+- `src/ui/flow/useGameFlow.ts` — tracks `prevCredibilityRef`; on any state change where **credibility decreased**, fires `audioManager.playSfx('credibility_drop')` + `haptic('light')`. Placed after the phase-hinge and new-event branches (early-return) so it never double-fires on a cinematic beat. **Display-only — no engine/outcome change.**
+- `src/ui/components/StatusStrip.tsx` + `src/index.css` — matching visual pulse `is-dropping` on the Credibility meter (`credDrop` keyframe, reduced-motion respected), mirroring the existing heat `is-easing` idiom.
+- **Verified:** `npx tsc -b` green; **54/54 tests**; `npm run build` green; live headless smoke (136 steps) → **0 crashes, only the known favicon 404**.
+
+**Files changed:** `angelo/src/audio/sfx.ts`, `angelo/src/ui/flow/useGameFlow.ts`, `angelo/src/ui/components/StatusStrip.tsx`, `angelo/src/index.css`.
+
+**Next:** (1) route the remaining dialogue pools through the new `getDialogue(...)` corpus (migrate `DEALER_INTROS`/`FAREWELLS`/`HAGGLE_*` one scene at a time, verify parity); (2) Mac runbook unchanged (signing team → Run on device → verify SFX-through-silent-switch); (3) optional: split the 526 kB main JS chunk.

@@ -92,6 +92,7 @@ export function useGameFlow(initialState?: GameState | null): GameFlow {
   const prevStateRef = useRef<GameState | null>(null);
   const prevEventIdRef = useRef<string | null>(null);
   const prevPhaseRef = useRef<Phase | null>(null);
+  const prevCredibilityRef = useRef<number | null>(null);
   const nonceRef = useRef(0);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -126,6 +127,10 @@ export function useGameFlow(initialState?: GameState | null): GameFlow {
     const prevPhase = prevPhaseRef.current;
     prevPhaseRef.current = state.gamePhase;
 
+    const credibility = state.player.credibility;
+    const prevCredibility = prevCredibilityRef.current;
+    prevCredibilityRef.current = credibility;
+
     const hinge = transitionForPhase(prevPhase, state);
     if (hinge) {
       audioManager.playSfx(hinge.cue);
@@ -141,8 +146,17 @@ export function useGameFlow(initialState?: GameState | null): GameFlow {
       const isBad = /BUST|busted|confiscat/i.test(ctx) || id.startsWith('bust');
       audioManager.playSfx(isBad ? 'danger' : 'reveal');
       haptic(isBad ? 'error' : 'light');
+      prevEventIdRef.current = id;
+      return;
     }
     prevEventIdRef.current = id;
+
+    // "The Click" for a standing drop: a quiet downbeat when credibility slips.
+    // Display-only — proves the meter moved without a toast or a number popping.
+    if (prevCredibility !== null && credibility < prevCredibility) {
+      audioManager.playSfx('credibility_drop');
+      haptic('light');
+    }
   }, [state]);
 
   const send = useCallback((action: GameAction) => {

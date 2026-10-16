@@ -634,8 +634,14 @@ button { touch-action: manipulation; }
   0% { filter: brightness(1.7); }
   100% { filter: brightness(1); }
 }
+.status__meter--cred.is-dropping .status__fill { animation: credDrop 0.7s ease; }
+@keyframes credDrop {
+  0% { filter: brightness(1.8) saturate(1.35); }
+  100% { filter: brightness(1) saturate(1); }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .status__fill { transition: none; }
   .status__meter--heat.is-easing .status__fill { animation: none; }
+  .status__meter--cred.is-dropping .status__fill { animation: none; }
 }
