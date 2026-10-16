@@ -73,6 +73,31 @@ describe('ANGELO Core Engine', () => {
     expect(state.player.currentCountryId).toBe('london');
   });
 
+  it('should not soft-lock when walking away from a dealer (re-offers contacts)', () => {
+    let state = createGameState();
+    state = gameReducer(state, { type: 'START_TRIP', amount: 2500 });
+    const country = state.world.find((c) => c.id === 'colombia') ?? state.world.find((c) => c.id !== 'london')!;
+    const zero = { cashDelta: 0, heatDelta: 0, reputationDelta: 0, message: '' };
+    state = {
+      ...state,
+      gamePhase: 'buying' as const,
+      player: { ...state.player, currentCountryId: country.id },
+      selectedDealer: { countryId: country.id, dealerId: 'col_1', name: 'Tony', gender: 'male', description: '', location: '', priceModifier: 1, riskBonus: 0, rapport: 0 },
+      pendingEvent: {
+        id: 'dealer_intro_test',
+        title: 'Meeting Tony',
+        context: 'Deal pending.',
+        choices: [{ id: 'back_out', text: 'walk away', odds: 1, successEffects: zero, failEffects: zero }],
+      },
+    };
+
+    const afterBackOut = gameReducer(state, { type: 'RESPOND_EVENT', choiceId: 'back_out' });
+    expect(afterBackOut.gamePhase).toBe('selecting_dealer');
+    expect(afterBackOut.pendingEvent).toBeTruthy();
+    expect(afterBackOut.pendingEvent!.choices.length).toBeGreaterThan(0);
+    expect(afterBackOut.selectedDealer).toBeNull();
+  });
+
   it('should reject START_TRIP with insufficient bank', () => {
     let state = createGameState();
     state = gameReducer(state, { type: 'START_TRIP', amount: 999999 });
@@ -157,6 +182,8 @@ describe('ANGELO Core Engine', () => {
   it('should manage heat properly across actions', () => {
     let state = createGameState();
     state = gameReducer(state, { type: 'START_TRIP', amount: 5000 });
+    // START_TRIP may fire a chance card — clear it so WAIT is not short-circuited
+    state = { ...state, pendingEvent: null };
 
     // WAIT should reduce heat directly (no pending event)
     const heatState = { ...state, player: { ...state.player, heat: 50 } };

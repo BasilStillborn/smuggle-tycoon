@@ -838,6 +838,19 @@ function handleDealerSelect(state: GameState, action: GameAction & { type: 'RESP
   return { ...withDealer, pendingEvent: createDealerIntro(withDealer), lastEventMessage: `Meeting ${selected.profile.name}...` };
 }
 
+function enterDealerSelection(state: GameState, message?: string): GameState {
+  const country = getCountry(state.player.currentCountryId);
+  if (!country) return { ...state, selectedDealer: null, pendingEvent: null, lastEventMessage: message ?? 'Choose another contact or fly home.' };
+  const options = getDealerOptions(country.id, state.dealerRapport);
+  const dealerEvent: ChoiceEvent = {
+    id: 'dealer_select_' + Date.now().toString(36),
+    title: `Choose Your Contact — ${country.city}`,
+    context: `You need a supplier. Who do you want to meet?\n\n${options.map(opt => `[${opt.profile.name}] — ${opt.profile.description}\n  ${opt.profile.location}`).join('\n\n')}`,
+    choices: options.map(opt => ({ id: opt.profile.dealerId, text: `${opt.profile.name} — ${opt.profile.location}`, ...nullChoice })),
+  };
+  return { ...state, gamePhase: 'selecting_dealer' as const, selectedDealer: null, pendingEvent: dealerEvent, lastEventMessage: message ?? 'Pick a different contact.' };
+}
+
 function handleDealerIntroOrCustomQty(state: GameState, action: GameAction & { type: 'RESPOND_EVENT'; choiceId: string }): GameState {
   if (action.choiceId === 'cancel') {
     return { ...state, pendingEvent: createDealerIntro(state), lastEventMessage: 'Back to the deal.' };
@@ -848,7 +861,7 @@ function handleDealerIntroOrCustomQty(state: GameState, action: GameAction & { t
     const walkLine = walkArr[Math.floor(Math.random() * walkArr.length)]
       .replace(/\$name/g, dealer?.name ?? '')
       .replace(/\$pron/g, p(dealer ?? { gender: 'male' }).his);
-    return { ...state, gamePhase: 'selecting_dealer', selectedDealer: null, pendingEvent: null, lastEventMessage: walkLine };
+    return enterDealerSelection(state, walkLine);
   }
   if (action.choiceId === 'negotiate') {
     return handleNegotiate(state);
@@ -907,7 +920,7 @@ function handleHaggleLose(state: GameState, action: GameAction & { type: 'RESPON
   if (action.choiceId === 'back_out') {
     const dealer = state.selectedDealer;
     const pr = dealer ? p(dealer) : p({ gender: 'male' });
-    return { ...state, gamePhase: 'selecting_dealer', selectedDealer: null, pendingEvent: null, lastEventMessage: `You walked away. ${dealer?.name} mutters something under ${pr.his} breath.` };
+    return enterDealerSelection(state, `You walked away. ${dealer?.name} mutters something under ${pr.his} breath.`);
   }
   let penalised = { ...state.player, reputation: Math.max(0, state.player.reputation - 2), credibility: Math.max(0, state.player.credibility - 3) };
   const goodDef = state.goods.find(g => g.id === state.selectedProductId);
