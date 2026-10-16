@@ -823,7 +823,7 @@ Note: the `$pron` fix (#1) is clearly "broken logic"; #2 uses only presentation 
 - **Correction to prior note:** the flaky assertion is at **`:189`** ("should manage heat properly across actions"), NOT `:154` ("should handle WAIT action") — `:154` builds a fresh state with no `START_TRIP`, so it is genuinely deterministic (30/30 and 40/40 clean).
 - **Fix:** after `START_TRIP`, add `state = { ...state, pendingEvent: null };` — mirrors the pattern already used at `:138`/`:148`. Verified **0 fails / 40** isolated and **0 / 8** full-suite runs. `npx tsc -b` green.
 
-**Status:** engine fix + regression test + flaky-test fix **committed** as `d8f1d7d` on `feature/m2-polish-pass` (22 files, +724/−2 — includes the newly-tracked `angelo/ios/` platform per prior approval). Staged `angelo/` only; **not pushed** (branch now ahead 3 of origin). `npx tsc -b` green; full suite green across 8 repeats.
+**Status:** engine fix + regression test + flaky-test fix **committed** as `d8f1d7d` on `feature/m2-polish-pass` (22 files, +724/−2 — includes the newly-tracked `angelo/ios/` platform per prior approval). `npx tsc -b` green; full suite green across 8 repeats. **PUSHED to origin** (see 16b deployment note).
 
 **Next Steps:**
 1. Commit the engine soft-lock fix + deterministic tests (and `ios/` per prior approval) on `feature/m2-polish-pass` — `git add angelo/`, no push unless asked.
@@ -865,3 +865,22 @@ Note: the `$pron` fix (#1) is clearly "broken logic"; #2 uses only presentation 
 2. Author real pools for more characters/moods; decide placeholder parity (`$pron` is `his` in the legacy engine — confirm intended persona variants).
 3. Optional: expose a dev/debug view that lists eligible lines for a context (authoring aid).
 4. Still open from prior session: commit/push, papercuts, Mac device build.
+
+---
+
+### Session 2026-10-16c — Deployment: build + iOS sync + push + live verification
+
+**Execution (Windows-side deployment steps):**
+- `npm run build` — green (82 modules; real SFX asset present: `dist/assets/cash-register-DSXyA5I5.wav`, 37 kB). Main JS chunk 526 kB (pre-existing size warning).
+- `npx cap sync ios` — copied fresh `dist` into `ios/App/App/public`; regenerated `capacitor.config.json` + `Package.swift` (`@capacitor/haptics@8.0.2`).
+- **Pushed `feature/m2-polish-pass` to `origin`** via `gh auth setup-git` (gh authed as `BasilStillborn`, https): `834af9f..99479bf`. The Mac can now `git fetch` and build — this is the concrete deployment enabler available from Windows.
+- Commits on the branch now pushed: `9af603f` (M2), `1eb4497` (M3 scaffolding), `d8f1d7d` (soft-lock fix + tests + ios/), `99479bf` (dialogue corpus infra + SESSION.md).
+
+**Live end-to-end smoke test (Edge, iPhone 390×844, fresh production build, 136 steps):**
+- **0 crash screens, 0 page errors, 0 failed requests.** Only 1 unique console error = the known favicon `404` (harmless; home-screen icon comes from Capacitor).
+- **✅ Soft-lock fix VERIFIED live:** the harness repeatedly chose "Something's off — walk away" at the dealer intro; each time the app returned to **"Choose Your Contact — Medellín"** (act_7→8, 9→10, 11→12, … through act_129) instead of the old `selecting_dealer`/`pendingEvent:null` dead-end. This is the critical regression from the prior session, now fixed and confirmed in the running app.
+- Full happy path exercised up to the deal: content warning → intro → briefing → hub → withdraw → chance card → product select → destination → flight confirm → customs → contact select → dealer intro. No narrative/flow breaks observed.
+- **Audio caveat unchanged:** 0 `.wav/.mp3/.ogg` requests logged during the run — verify SFX actually fire on device (may be oscillator-synth for most cues; `cash-register.wav` loads only on the relevant beat).
+- **Harness note (not an app bug):** the naive auto-driver always picks the last non-skip tap at the dealer-intro, so it always walks away and loops on the contact screen; it never clicks a quantity to complete a buy. Improving the driver to prefer deal options would let it reach the sell leg. No app change needed.
+
+**Still blocked here:** iOS device build/install requires the Mac (Xcode + signing). Runbook unchanged: `git pull` → `npm install` → `npm run build` → `npx cap sync ios` → open `ios/App/App.xcworkspace` → set signing team → Run on device (verify portrait lock, safe-area, SFX-through-silent-switch).
