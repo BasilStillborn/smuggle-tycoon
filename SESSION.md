@@ -884,3 +884,24 @@ Note: the `$pron` fix (#1) is clearly "broken logic"; #2 uses only presentation 
 - **Harness note (not an app bug):** the naive auto-driver always picks the last non-skip tap at the dealer-intro, so it always walks away and loops on the contact screen; it never clicks a quantity to complete a buy. Improving the driver to prefer deal options would let it reach the sell leg. No app change needed.
 
 **Still blocked here:** iOS device build/install requires the Mac (Xcode + signing). Runbook unchanged: `git pull` → `npm install` → `npm run build` → `npx cap sync ios` → open `ios/App/App.xcworkspace` → set signing team → Run on device (verify portrait lock, safe-area, SFX-through-silent-switch).
+
+---
+
+### Session 2026-10-16d — iOS delivery-readiness audit + asset fixes
+
+**Audit of the generated Xcode project (Windows-side, no compiler needed):**
+- ✅ Portrait lock present (`UISupportedInterfaceOrientations` + `~ipad` = Portrait only). Display name "Smuggle Tycoon". Scene manifest + LaunchScreen wired.
+- ✅ Safe areas **are** correctly handled in-app: `src/index.css:20-21` defines `--safe-top/--safe-bottom` from `env(safe-area-inset-*)` and applies them in `.gameshell__main`, `.statbar`, `.scene-card`, `.sheet`; `index.html` has `viewport-fit=cover`. (Earlier grep false-negative: PowerShell `Select-String` doesn't recurse `src/**/*.css`.)
+- ✅ `capacitor.config.ts` `ios.contentInset:'never'` matches the CSS-managed safe areas. Bundle id `com.smuggletycoon.app`, deployment target iOS 15.0, `CODE_SIGN_STYLE = Automatic` (team to be chosen in Xcode).
+- ❌ **Fixed:** `Info.plist` `UIRequiredDeviceCapabilities` was `armv7` (32-bit) — wrong for iOS 15+/arm64. Changed to **`arm64`**.
+- ❌ **Fixed:** App icon + launch splash were **stock Capacitor placeholders**. Generated on-brand assets with Python/Pillow (script kept in `%TEMP%\opencode\smuggle-assets`, not the repo):
+  - `AppIcon-512@2x.png` 1024×1024 — gold serif "A" seal on `#0a0a0a` with radial vignette.
+  - `Splash.imageset/splash-2732x2732{,-1,-2}.png` 2732×2732 — mark + "ANGELO" / "THE CHRONICLES OF CRIME" wordmark, centered (crop-safe).
+  - Palette matches the live theme accent `#d4a017` / bg `#0a0a0a`, so the launch screen blends into the first frame.
+
+**Outstanding (needs decision / Mac):**
+1. **Signing team** — must be selected once in Xcode (`DEVELOPMENT_TEAM` unset).
+2. **Audio on device** — confirm SFX actually fire (0 `.wav` loads observed in the headless run; the safe-switch bypass via `AVAudioSession .playback` is in `AppDelegate.swift`).
+3. **Main JS chunk 526 kB** — pre-existing Vite size warning; candidate for route/feature code-splitting if launch feels heavy on device.
+
+**Committed/pushed:** `armv7→arm64` + on-brand icon/splash. Branch `feature/m2-polish-pass` stays current on origin for the Mac to pull.
