@@ -39,3 +39,6 @@ export { generateDealerEncounter, generateSellEncounter, getDealerOptions, p, KI
 export type { DealerOption } from './dealer-encounters';
 export type { DealerProfile, PronounSet, KingpinProfile } from './types';
 export { getChanceCard } from './chance-cards';
+export { DialogueCorpus, createCorpus, getDialogue, renderDialogue, registerCorpus, weightedPick, evaluatePrerequisite, meetsPrerequisites, DEFAULT_CORPUS } from './dialogue';
+export type { DialogueEntry, DialogueContext, DialogueResult, DialogueVars, DialogueMood, DialoguePronouns, Prerequisite, GetDialogueOptions, Rng, NumericContextKey } from './dialogue';
+export { buildSampleCorpus, SAMPLE_CORPUS, dialogueContextFromGameState, PREREQS, loadSampleCorpus } from './dialogue-corpus';
