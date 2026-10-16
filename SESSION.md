@@ -940,8 +940,8 @@ Note: the `$pron` fix (#1) is clearly "broken logic"; #2 uses only presentation 
 1. `git pull` on `feature/m2-polish-pass` (has `c90b0f7`).
 2. `bash angelo/ios/make-ipa.sh` (first run: Xcode may prompt to create scheme/signing — accept; ensure a signing team is selected).
 3. Install: Xcode → Window → Devices & Simulators → drag the `.ipa` onto the iPhone → Trust in Settings → VPN & Device Management.
-   - If `-scheme App` errors on first try, open `ios/App/App.xcodeproj` once in Xcode (creates the scheme), then rerun the script.
+   - A **shared scheme `App.xcscheme` is now committed**, so `xcodebuild -scheme App` works headless without opening Xcode first.
 
 **Then:** pivot to Bug Hunting on-device (Director's mode switch) — verify portrait lock, safe-area, **SFX-through-silent-switch**, and the credibility-drop beat audibly.
 
-**Commits now on origin:** `…bbb0337`, `7a85bb6` (Click audit + credibility cue), `c90b0f7` (RC handoff).
+**Commits now on origin:** `…bbb0337`, `7a85bb6` (Click audit + credibility cue), `c90b0f7` (RC handoff), plus the committed shared scheme `App.xcscheme` (headless `xcodebuild -scheme App` needs no Xcode open).
