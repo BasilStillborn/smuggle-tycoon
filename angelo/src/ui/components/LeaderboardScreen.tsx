@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { LeaderboardEntry, LeaderboardPeriod } from '../../supabase';
 import { fetchLeaderboard, fetchPlayerScore } from '../../supabase';
-import { audioManager } from '../../audio';
+import { Tap } from './Tap';
 
 interface LeaderboardScreenProps {
   onBack: () => void;
@@ -30,7 +30,6 @@ export function LeaderboardScreen({ onBack }: LeaderboardScreenProps) {
   }, [period, load]);
 
   const handlePeriodChange = (p: LeaderboardPeriod) => {
-    audioManager.playSfx('click');
     setPeriod(p);
   };
 
@@ -88,12 +87,12 @@ export function LeaderboardScreen({ onBack }: LeaderboardScreenProps) {
       {/* Header */}
       <div className="border-b-2 border-retro-border bg-retro-panel px-4 py-3 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-4">
-          <button
-            onClick={() => { audioManager.playSfx('click'); onBack(); }}
+          <Tap
+            onTap={onBack}
             className="touch-target border-2 border-retro-border bg-[#111] hover:bg-[#222] px-3 py-1.5 text-xs transition-colors"
           >
             &larr; Back
-          </button>
+          </Tap>
           <div className="text-retro-accent text-sm tracking-widest uppercase glow-text">
             Global Leaderboard
           </div>
@@ -103,9 +102,9 @@ export function LeaderboardScreen({ onBack }: LeaderboardScreenProps) {
       {/* Period tabs */}
       <div className="flex border-b-2 border-retro-border bg-retro-panel/50">
         {PERIODS.map((p) => (
-          <button
+          <Tap
             key={p.key}
-            onClick={() => handlePeriodChange(p.key)}
+            onTap={() => handlePeriodChange(p.key)}
             className={`touch-target flex-1 px-4 py-3 text-xs tracking-widest uppercase transition-colors ${
               period === p.key
                 ? 'bg-[#1a1a1a] text-retro-accent border-b-2 border-retro-accent'
@@ -113,7 +112,7 @@ export function LeaderboardScreen({ onBack }: LeaderboardScreenProps) {
             }`}
           >
             {p.label}
-          </button>
+          </Tap>
         ))}
       </div>
 

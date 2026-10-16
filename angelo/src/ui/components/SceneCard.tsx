@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { ChoiceEvent } from '../../core';
+import { Tap } from './Tap';
 
 interface Props {
   event: ChoiceEvent;
@@ -61,7 +62,7 @@ export function SceneCard({ event, onChoose }: Props) {
           {isCustomQty ? (
             <>
               <div className="qtystep">
-                <button className="qtystep__btn" onClick={() => adjustQty(-1)} disabled={customQty <= 1}>−</button>
+                <Tap className="qtystep__btn" disabled={customQty <= 1} onTap={() => adjustQty(-1)}>−</Tap>
                 {editing ? (
                   <input
                     className="input qtystep__input"
@@ -75,12 +76,12 @@ export function SceneCard({ event, onChoose }: Props) {
                     onKeyDown={(e) => { if (e.key === 'Enter') commitEdit(); if (e.key === 'Escape') setEditing(false); }}
                   />
                 ) : (
-                  <button className="qtystep__value" onClick={() => { setEditVal(String(customQty)); setEditing(true); }}>
+                  <Tap className="qtystep__value" onTap={() => { setEditVal(String(customQty)); setEditing(true); }}>
                     <span className="qtystep__num">{customQty}</span>
                     <span className="qtystep__unit">{unit}{customQty !== 1 ? 's' : ''}</span>
-                  </button>
+                  </Tap>
                 )}
-                <button className="qtystep__btn" onClick={() => adjustQty(1)} disabled={customQty >= maxQty}>+</button>
+                <Tap className="qtystep__btn" disabled={customQty >= maxQty} onTap={() => adjustQty(1)}>+</Tap>
               </div>
 
               <div className="qtystep__breakdown">
@@ -94,27 +95,28 @@ export function SceneCard({ event, onChoose }: Props) {
                 </div>
               </div>
 
-              <button
+              <Tap
                 className="btn btn-primary scene-card__cta"
                 disabled={customQty < 1 || customQty > maxQty}
-                onClick={() => onChoose('qty_' + customQty)}
+                haptic="medium"
+                onTap={() => onChoose('qty_' + customQty)}
               >
                 Confirm — {customQty} {unit}{customQty !== 1 ? 's' : ''}
-              </button>
-              <button className="btn btn-secondary scene-card__cta" onClick={() => onChoose('cancel')}>
+              </Tap>
+              <Tap className="btn btn-secondary scene-card__cta" haptic="warning" onTap={() => onChoose('cancel')}>
                 Walk away
-              </button>
+              </Tap>
             </>
           ) : (
             event.choices.map((choice) => (
-              <button
+              <Tap
                 key={choice.id}
                 className="btn btn-secondary scene-card__choice"
-                onClick={() => onChoose(choice.id)}
+                onTap={() => onChoose(choice.id)}
               >
                 <span>{choice.text || choice.id}</span>
                 <span className="scene-card__arrow">→</span>
-              </button>
+              </Tap>
             ))
           )}
         </div>

@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import type { GameState, GameAction } from '../../core/types';
 import { getOverdraftLimit } from '../../core';
-import { audioManager } from '../../audio';
+import { Tap } from './Tap';
 
 interface Props {
   state: GameState;
-  dispatch: React.Dispatch<GameAction>;
+  send: (action: GameAction) => void;
   onClose: () => void;
 }
 
-export function BankModal({ state, dispatch, onClose }: Props) {
+export function BankModal({ state, send, onClose }: Props) {
   const [amount, setAmount] = useState(500);
   const [showingTutorial, setShowingTutorial] = useState(!state.bankTutorialShown);
 
@@ -24,28 +24,28 @@ export function BankModal({ state, dispatch, onClose }: Props) {
   const handleWithdraw = () => {
     const amt = Math.min(amount, maxWithdraw);
     if (amt < 1) return;
-    audioManager.playSfx('click');
-    dispatch({ type: 'TRANSFER_FROM_BANK', amount: amt });
+    send({ type: 'TRANSFER_FROM_BANK', amount: amt });
   };
 
   const handleDeposit = () => {
     const amt = Math.min(amount, maxDeposit);
     if (amt < 1) return;
-    audioManager.playSfx('click');
-    dispatch({ type: 'TRANSFER_TO_BANK', amount: amt });
+    send({ type: 'TRANSFER_TO_BANK', amount: amt });
   };
 
   const handleTutorialDone = () => {
-    dispatch({ type: 'BANK_TUTORIAL_SHOWN' });
+    send({ type: 'BANK_TUTORIAL_SHOWN' });
     setShowingTutorial(false);
   };
 
   const fmt = (n: number) => n.toLocaleString();
 
   return (
-    <div
+    <Tap
+      as="div"
+      className="modal-backdrop"
+      onTap={onClose}
       style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}
-      onClick={onClose}
     >
       <div className="card" style={{ width: '100%', maxWidth: 420, maxHeight: '90vh', overflowY: 'auto', padding: 24 }} onClick={(e) => e.stopPropagation()}>
         {/* Header */}
@@ -53,11 +53,11 @@ export function BankModal({ state, dispatch, onClose }: Props) {
           <div style={{ fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--accent)' }}>
             {showingTutorial ? 'Banking & Overdrafts' : 'Banking'}
           </div>
-          <button
-            onClick={() => { audioManager.playSfx('click'); onClose(); }}
+          <Tap
             className="btn btn-secondary"
             style={{ fontSize: 12, padding: '4px 10px' }}
-          >✕</button>
+            onTap={onClose}
+          >✕</Tap>
         </div>
 
         {showingTutorial ? (
@@ -69,7 +69,7 @@ export function BankModal({ state, dispatch, onClose }: Props) {
               <p style={{ marginBottom: 4 }}><span style={{ color: 'var(--accent)' }}>Tier 3</span> — over $50K: <span style={{ color: 'var(--danger)' }}>-$5,000</span></p>
               <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 8 }}>If your cash falls below your overdraft limit AND you've got no product anywhere to sell... game over.</p>
             </div>
-            <button className="btn btn-primary" style={{ width: '100%' }} onClick={handleTutorialDone}>Got it</button>
+            <Tap className="btn btn-primary" style={{ width: '100%' }} onTap={handleTutorialDone}>Got it</Tap>
           </div>
         ) : (
           <>
@@ -112,57 +112,59 @@ export function BankModal({ state, dispatch, onClose }: Props) {
                   { label: '−1K', fn: () => adjust(-1000) },
                   { label: '+1K', fn: () => adjust(1000) },
                 ].map(b => (
-                  <button key={b.label} className="btn btn-secondary" style={{ fontSize: 11, padding: '6px 10px' }} onClick={b.fn}>{b.label}</button>
+                  <Tap key={b.label} className="btn btn-secondary" style={{ fontSize: 11, padding: '6px 10px' }} onTap={b.fn}>{b.label}</Tap>
                 ))}
               </div>
 
               {/* Stepper */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, marginBottom: 12 }}>
-                <button
+                <Tap
                   className="btn btn-secondary"
                   style={{ width: 40, height: 40, fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
-                  onClick={() => adjust(-100)}
                   disabled={amount <= 1}
-                >▼</button>
+                  onTap={() => adjust(-100)}
+                >▼</Tap>
                 <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--accent)', minWidth: 100, textAlign: 'center' }}>
                   ${fmt(amount)}
                 </div>
-                <button
+                <Tap
                   className="btn btn-secondary"
                   style={{ width: 40, height: 40, fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
-                  onClick={() => adjust(100)}
-                >▲</button>
+                  onTap={() => adjust(100)}
+                >▲</Tap>
               </div>
 
               {/* All-bank / All-cash */}
               <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
-                <button className="btn btn-secondary" style={{ fontSize: 11, padding: '6px 12px' }} onClick={() => setAmount(maxWithdraw)} disabled={maxWithdraw < 1}>
+                <Tap className="btn btn-secondary" style={{ fontSize: 11, padding: '6px 12px' }} disabled={maxWithdraw < 1} onTap={() => setAmount(maxWithdraw)}>
                   All Bank
-                </button>
-                <button className="btn btn-secondary" style={{ fontSize: 11, padding: '6px 12px' }} onClick={() => setAmount(maxDeposit)} disabled={maxDeposit < 1}>
+                </Tap>
+                <Tap className="btn btn-secondary" style={{ fontSize: 11, padding: '6px 12px' }} disabled={maxDeposit < 1} onTap={() => setAmount(maxDeposit)}>
                   All Cash
-                </button>
+                </Tap>
               </div>
             </div>
 
             {/* Action buttons */}
             <div style={{ display: 'flex', gap: 10, marginBottom: 12 }}>
-              <button
+              <Tap
                 className="btn btn-primary"
                 style={{ flex: 1 }}
-                onClick={handleWithdraw}
+                haptic="medium"
                 disabled={maxWithdraw < 1 || amount < 1}
+                onTap={handleWithdraw}
               >
                 Withdraw
-              </button>
-              <button
+              </Tap>
+              <Tap
                 className="btn btn-secondary"
                 style={{ flex: 1 }}
-                onClick={handleDeposit}
+                haptic="medium"
                 disabled={maxDeposit < 1 || amount < 1}
+                onTap={handleDeposit}
               >
                 Deposit
-              </button>
+              </Tap>
             </div>
 
             {/* Preview */}
@@ -172,6 +174,6 @@ export function BankModal({ state, dispatch, onClose }: Props) {
           </>
         )}
       </div>
-    </div>
+    </Tap>
   );
 }

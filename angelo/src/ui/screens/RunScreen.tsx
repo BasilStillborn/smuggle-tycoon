@@ -1,11 +1,11 @@
 import type { GameState, GameAction } from '../../core';
 import { getCountry, getLocationLabel } from '../../core';
-
-type Haptic = 'light' | 'medium' | 'heavy' | 'success' | 'warning' | 'error';
+import type { HapticStyle } from '../../audio/haptics';
+import { Tap } from '../components/Tap';
 
 interface Props {
   state: GameState;
-  send: (action: GameAction, style?: Haptic) => void;
+  send: (action: GameAction) => void;
 }
 
 export function RunScreen({ state, send }: Props) {
@@ -14,7 +14,7 @@ export function RunScreen({ state, send }: Props) {
 
   let title = 'In transit';
   let sub = 'The flight is underway.';
-  let cta: { label: string; action: GameAction; haptic: Haptic } | null = null;
+  let cta: { label: string; action: GameAction; haptic: HapticStyle } | null = null;
 
   switch (state.gamePhase) {
     case 'flying_out':
@@ -43,9 +43,9 @@ export function RunScreen({ state, send }: Props) {
         <h2 className="run__title">{title}</h2>
         <p className="run__sub">{sub}</p>
         {cta && (
-          <button className="btn btn-primary plan__cta" onClick={() => send(cta!.action, cta!.haptic)}>
+          <Tap className="btn btn-primary plan__cta" haptic={cta.haptic} onTap={() => send(cta!.action)}>
             {cta.label}
-          </button>
+          </Tap>
         )}
       </div>
     </div>

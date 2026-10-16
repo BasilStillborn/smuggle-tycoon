@@ -1,12 +1,11 @@
 import type { GameState, GameAction } from '../../core';
 import { STATUS_ASSETS, getOwnedAssets, getEffectiveRequiredNetWorth } from '../../core';
 import { SAFEHOUSE_LEVELS, getSafehouseProgress } from '../visual/SafehouseState';
-
-type Haptic = 'light' | 'medium' | 'heavy' | 'success' | 'warning' | 'error';
+import { Tap } from './Tap';
 
 interface SheetProps {
   state: GameState;
-  send: (action: GameAction, style?: Haptic) => void;
+  send: (action: GameAction) => void;
 }
 
 export function SafehouseSheet({ state }: SheetProps) {
@@ -72,17 +71,18 @@ export function AssetsSheet({ state, send }: SheetProps) {
                 <div className="sheet__row-sub">{asset.description}</div>
               </div>
               {isOwned ? (
-                <button className="btn btn-secondary sheet__action" onClick={() => send({ type: 'SELL_ASSET', assetId: asset.id }, 'warning')}>
+                <Tap className="btn btn-secondary sheet__action" haptic="warning" onTap={() => send({ type: 'SELL_ASSET', assetId: asset.id })}>
                   Sell
-                </button>
+                </Tap>
               ) : (
-                <button
+                <Tap
                   className="btn btn-secondary sheet__action"
                   disabled={locked || !affordable}
-                  onClick={() => send({ type: 'BUY_ASSET', assetId: asset.id }, 'success')}
+                  haptic="success"
+                  onTap={() => send({ type: 'BUY_ASSET', assetId: asset.id })}
                 >
                   {locked ? `$${needNw.toLocaleString()}+` : `$${asset.price.toLocaleString()}`}
-                </button>
+                </Tap>
               )}
             </div>
           );

@@ -1,11 +1,10 @@
 import type { GameState, GameAction } from '../../core';
 import { getUsedCapacity, getRemainingCapacity, getInventoryValue, KINGPIN_POOL, getLocationLabel, getCountry } from '../../core';
-
-type Haptic = 'light' | 'medium' | 'heavy' | 'success' | 'warning' | 'error';
+import { Tap } from '../components/Tap';
 
 interface Props {
   state: GameState;
-  send: (action: GameAction, style?: Haptic) => void;
+  send: (action: GameAction) => void;
 }
 
 export function StashSellScreen({ state, send }: Props) {
@@ -21,7 +20,7 @@ export function StashSellScreen({ state, send }: Props) {
     return (p?.sellPrice ?? 0) * qty;
   };
 
-  const stashAll = () => send({ type: 'STASH_GOODS' }, 'medium');
+  const stashAll = () => send({ type: 'STASH_GOODS' });
   const retrieve = (goodId: string, quantity: number) => send({ type: 'RETRIEVE_GOODS', goodId, quantity });
 
   const invTypes = player.inventory.length;
@@ -51,7 +50,7 @@ export function StashSellScreen({ state, send }: Props) {
                 <span className="stash__qty">{item.quantity}x · ${sellValue(item.goodId, item.quantity).toLocaleString()}</span>
               </div>
             ))}
-            <button className="btn btn-secondary stash__btn" onClick={stashAll}>Stash everything</button>
+            <Tap className="btn btn-secondary stash__btn" haptic="medium" onTap={stashAll}>Stash everything</Tap>
           </>
         )}
       </div>
@@ -68,9 +67,9 @@ export function StashSellScreen({ state, send }: Props) {
           player.stash.map((item) => (
             <div key={item.goodId} className="stash__line">
               <span>{goodName(item.goodId)}</span>
-              <button className="stash__retrieve" onClick={() => retrieve(item.goodId, item.quantity)}>
+              <Tap className="stash__retrieve" onTap={() => retrieve(item.goodId, item.quantity)}>
                 Bring out {item.quantity}x
-              </button>
+              </Tap>
             </div>
           ))
         )}
@@ -94,26 +93,28 @@ export function StashSellScreen({ state, send }: Props) {
               : !meetsMin ? `Needs $${kp.minStashValue.toLocaleString()}+`
                 : 'Tap to deal';
           return (
-            <button
+            <Tap
               key={kp.id}
               className={`plan__dest${ok ? '' : ' is-disabled'}`}
               disabled={!ok}
-              onClick={() => send({ type: 'CONTACT_KINGPIN', kingpinId: kp.id }, 'heavy')}
+              haptic="heavy"
+              onTap={() => send({ type: 'CONTACT_KINGPIN', kingpinId: kp.id })}
             >
               <span className="plan__dest-name">{kp.name}</span>
               <span className={`plan__dest-cost${ok ? '' : ' danger'}`}>{reason}</span>
-            </button>
+            </Tap>
           );
         })}
       </div>
 
-      <button
+      <Tap
         className="btn btn-primary plan__cta"
         disabled={!canEnd}
-        onClick={() => send({ type: 'END_TRIP' }, 'success')}
+        haptic="success"
+        onTap={() => send({ type: 'END_TRIP' })}
       >
         {canEnd ? 'Bank the money & end the run' : 'Stash your product first'}
-      </button>
+      </Tap>
     </div>
   );
 }

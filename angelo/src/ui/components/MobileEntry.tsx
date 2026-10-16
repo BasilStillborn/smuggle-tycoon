@@ -5,6 +5,7 @@ import { ContentWarning } from './ContentWarning';
 import { UniversalIntro } from './UniversalIntro';
 import { BriefingScreen } from './BriefingScreen';
 import { LeaderboardScreen } from './LeaderboardScreen';
+import { Tap } from './Tap';
 
 type Screen = 'warning' | 'intro' | 'briefing' | 'game' | 'leaderboard';
 
@@ -28,7 +29,7 @@ class ErrorBoundary extends Component<{ children: ReactNode; onReset: () => void
         <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, background: 'var(--bg)' }}>
           <div className="card" style={{ padding: 24, maxWidth: 400, textAlign: 'center' }}>
             <div style={{ color: 'var(--danger)', fontSize: 14, marginBottom: 16 }}>Something went wrong. Refresh the page to continue.</div>
-            <button className="btn btn-primary" onClick={this.props.onReset}>Go to Start</button>
+            <Tap className="btn btn-primary" onTap={this.props.onReset}>Go to Start</Tap>
           </div>
         </div>
       );

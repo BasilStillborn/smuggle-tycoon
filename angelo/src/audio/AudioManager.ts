@@ -70,11 +70,15 @@ class AudioManager {
     if (this.settings.muted) return;
 
     const heatLevel = gameState.heat >= 80 ? 'critical' : gameState.heat >= 50 ? 'high' : gameState.heat >= 25 ? 'medium' : 'low';
+    const rank = (l: string) => (l === 'critical' ? 3 : l === 'high' ? 2 : l === 'medium' ? 1 : 0);
+    const prev = this._lastHeatLevel;
 
-    if (heatLevel === 'critical' && this._lastHeatLevel !== 'critical') {
+    if (heatLevel === 'critical' && prev !== 'critical') {
       this.playSfx('siren');
-    } else if (heatLevel === 'high' && this._lastHeatLevel !== 'high') {
+    } else if (heatLevel === 'high' && prev !== 'high') {
       this.playSfx('alert');
+    } else if (rank(heatLevel) < rank(prev)) {
+      this.playSfx('processing');
     }
 
     this._lastHeatLevel = heatLevel;

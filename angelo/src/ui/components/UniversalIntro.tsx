@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { audioManager } from '../../audio';
+import { Tap } from './Tap';
 
 interface UniversalIntroProps {
   onStart: () => void;
@@ -7,7 +8,7 @@ interface UniversalIntroProps {
 
 const EXPOSITION_TEXT = [
   "It's the early 1990s, after falling asleep in the office and then getting caught stealing,",
-  'Angelo is fired from his job as a security guard.. he sees no other option but to turn to a life of crime',
+  'Angelo is fired from his job as a security guard. He sees no other option but to turn to a life of crime',
   'He cashes out his savings and heads into the street,',
   'the dark seedy underworld.',
   '',
@@ -82,20 +83,21 @@ export function UniversalIntro({ onStart }: UniversalIntroProps) {
 
         {/* Start button — fades in over 3s alongside text */}
         <div className={`transition-opacity duration-[3000ms] ease-in mt-12 ${showButton ? 'opacity-100' : 'opacity-0'}`}>
-          <button
-            onClick={buttonClickable ? handleStart : undefined}
+          <Tap
+            silent
             disabled={!buttonClickable}
-              className={`touch-target border-2 px-10 py-4 text-sm transition-all duration-300 font-bold tracking-[0.2em] uppercase ${
-                buttonClickable
-                  ? 'border-retro-accent bg-retro-accent/10 hover:bg-retro-accent/20 text-retro-accent cursor-pointer'
-                  : 'border-transparent text-transparent cursor-default'
-              }`}
-              style={{ fontFamily: '"Courier New", Courier, monospace' }}
-            >
-              (This is his story)
-            </button>
-          </div>
+            onTap={handleStart}
+            className={`touch-target border-2 px-10 py-4 text-sm transition-all duration-300 font-bold tracking-[0.2em] uppercase ${
+              buttonClickable
+                ? 'border-retro-accent bg-retro-accent/10 hover:bg-retro-accent/20 text-retro-accent cursor-pointer'
+                : 'border-transparent text-transparent cursor-default'
+            }`}
+            style={{ fontFamily: '"Courier New", Courier, monospace' }}
+          >
+            (This is his story)
+          </Tap>
         </div>
+      </div>
     </div>
   );
 }

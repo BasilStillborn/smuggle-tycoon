@@ -1,4 +1,4 @@
-type HapticStyle = 'light' | 'medium' | 'heavy' | 'success' | 'warning' | 'error';
+export type HapticStyle = 'light' | 'medium' | 'heavy' | 'success' | 'warning' | 'error';
 
 let enabled = true;
 

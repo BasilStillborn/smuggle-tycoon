@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { Tap } from './Tap';
 
 interface ContentWarningProps {
   onStart: () => void;
@@ -75,9 +76,9 @@ export function ContentWarning({ onStart, onLoadSave }: ContentWarningProps) {
 
         {/* Buttons — fade in over 3s */}
         <div className={`transition-opacity duration-[3000ms] ease-in mt-12 flex flex-col items-center gap-4 ${showButton ? 'opacity-100' : 'opacity-0'}`}>
-          <button
-            onClick={buttonClickable ? handleStart : undefined}
+          <Tap
             disabled={!buttonClickable}
+            onTap={handleStart}
             className={`touch-target border-2 px-10 py-4 text-sm transition-all duration-300 font-bold tracking-[0.2em] uppercase ${
               buttonClickable
                 ? 'border-retro-accent bg-retro-accent/10 hover:bg-retro-accent/20 text-retro-accent cursor-pointer'
@@ -86,12 +87,12 @@ export function ContentWarning({ onStart, onLoadSave }: ContentWarningProps) {
             style={{ fontFamily: '"Courier New", Courier, monospace' }}
           >
             (I completely understand)
-          </button>
+          </Tap>
 
           {canLoad && (
-            <button
-              onClick={buttonClickable ? handleLoad : undefined}
+            <Tap
               disabled={!buttonClickable}
+              onTap={handleLoad}
               className={`touch-target border-2 px-8 py-3 text-xs transition-all duration-300 font-bold tracking-[0.15em] uppercase ${
                 buttonClickable
                   ? 'border-retro-border bg-[#111] hover:bg-[#222] text-gray-400 hover:text-gray-200 cursor-pointer'
@@ -100,7 +101,7 @@ export function ContentWarning({ onStart, onLoadSave }: ContentWarningProps) {
               style={{ fontFamily: '"Courier New", Courier, monospace' }}
             >
               [ LOAD SAVED GAME ]
-            </button>
+            </Tap>
           )}
         </div>
       </div>

@@ -125,7 +125,7 @@ const FAREWELLS: Record<string, string[]> = {
     `"Done." He pockets the cash without counting. "That's how real men operate. Fast. Decisive. Not like those weak little dealers in Amsterdam. Come back when you've made some real money. If you can, peasant."`,
     `"Get out of my sight, weak man." He flicks a speck off his shirt. "I've got a VIP table waiting. Champagne, models, things your little mind can't process. Cheerio!"`,
   ],
-  afg_1: [`$name slams $pron ledger shut. "You paid, you cunt. Now get out before the drones spot you. Your country will burn one day. But today — today you walk, nonce." as you leave you notice a portrait of the prophet Mohamed framed in the courtyard, yep, defiantly looks like a kiddie toucher`, `$name gestures at the gate. "Go. The Prophet blessed this deal. Don't make me curse it by looking at your Western face any longer, you spastic."`, `$name's son opens the gate. "Allah watches all transactions. He saw you pay. He also saw you flinch when I mentioned the Kalashnikov. Leave before I tell him about that, cunt. as you leave you notice a portrait of the prophet Mohamed framed in the courtyard, you draw a cock on his forehead with a sharpie. and then leave.`],
+  afg_1: [`$name slams $pron ledger shut. "You paid, you cunt. Now get out before the drones spot you. Your country will burn one day. But today — today you walk, nonce." As you leave you notice a portrait of the prophet Mohamed framed in the courtyard, yep, definitely looks like a kiddie toucher`, `$name gestures at the gate. "Go. The Prophet blessed this deal. Don't make me curse it by looking at your Western face any longer, you spastic."`, `$name's son opens the gate. "Allah watches all transactions. He saw you pay. He also saw you flinch when I mentioned the Kalashnikov. Leave before I tell him about that, cunt. As you leave you notice a portrait of the prophet Mohamed framed in the courtyard, you draw a cock on his forehead with a sharpie. And then leave.`],
   afg_2: [`$name adjusts his collar. "My ancestors ruled this land while yours painted themselves blue. Remember that as you leave, you insolent Blacky."`, `$name straightens a portrait. "The Durrani dynasty endures another day. You may go, Angelo. Try not to get shot on the way out — it would reflect poorly on my hospitality."`, `$name pours himself a drink. "Done. If anyone asks, you never met me. If the Taliban asks, I never met you. If they ask nicely, I never met either of us. Goodbye, you cheeky cunt."`],
 };
 
@@ -845,7 +845,9 @@ function handleDealerIntroOrCustomQty(state: GameState, action: GameAction & { t
   if (action.choiceId === 'back_out') {
     const dealer = state.selectedDealer;
     const walkArr = WALK_AWAYS[dealer?.dealerId ?? ''] ?? ['You walked away from the deal. Choose another contact or fly home.'];
-    const walkLine = walkArr[Math.floor(Math.random() * walkArr.length)].replace('$name', dealer?.name ?? '');
+    const walkLine = walkArr[Math.floor(Math.random() * walkArr.length)]
+      .replace(/\$name/g, dealer?.name ?? '')
+      .replace(/\$pron/g, p(dealer ?? { gender: 'male' }).his);
     return { ...state, gamePhase: 'selecting_dealer', selectedDealer: null, pendingEvent: null, lastEventMessage: walkLine };
   }
   if (action.choiceId === 'negotiate') {
@@ -871,7 +873,9 @@ function handleNegotiate(state: GameState): GameState {
   const roll = Math.random();
   if (roll < haggleSuccessChance) {
     const winArr = HAGGLE_WIN[dealer?.dealerId ?? ''] ?? [`${dealer?.name} grins. "You drive a hard bargain. Fine — I'll knock 20% off. But you owe me a favour next time."\n\nThe price drops. ${pr.He} seems to respect the negotiation.`];
-    const winText = winArr[Math.floor(Math.random() * winArr.length)].replace('$name', dealer?.name ?? 'Dealer');
+    const winText = winArr[Math.floor(Math.random() * winArr.length)]
+      .replace(/\$name/g, dealer?.name ?? 'Dealer')
+      .replace(/\$pron/g, pr.his);
     const negotiateEvent: ChoiceEvent = {
       id: 'haggle_win_' + Date.now().toString(36), title: 'Deal Sweetened', context: winText,
       choices: [{ id: 'accept_deal', text: 'Take the discounted deal', odds: 1.0, successEffects: { cashDelta: 0, heatDelta: 0, reputationDelta: 3, credibilityDelta: 5, message: '' }, failEffects: nullEffects }],
@@ -879,7 +883,9 @@ function handleNegotiate(state: GameState): GameState {
     return { ...state, pendingEvent: negotiateEvent, lastEventMessage: 'Haggle successful — price lowered.' };
   }
   const loseArr = HAGGLE_LOSE[dealer?.dealerId ?? ''] ?? [`${dealer?.name}'s expression hardens. "You think I run a fucking charity? The price just went up 15%. Take it or leave it."`];
-  const loseText = loseArr[Math.floor(Math.random() * loseArr.length)].replace('$name', dealer?.name ?? 'Dealer');
+  const loseText = loseArr[Math.floor(Math.random() * loseArr.length)]
+    .replace(/\$name/g, dealer?.name ?? 'Dealer')
+    .replace(/\$pron/g, pr.his);
   const negotiateFail: ChoiceEvent = {
     id: 'haggle_lose_' + Date.now().toString(36), title: 'Dealer Offended', context: loseText,
     choices: [

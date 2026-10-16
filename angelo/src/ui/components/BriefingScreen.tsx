@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { audioManager } from '../../audio';
+import { Tap } from './Tap';
 
 interface BriefingScreenProps {
   onContinue: () => void;
@@ -19,7 +19,6 @@ export function BriefingScreen({ onContinue }: BriefingScreenProps) {
       setError('Keep it under 15 characters, it\'s not your full CV.');
       return;
     }
-    audioManager.playSfx('click');
     localStorage.setItem('angelo_alias', trimmed);
     onContinue();
   }, [alias, onContinue]);
@@ -53,18 +52,18 @@ export function BriefingScreen({ onContinue }: BriefingScreenProps) {
               There's a leaderboard out there, Angelo. Real names. Real money. The only question is: can you be the baddest motherfucker in the world and hold the highest score? Because that's the whole point of this — everything else is just noise.
             </p>
             <p>
-              You start with <span className="text-retro-success">£5,000</span> in the bank. You're nobody.
+              You start with <span className="text-retro-success">$5,000</span> in the bank. You're nobody.
             </p>
 
             <div className="border-t border-retro-border pt-3">
               <div className="text-retro-accent text-[10px] uppercase tracking-widest mb-3">How It Works</div>
 
               <p>
-                <span className="text-retro-accent font-bold">1. THE MONEY</span> — Click <span className="text-retro-accent">[BANK]</span> at the top. Withdraw cash. Every pound you carry is product money and bribe money. Don't leave home skint.
+                <span className="text-retro-accent font-bold">1. THE MONEY</span> — Open <span className="text-retro-accent">[BANK]</span> on the hub. Withdraw cash. Every dollar you carry is product money and bribe money. Don't leave home skint.
               </p>
 
               <p>
-                <span className="text-retro-accent font-bold">2. THE PRODUCT</span> — Pick something in the Market panel. Check the demand. Check who buys it back in London. Don't buy something if nobody wants it, you daft prick.
+                <span className="text-retro-accent font-bold">2. THE PRODUCT</span> — Pick something on the Plan screen. Check the demand. Check who buys it back in London. Don't buy something if nobody wants it, you daft prick.
               </p>
 
               <p>
@@ -76,7 +75,7 @@ export function BriefingScreen({ onContinue }: BriefingScreenProps) {
               </p>
 
               <p>
-                <span className="text-retro-accent font-bold">5. CUSTOMS</span> — This is where it gets tasty. Bribe the officer. Bluff your way through. Or walk straight past like you own the terminal. Acting cocky gets you searched. Acting scared gets you searched faster. Find the middle ground. Keep £500 spare for bribes — minimum.
+                <span className="text-retro-accent font-bold">5. CUSTOMS</span> — This is where it gets tasty. Bribe the officer. Bluff your way through. Or walk straight past like you own the terminal. Acting cocky gets you searched. Acting scared gets you searched faster. Find the middle ground. Keep $500 spare for bribes — minimum.
               </p>
 
               <p>
@@ -84,7 +83,7 @@ export function BriefingScreen({ onContinue }: BriefingScreenProps) {
               </p>
 
               <p>
-                <span className="text-retro-accent font-bold">7. BACK HOME</span> — Stash your product in the Inventory panel. Build up enough and the kingpins start answering your calls. Get it right and your score climbs. Get it wrong and you're back in mum's basement.
+                <span className="text-retro-accent font-bold">7. BACK HOME</span> — Stash your product in the Stash sheet. Build up enough and the kingpins start answering your calls. Get it right and your score climbs. Get it wrong and you're back in mum's basement.
               </p>
             </div>
           </div>
@@ -105,13 +104,14 @@ export function BriefingScreen({ onContinue }: BriefingScreenProps) {
             <div className="text-[8px] text-gray-700 mt-1">Max 15 characters — the underworld will know your name</div>
           </div>
 
-          <button
-            onClick={handleContinue}
+          <Tap
+            onTap={handleContinue}
             disabled={alias.trim().length === 0}
+            haptic="success"
             className="touch-target mt-4 border-2 border-retro-accent bg-retro-accent/10 hover:bg-retro-accent/20 text-retro-accent px-8 py-3 text-sm transition-all duration-300 font-bold tracking-widest uppercase shrink-0 disabled:opacity-30"
           >
             Right, now fuck off
-          </button>
+          </Tap>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import type { GameState } from '../../core';
-import { getHeatLevel, getUsedCapacity, getOwnedAssets } from '../../core';
+import { getUsedCapacity, getOwnedAssets } from '../../core';
 import { getSafehouseProgress } from '../visual/SafehouseState';
 import { getCombinedVisuals, type VisualStateData } from '../visual/VisualState';
 import { getScene } from '../visual/scenes';
@@ -24,7 +24,6 @@ export function HubInfoWindow({ state }: Props) {
   const visuals = getCombinedVisuals(visualData);
   const scene = getScene(visuals.wealth, visuals.fame);
   const safehouse = getSafehouseProgress(state.player.cash + state.player.bank, state.safehouseTier);
-  const heatLevel = getHeatLevel(state.player);
   const usedCapacity = getUsedCapacity(state.player);
 
   return (
@@ -53,13 +52,6 @@ export function HubInfoWindow({ state }: Props) {
           </div>
         </div>
       )}
-
-      <div className="infowindow__row">
-        <span className="infowindow__key">Heat</span>
-        <span className={`infowindow__val tone-${state.player.heat >= 75 ? 'danger' : state.player.heat >= 40 ? 'accent' : 'success'}`}>
-          {heatLevel.toUpperCase()} · {state.player.heat}%
-        </span>
-      </div>
 
       <div className="infowindow__row">
         <span className="infowindow__key">Holdings</span>
